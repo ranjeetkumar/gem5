@@ -80,3 +80,8 @@ class FALRU(BaseTags):
     type = 'FALRU'
     cxx_class = 'FALRU'
     cxx_header = "mem/cache/tags/fa_lru.hh"
+
+class NMRU(BaseSetAssoc):
+    type = 'NMRU'
+    cxx_class = 'NMRU'
+    cxx_header = "mem/cache/tags/nmru.hh"
