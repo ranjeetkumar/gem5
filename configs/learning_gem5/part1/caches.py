@@ -88,15 +88,38 @@ class L1DCache(L1Cache):
 
     # Set the default size
     size = '64kB'
+    assoc = 8
 
     SimpleOpts.add_option('--l1d_size',
                           help="L1 data cache size. Default: %s" % size)
+    SimpleOpts.add_option('--l1d_assoc',
+                    help="L1 data cache associativity. Default: %s" % assoc)
+    SimpleOpts.add_option('--replacement_policy',
+                    help="L1 cache replacement policy. [NMRU,LRU,Random]")
 
     def __init__(self, opts=None):
         super(L1DCache, self).__init__(opts)
-        if not opts or not opts.l1d_size:
+        if not opts:
             return
-        self.size = opts.l1d_size
+
+        if opts.l1d_size:
+            self.size = opts.l1d_size
+
+        if opts.l1d_assoc:
+            self.size = opts.l1d_assoc
+
+        if opts.replacement_policy == "NMRU":
+            from m5.objects import NMRU
+            self.tags = NMRU()
+        elif opts.replacement_policy == "Random":
+            from m5.objects import RandomRepl
+            self.tags = RandomRepl()
+        elif opts.replacement_policy == "LRU":
+            from m5.objects import LRU
+            self.tags = LRU()
+        elif opts.replacement_policy:
+            fatal("Unsupported replacement policy: %s" %
+                  opts.replacement_policy)
 
     def connectCPU(self, cpu):
         """Connect this cache's port to a CPU dcache port"""
