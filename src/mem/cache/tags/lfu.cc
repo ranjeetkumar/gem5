@@ -48,8 +48,8 @@ LFU::findVictim(Addr addr)
 
     if (blk && blk->isValid()) {
         DPRINTF(CacheRepl,
-                                "set %x: selecting blk %x for replacement\n",
-                                set, regenerateBlkAddr(blk->tag, set));
+                "set %x: selecting blk %x for replacement\n",
+                 set, regenerateBlkAddr(blk->tag, set));
     }
 
     return blk;
