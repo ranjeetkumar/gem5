@@ -85,3 +85,8 @@ class NMRU(BaseSetAssoc):
     type = 'NMRU'
     cxx_class = 'NMRU'
     cxx_header = "mem/cache/tags/nmru.hh"
+
+class LFU(BaseSetAssoc):
+    type = 'LFU'
+    cxx_class = 'LFU'
+    cxx_header = "mem/cache/tags/lfu.hh"
