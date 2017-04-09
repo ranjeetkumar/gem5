@@ -96,7 +96,7 @@ class L1DCache(L1Cache):
                     help="L1 data cache associativity. Default: %s" % assoc)
     SimpleOpts.add_option('--replacement_policy',
                     help="L1 cache replacement policy. [NMRU,LFU,LIFO,LRU,"
-                         "Random]")
+                         "Random,FIFO]")
 
     def __init__(self, opts=None):
         super(L1DCache, self).__init__(opts)
@@ -124,6 +124,9 @@ class L1DCache(L1Cache):
         elif opts.replacement_policy == "LIFO":
             from m5.objects import LIFO
             self.tags = LIFO()
+        elif opts.replacement_policy == "FIFO":
+            from m5.objects import FIFO
+            self.tags = FIFO()
         elif opts.replacement_policy:
             fatal("Unsupported replacement policy: %s" %
                   opts.replacement_policy)

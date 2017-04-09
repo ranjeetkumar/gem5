@@ -95,3 +95,7 @@ class LIFO(BaseSetAssoc):
     type = 'LIFO'
     cxx_class = 'LIFO'
     cxx_header = "mem/cache/tags/lifo.hh"
+class FIFO(BaseSetAssoc):
+    type = 'FIFO'
+    cxx_class = 'FIFO'
+    cxx_header = "mem/cache/tags/fifo.hh"
