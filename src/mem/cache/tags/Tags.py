@@ -90,3 +90,8 @@ class LFU(BaseSetAssoc):
     type = 'LFU'
     cxx_class = 'LFU'
     cxx_header = "mem/cache/tags/lfu.hh"
+
+class LIFO(BaseSetAssoc):
+    type = 'LIFO'
+    cxx_class = 'LIFO'
+    cxx_header = "mem/cache/tags/lifo.hh"
