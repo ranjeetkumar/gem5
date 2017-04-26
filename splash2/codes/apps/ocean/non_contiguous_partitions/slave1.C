@@ -18,10 +18,10 @@
       subroutine slave
       ****************  */
 
-#include <cmath>
-#include <cstdio>
-#include <cstdlib>
-#include <ctime>
+#include <stdio.h>
+#include <math.h>
+#include <time.h>
+#include <stdlib.h>
 
 #include "decs.h"
 
@@ -103,7 +103,7 @@ void slave()
 
    ysca1 = 0.5*ysca;
    if (procid == MASTER) {
-     for (iindex = 0;iindex<=jm-1;iindex++) {
+     for(iindex = 0;iindex<=jm-1;iindex++) {
        y = ((double) iindex)*res;
        wrk2->f[iindex] = f0+beta*(y-ysca1);
      }
@@ -122,28 +122,28 @@ void slave()
      fields2->psium[im-1][jm-1]=0.0;
    }
    if (firstrow == 1) {
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        fields2->psium[0][j] = 0.0;
      }
    }
    if ((firstrow+numrows) == im-1) {
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        fields2->psium[im-1][j] = 0.0;
      }
    }
    if (firstcol == 1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        fields2->psium[j][0] = 0.0;
      }
    }
    if ((firstcol+numcols) == jm-1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        fields2->psium[j][jm-1] = 0.0;
      }
    }
 
-   for (i=firstrow;i<=lastrow;i++) {
-     for (iindex=firstcol;iindex<=lastcol;iindex++) {
+   for(i=firstrow;i<=lastrow;i++) {
+     for(iindex=firstcol;iindex<=lastcol;iindex++) {
        fields2->psium[i][iindex] = 0.0;
      }
    }
@@ -160,27 +160,27 @@ void slave()
      fields2->psilm[im-1][jm-1]=0.0;
    }
    if (firstrow == 1) {
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        fields2->psilm[0][j] = 0.0;
      }
    }
    if ((firstrow+numrows) == im-1) {
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        fields2->psilm[im-1][j] = 0.0;
      }
    }
    if (firstcol == 1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        fields2->psilm[j][0] = 0.0;
      }
    }
    if ((firstcol+numcols) == jm-1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        fields2->psilm[j][jm-1] = 0.0;
      }
    }
-   for (i=firstrow;i<=lastrow;i++) {
-     for (iindex=firstcol;iindex<=lastcol;iindex++) {
+   for(i=firstrow;i<=lastrow;i++) {
+     for(iindex=firstcol;iindex<=lastcol;iindex++) {
        fields2->psilm[i][iindex] = 0.0;
      }
    }
@@ -198,27 +198,27 @@ void slave()
      wrk1->psib[im-1][jm-1]=1.0;
    }
    if (firstrow == 1) {
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        wrk1->psib[0][j] = 1.0;
      }
    }
    if ((firstrow+numrows) == im-1) {
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        wrk1->psib[im-1][j] = 1.0;
      }
    }
    if (firstcol == 1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        wrk1->psib[j][0] = 1.0;
      }
    }
    if ((firstcol+numcols) == jm-1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        wrk1->psib[j][jm-1] = 1.0;
      }
    }
-   for (i=firstrow;i<=lastrow;i++) {
-     for (iindex=firstcol;iindex<=lastcol;iindex++) {
+   for(i=firstrow;i<=lastrow;i++) {
+     for(iindex=firstcol;iindex<=lastcol;iindex++) {
        wrk1->psib[i][iindex] = 0.0;
      }
    }
@@ -249,35 +249,35 @@ BARRIER(bars->barrier,nprocs)
    if (jend == jm-2) {
      jend = jm-1;
    }
-   for (i=istart;i<=iend;i++) {
-     for (j=jstart;j<=jend;j++) {
+   for(i=istart;i<=iend;i++) {
+     for(j=jstart;j<=jend;j++) {
        multi->rhs_multi[numlev-1][i][j] = wrk1->psib[i][j] * ressqr;
      }
    }
    if (istart == 0) {
-     for (j=jstart;j<=jend;j++) {
+     for(j=jstart;j<=jend;j++) {
        multi->q_multi[numlev-1][0][j] = wrk1->psib[0][j];
      }
    }
    if (iend == im-1) {
-     for (j=jstart;j<=jend;j++) {
+     for(j=jstart;j<=jend;j++) {
        multi->q_multi[numlev-1][im-1][j] = wrk1->psib[im-1][j];
      }
    }
    if (jstart == 0) {
-     for (i=istart;i<=iend;i++) {
+     for(i=istart;i<=iend;i++) {
        multi->q_multi[numlev-1][i][0] = wrk1->psib[i][0];
      }
    }
    if (jend == jm-1) {
-     for (i=istart;i<=iend;i++) {
+     for(i=istart;i<=iend;i++) {
        multi->q_multi[numlev-1][i][jm-1] = wrk1->psib[i][jm-1];
      }
    }
 
    fac = 1.0 / (4.0 - ressqr*eig2);
-   for (i=ist;i<=ien;i++) {
-     for (j=jst;j<=jen;j++) {
+   for(i=ist;i<=ien;i++) {
+     for(j=jst;j<=jen;j++) {
        multi->q_multi[numlev-1][i][j] = fac * (wrk1->psib[i+1][j] +
            wrk1->psib[i-1][j] + wrk1->psib[i][j+1] + wrk1->psib[i][j-1] -
            ressqr*wrk1->psib[i][j]);
@@ -290,8 +290,8 @@ BARRIER(bars->barrier,nprocs)
 #endif
    multig(procid);
 
-   for (i=istart;i<=iend;i++) {
-     for (j=jstart;j<=jend;j++) {
+   for(i=istart;i<=iend;i++) {
+     for(j=jstart;j<=jend;j++) {
        wrk1->psib[i][j] = multi->q_multi[numlev-1][i][j];
      }
    }
@@ -317,27 +317,27 @@ BARRIER(bars->barrier,nprocs)
      psibipriv=psibipriv+0.25*(wrk1->psib[im-1][jm-1]);
    }
    if (firstrow == 1) {
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        psibipriv = psibipriv + 0.5*wrk1->psib[0][j];
      }
    }
    if ((firstrow+numrows) == im-1) {
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        psibipriv = psibipriv + 0.5*wrk1->psib[im-1][j];
      }
    }
    if (firstcol == 1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        psibipriv = psibipriv + 0.5*wrk1->psib[j][0];
      }
    }
    if ((firstcol+numcols) == jm-1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        psibipriv = psibipriv + 0.5*wrk1->psib[j][jm-1];
      }
    }
-     for (iindex=firstcol;iindex<=lastcol;iindex++) {
-   for (i=firstrow;i<=lastrow;i++) {
+     for(iindex=firstcol;iindex<=lastcol;iindex++) {
+   for(i=firstrow;i<=lastrow;i++) {
        psibipriv = psibipriv + wrk1->psib[i][iindex];
      }
    }
@@ -351,7 +351,7 @@ BARRIER(bars->barrier,nprocs)
    global->psibi = global->psibi + psibipriv;
    UNLOCK(locks->psibilock)
 
-   for (psiindex=0;psiindex<=1;psiindex++) {
+   for(psiindex=0;psiindex<=1;psiindex++) {
      if (procid == MASTER) {
        fields->psim[psiindex][0][0] = 0.0;
      }
@@ -365,27 +365,27 @@ BARRIER(bars->barrier,nprocs)
        fields->psim[psiindex][im-1][jm-1] = 0.0;
      }
      if (firstrow == 1) {
-       for (j=firstcol;j<=lastcol;j++) {
+       for(j=firstcol;j<=lastcol;j++) {
          fields->psim[psiindex][0][j] = 0.0;
        }
      }
      if ((firstrow+numrows) == im-1) {
-       for (j=firstcol;j<=lastcol;j++) {
+       for(j=firstcol;j<=lastcol;j++) {
          fields->psim[psiindex][im-1][j] = 0.0;
        }
      }
      if (firstcol == 1) {
-       for (j=firstrow;j<=lastrow;j++) {
+       for(j=firstrow;j<=lastrow;j++) {
          fields->psim[psiindex][j][0] = 0.0;
        }
      }
      if ((firstcol+numcols) == jm-1) {
-       for (j=firstrow;j<=lastrow;j++) {
+       for(j=firstrow;j<=lastrow;j++) {
          fields->psim[psiindex][j][jm-1] = 0.0;
        }
      }
-     for (i=firstrow;i<=lastrow;i++) {
-       for (iindex=firstcol;iindex<=lastcol;iindex++) {
+     for(i=firstrow;i<=lastrow;i++) {
+       for(iindex=firstcol;iindex<=lastcol;iindex++) {
            fields->psim[psiindex][i][iindex] = 0.0;
        }
      }
@@ -393,7 +393,7 @@ BARRIER(bars->barrier,nprocs)
 
 /* initialize psi matrices the same way  */
 
-   for (psiindex=0;psiindex<=1;psiindex++) {
+   for(psiindex=0;psiindex<=1;psiindex++) {
      if (procid == MASTER) {
        fields->psi[psiindex][0][0] = 0.0;
      }
@@ -407,27 +407,27 @@ BARRIER(bars->barrier,nprocs)
        fields->psi[psiindex][im-1][jm-1] = 0.0;
      }
      if (firstrow == 1) {
-       for (j=firstcol;j<=lastcol;j++) {
+       for(j=firstcol;j<=lastcol;j++) {
          fields->psi[psiindex][0][j] = 0.0;
        }
      }
      if ((firstrow+numrows) == im-1) {
-       for (j=firstcol;j<=lastcol;j++) {
+       for(j=firstcol;j<=lastcol;j++) {
          fields->psi[psiindex][im-1][j] = 0.0;
        }
      }
      if (firstcol == 1) {
-       for (j=firstrow;j<=lastrow;j++) {
+       for(j=firstrow;j<=lastrow;j++) {
          fields->psi[psiindex][j][0] = 0.0;
        }
      }
      if ((firstcol+numcols) == jm-1) {
-       for (j=firstrow;j<=lastrow;j++) {
+       for(j=firstrow;j<=lastrow;j++) {
          fields->psi[psiindex][j][jm-1] = 0.0;
        }
      }
-     for (i=firstrow;i<=lastrow;i++) {
-       for (iindex=firstcol;iindex<=lastcol;iindex++) {
+     for(i=firstrow;i<=lastrow;i++) {
+       for(iindex=firstcol;iindex<=lastcol;iindex++) {
          fields->psi[psiindex][i][iindex] = 0.0;
        }
      }
@@ -454,7 +454,7 @@ BARRIER(bars->barrier,nprocs)
      frcng->tauz[im-1][jm-1] = frcng->tauz[0][jm-1];
    }
    if (firstrow == 1) {
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        sintemp = pi*((double) j)*res/ysca1;
        sintemp = sin(sintemp);
        curlt = factor*sintemp;
@@ -462,7 +462,7 @@ BARRIER(bars->barrier,nprocs)
      }
    }
    if ((firstrow+numrows) == im-1) {
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        sintemp = pi*((double) j)*res/ysca1;
        sintemp = sin(sintemp);
        curlt = factor*sintemp;
@@ -470,7 +470,7 @@ BARRIER(bars->barrier,nprocs)
      }
    }
    if (firstcol == 1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        frcng->tauz[j][0] = 0.0;
      }
    }
@@ -478,15 +478,15 @@ BARRIER(bars->barrier,nprocs)
      sintemp = pi*((double) jmm1)*res/ysca1;
      sintemp = sin(sintemp);
      curlt = factor*sintemp;
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        frcng->tauz[j][jm-1] = curlt;
      }
    }
-   for (iindex=firstcol;iindex<=lastcol;iindex++) {
+   for(iindex=firstcol;iindex<=lastcol;iindex++) {
      sintemp = pi*((double) iindex)*res/ysca1;
      sintemp = sin(sintemp);
      curlt = factor*sintemp;
-     for (i=firstrow;i<=lastrow;i++) {
+     for(i=firstrow;i<=lastrow;i++) {
        frcng->tauz[i][iindex] = curlt;
      }
    }
@@ -531,7 +531,7 @@ BARRIER(bars->barrier,nprocs)
          iday = (long) day;
          dhour = dhour+dtau;
          if (dhour >= 86400.0) {
-           dhourflag = 1;
+	   dhourflag = 1;
          }
        }
      }
@@ -552,27 +552,27 @@ BARRIER(bars->barrier,nprocs)
        fields2->psium[im-1][jm-1] = fields2->psium[im-1][jm-1]+fields->psim[0][im-1][jm-1];
      }
      if (firstrow == 1) {
-       for (j=firstcol;j<=lastcol;j++) {
+       for(j=firstcol;j<=lastcol;j++) {
          fields2->psium[0][j] = fields2->psium[0][j]+fields->psim[0][0][j];
        }
      }
      if ((firstrow+numrows) == im-1) {
-       for (j=firstcol;j<=lastcol;j++) {
+       for(j=firstcol;j<=lastcol;j++) {
          fields2->psium[im-1][j] = fields2->psium[im-1][j]+fields->psim[0][im-1][j];
        }
      }
      if (firstcol == 1) {
-       for (j=firstrow;j<=lastrow;j++) {
+       for(j=firstrow;j<=lastrow;j++) {
          fields2->psium[j][0] = fields2->psium[j][0]+fields->psim[0][j][0];
        }
      }
      if ((firstcol+numcols) == jm-1) {
-       for (j=firstrow;j<=lastrow;j++) {
+       for(j=firstrow;j<=lastrow;j++) {
          fields2->psium[j][jm-1] = fields2->psium[j][jm-1]+fields->psim[0][j][jm-1];
        }
      }
-     for (i=firstrow;i<=lastrow;i++) {
-       for (iindex=firstcol;iindex<=lastcol;iindex++) {
+     for(i=firstrow;i<=lastrow;i++) {
+       for(iindex=firstcol;iindex<=lastcol;iindex++) {
          fields2->psium[i][iindex] = fields2->psium[i][iindex]+fields->psim[0][i][iindex];
        }
      }
@@ -592,27 +592,27 @@ BARRIER(bars->barrier,nprocs)
        fields2->psilm[im-1][jm-1] = fields2->psilm[im-1][jm-1]+fields->psim[1][im-1][jm-1];
      }
      if (firstrow == 1) {
-       for (j=firstcol;j<=lastcol;j++) {
+       for(j=firstcol;j<=lastcol;j++) {
          fields2->psilm[0][j] = fields2->psilm[0][j]+fields->psim[1][0][j];
        }
      }
      if ((firstrow+numrows) == im-1) {
-       for (j=firstcol;j<=lastcol;j++) {
+       for(j=firstcol;j<=lastcol;j++) {
          fields2->psilm[im-1][j] = fields2->psilm[im-1][j]+fields->psim[1][im-1][j];
        }
      }
      if (firstcol == 1) {
-       for (j=firstrow;j<=lastrow;j++) {
+       for(j=firstrow;j<=lastrow;j++) {
          fields2->psilm[j][0] = fields2->psilm[j][0]+fields->psim[1][j][0];
        }
      }
      if ((firstcol+numcols) == jm-1) {
-       for (j=firstrow;j<=lastrow;j++) {
+       for(j=firstrow;j<=lastrow;j++) {
          fields2->psilm[j][jm-1] = fields2->psilm[j][jm-1]+fields->psim[1][j][jm-1];
        }
      }
-     for (i=firstrow;i<=lastrow;i++) {
-       for (iindex=firstcol;iindex<=lastcol;iindex++) {
+     for(i=firstrow;i<=lastrow;i++) {
+       for(iindex=firstcol;iindex<=lastcol;iindex++) {
          fields2->psilm[i][iindex] = fields2->psilm[i][iindex]+fields->psim[1][i][iindex];
        }
      }

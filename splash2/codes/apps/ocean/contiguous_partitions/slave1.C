@@ -20,11 +20,10 @@
 
 EXTERN_ENV
 
-#include <cmath>
-#include <cstdio>
-#include <cstdlib>
-#include <ctime>
-
+#include <stdio.h>
+#include <math.h>
+#include <time.h>
+#include <stdlib.h>
 #include "decs.h"
 
 void slave()
@@ -223,30 +222,30 @@ eof(double) +
    }
    if (gp[procid].neighbors[UP] == -1) {
      t1a = (double *) t2a[0];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        t1a[j] = 0.0;
      }
    }
    if (gp[procid].neighbors[DOWN] == -1) {
      t1a = (double *) t2a[im-1];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        t1a[j] = 0.0;
      }
    }
    if (gp[procid].neighbors[LEFT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2a[j][0] = 0.0;
      }
    }
    if (gp[procid].neighbors[RIGHT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2a[j][jm-1] = 0.0;
      }
    }
 
-   for (i=firstrow;i<=lastrow;i++) {
+   for(i=firstrow;i<=lastrow;i++) {
      t1a = (double *) t2a[i];
-     for (iindex=firstcol;iindex<=lastcol;iindex++) {
+     for(iindex=firstcol;iindex<=lastcol;iindex++) {
        t1a[iindex] = 0.0;
      }
    }
@@ -265,29 +264,29 @@ eof(double) +
    }
    if (gp[procid].neighbors[UP] == -1) {
      t1a = (double *) t2a[0];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        t1a[j] = 0.0;
      }
    }
    if (gp[procid].neighbors[DOWN] == -1) {
      t1a = (double *) t2a[im-1];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        t1a[j] = 0.0;
      }
    }
    if (gp[procid].neighbors[LEFT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2a[j][0] = 0.0;
      }
    }
    if (gp[procid].neighbors[RIGHT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2a[j][jm-1] = 0.0;
      }
    }
-   for (i=firstrow;i<=lastrow;i++) {
+   for(i=firstrow;i<=lastrow;i++) {
      t1a = (double *) t2a[i];
-     for (iindex=firstcol;iindex<=lastcol;iindex++) {
+     for(iindex=firstcol;iindex<=lastcol;iindex++) {
        t1a[iindex] = 0.0;
      }
    }
@@ -307,29 +306,29 @@ eof(double) +
    }
    if (gp[procid].neighbors[UP] == -1) {
      t1a = (double *) t2a[0];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        t1a[j] = 1.0;
      }
    }
    if (gp[procid].neighbors[DOWN] == -1) {
      t1a = (double *) t2a[im-1];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        t1a[j] = 1.0;
      }
    }
    if (gp[procid].neighbors[LEFT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2a[j][0] = 1.0;
      }
    }
    if (gp[procid].neighbors[RIGHT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2a[j][jm-1] = 1.0;
      }
    }
-   for (i=firstrow;i<=lastrow;i++) {
+   for(i=firstrow;i<=lastrow;i++) {
      t1a = (double *) t2a[i];
-     for (iindex=firstcol;iindex<=lastcol;iindex++) {
+     for(iindex=firstcol;iindex<=lastcol;iindex++) {
        t1a[iindex] = 0.0;
      }
    }
@@ -366,10 +365,10 @@ eof(double) +
 
    t2a = (double **) rhs_multi[procid][numlev-1];
    t2b = (double **) psib[procid];
-   for (i=istart;i<=iend;i++) {
+   for(i=istart;i<=iend;i++) {
      t1a = (double *) t2a[i];
      t1b = (double *) t2b[i];
-     for (j=jstart;j<=jend;j++) {
+     for(j=jstart;j<=jend;j++) {
        t1a[j] = t1b[j] * ressqr;
      }
    }
@@ -377,24 +376,24 @@ eof(double) +
    if (gp[procid].neighbors[UP] == -1) {
      t1a = (double *) t2a[0];
      t1b = (double *) t2b[0];
-     for (j=jstart;j<=jend;j++) {
+     for(j=jstart;j<=jend;j++) {
        t1a[j] = t1b[j];
      }
    }
    if (gp[procid].neighbors[DOWN] == -1) {
      t1a = (double *) t2a[im-1];
      t1b = (double *) t2b[im-1];
-     for (j=jstart;j<=jend;j++) {
+     for(j=jstart;j<=jend;j++) {
        t1a[j] = t1b[j];
      }
    }
    if (gp[procid].neighbors[LEFT] == -1) {
-     for (i=istart;i<=iend;i++) {
+     for(i=istart;i<=iend;i++) {
        t2a[i][0] = t2b[i][0];
      }
    }
    if (gp[procid].neighbors[RIGHT] == -1) {
-     for (i=istart;i<=iend;i++) {
+     for(i=istart;i<=iend;i++) {
        t2a[i][jm-1] = t2b[i][jm-1];
      }
    }
@@ -438,12 +437,12 @@ eof(double) +
    t2a = (double **) q_multi[procid][numlev-1];
    t2b = (double **) psib[procid];
    fac = 1.0 / (4.0 - ressqr*eig2);
-   for (i=ist;i<=ien;i++) {
+   for(i=ist;i<=ien;i++) {
      t1a = (double *) t2a[i];
      t1b = (double *) t2b[i];
      t1c = (double *) t2b[i-1];
      t1d = (double *) t2b[i+1];
-     for (j=jst;j<=jen;j++) {
+     for(j=jst;j<=jen;j++) {
        t1a[j] = fac * (t1d[j]+t1c[j]+t1b[j+1]+t1b[j-1] -
                    ressqr*t1b[j]);
      }
@@ -451,10 +450,10 @@ eof(double) +
 
    multig(procid);
 
-   for (i=istart;i<=iend;i++) {
+   for(i=istart;i<=iend;i++) {
      t1a = (double *) t2a[i];
      t1b = (double *) t2b[i];
-     for (j=jstart;j<=jend;j++) {
+     for(j=jstart;j<=jend;j++) {
        t1b[j] = t1a[j];
      }
    }
@@ -482,29 +481,29 @@ eof(double) +
    }
    if (gp[procid].neighbors[UP] == -1) {
      t1a = (double *) t2a[0];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        psibipriv = psibipriv + 0.5*t1a[j];
      }
    }
    if (gp[procid].neighbors[DOWN] == -1) {
      t1a = (double *) t2a[im-1];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        psibipriv = psibipriv + 0.5*t1a[j];
      }
    }
    if (gp[procid].neighbors[LEFT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        psibipriv = psibipriv + 0.5*t2a[j][0];
      }
    }
    if (gp[procid].neighbors[RIGHT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        psibipriv = psibipriv + 0.5*t2a[j][jm-1];
      }
    }
-   for (i=firstrow;i<=lastrow;i++) {
+   for(i=firstrow;i<=lastrow;i++) {
      t1a = (double *) t2a[i];
-     for (iindex=firstcol;iindex<=lastcol;iindex++) {
+     for(iindex=firstcol;iindex<=lastcol;iindex++) {
        psibipriv = psibipriv + t1a[iindex];
      }
    }
@@ -524,7 +523,7 @@ eof(double) +
    between the two psim matrices; otherwise, let the single process
    work on one first and then the other   */
 
-   for (psiindex=0;psiindex<=1;psiindex++) {
+   for(psiindex=0;psiindex<=1;psiindex++) {
      t2a = (double **) psim[procid][psiindex];
      if ((gp[procid].neighbors[UP] == -1) && (gp[procid].neighbors[LEFT] == -1)) {
        t2a[0][0] = 0.0;
@@ -540,29 +539,29 @@ eof(double) +
      }
      if (gp[procid].neighbors[UP] == -1) {
        t1a = (double *) t2a[0];
-       for (j=firstcol;j<=lastcol;j++) {
+       for(j=firstcol;j<=lastcol;j++) {
          t1a[j] = 0.0;
        }
      }
      if (gp[procid].neighbors[DOWN] == -1) {
        t1a = (double *) t2a[im-1];
-       for (j=firstcol;j<=lastcol;j++) {
+       for(j=firstcol;j<=lastcol;j++) {
          t1a[j] = 0.0;
        }
      }
      if (gp[procid].neighbors[LEFT] == -1) {
-       for (j=firstrow;j<=lastrow;j++) {
+       for(j=firstrow;j<=lastrow;j++) {
          t2a[j][0] = 0.0;
        }
      }
      if (gp[procid].neighbors[RIGHT] == -1) {
-       for (j=firstrow;j<=lastrow;j++) {
+       for(j=firstrow;j<=lastrow;j++) {
          t2a[j][jm-1] = 0.0;
        }
      }
-     for (i=firstrow;i<=lastrow;i++) {
+     for(i=firstrow;i<=lastrow;i++) {
        t1a = (double *) t2a[i];
-       for (iindex=firstcol;iindex<=lastcol;iindex++) {
+       for(iindex=firstcol;iindex<=lastcol;iindex++) {
          t1a[iindex] = 0.0;
        }
      }
@@ -570,7 +569,7 @@ eof(double) +
 
 /* initialize psi matrices the same way  */
 
-   for (psiindex=0;psiindex<=1;psiindex++) {
+   for(psiindex=0;psiindex<=1;psiindex++) {
      t2a = (double **) psi[procid][psiindex];
      if ((gp[procid].neighbors[UP] == -1) && (gp[procid].neighbors[LEFT] == -1)) {
        t2a[0][0] = 0.0;
@@ -586,29 +585,29 @@ eof(double) +
      }
      if (gp[procid].neighbors[UP] == -1) {
        t1a = (double *) t2a[0];
-       for (j=firstcol;j<=lastcol;j++) {
+       for(j=firstcol;j<=lastcol;j++) {
          t1a[j] = 0.0;
        }
      }
      if (gp[procid].neighbors[DOWN] == -1) {
        t1a = (double *) t2a[im-1];
-       for (j=firstcol;j<=lastcol;j++) {
+       for(j=firstcol;j<=lastcol;j++) {
          t1a[j] = 0.0;
        }
      }
      if (gp[procid].neighbors[LEFT] == -1) {
-       for (j=firstrow;j<=lastrow;j++) {
+       for(j=firstrow;j<=lastrow;j++) {
          t2a[j][0] = 0.0;
        }
      }
      if (gp[procid].neighbors[RIGHT] == -1) {
-       for (j=firstrow;j<=lastrow;j++) {
+       for(j=firstrow;j<=lastrow;j++) {
          t2a[j][jm-1] = 0.0;
        }
      }
-     for (i=firstrow;i<=lastrow;i++) {
+     for(i=firstrow;i<=lastrow;i++) {
        t1a = (double *) t2a[i];
-       for (iindex=firstcol;iindex<=lastcol;iindex++) {
+       for(iindex=firstcol;iindex<=lastcol;iindex++) {
          t1a[iindex] = 0.0;
        }
      }
@@ -637,7 +636,7 @@ eof(double) +
    }
    if (gp[procid].neighbors[UP] == -1) {
      t1a = (double *) t2a[0];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        sintemp = pi*((double) j+j_off)*res/ysca1;
        sintemp = sin(sintemp);
        curlt = factor*sintemp;
@@ -646,7 +645,7 @@ eof(double) +
    }
    if (gp[procid].neighbors[DOWN] == -1) {
      t1a = (double *) t2a[im-1];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        sintemp = pi*((double) j+j_off)*res/ysca1;
        sintemp = sin(sintemp);
        curlt = factor*sintemp;
@@ -654,7 +653,7 @@ eof(double) +
      }
    }
    if (gp[procid].neighbors[LEFT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2a[j][0] = 0.0;
      }
    }
@@ -662,13 +661,13 @@ eof(double) +
      sintemp = pi*((double) jm-1+j_off)*res/ysca1;
      sintemp = sin(sintemp);
      curlt = factor*sintemp;
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2a[j][jm-1] = curlt;
      }
    }
-   for (i=firstrow;i<=lastrow;i++) {
+   for(i=firstrow;i<=lastrow;i++) {
      t1a = (double *) t2a[i];
-     for (iindex=firstcol;iindex<=lastcol;iindex++) {
+     for(iindex=firstcol;iindex<=lastcol;iindex++) {
        sintemp = pi*((double) iindex+j_off)*res/ysca1;
        sintemp = sin(sintemp);
        curlt = factor*sintemp;
@@ -693,11 +692,11 @@ eof(double) +
          if (procid == MASTER) {
             CLOCK(global->trackstart)
          }
-         if ((procid == MASTER) || (do_stats)) {
-           CLOCK(t1);
+	 if ((procid == MASTER) || (do_stats)) {
+	   CLOCK(t1);
            gp[procid].total_time = t1;
            gp[procid].multi_time = 0;
-         }
+	 }
 /* POSSIBLE ENHANCEMENT:  Here is where one might reset the
    statistics that one is measuring about the parallel execution */
        }
@@ -717,7 +716,7 @@ eof(double) +
          iday = (long) day;
          dhour = dhour+dtau;
          if (dhour >= 86400.0) {
-           dhourflag = 1;
+	   dhourflag = 1;
          }
        }
      }
@@ -736,37 +735,37 @@ eof(double) +
      }
      if ((gp[procid].neighbors[DOWN] == -1) && (gp[procid].neighbors[RIGHT] == -1)) {
        t2a[im-1][jm-1] = t2a[im-1][jm-1] +
-                                   t2b[im-1][jm-1];
+				   t2b[im-1][jm-1];
      }
      if (gp[procid].neighbors[UP] == -1) {
        t1a = (double *) t2a[0];
        t1b = (double *) t2b[0];
-       for (j=firstcol;j<=lastcol;j++) {
+       for(j=firstcol;j<=lastcol;j++) {
          t1a[j] = t1a[j]+t1b[j];
        }
      }
      if (gp[procid].neighbors[DOWN] == -1) {
        t1a = (double *) t2a[im-1];
        t1b = (double *) t2b[im-1];
-       for (j=firstcol;j<=lastcol;j++) {
+       for(j=firstcol;j<=lastcol;j++) {
          t1a[j] = t1a[j] + t1b[j];
        }
      }
      if (gp[procid].neighbors[LEFT] == -1) {
-       for (j=firstrow;j<=lastrow;j++) {
+       for(j=firstrow;j<=lastrow;j++) {
          t2a[j][0] = t2a[j][0]+t2b[j][0];
        }
      }
      if (gp[procid].neighbors[RIGHT] == -1) {
-       for (j=firstrow;j<=lastrow;j++) {
+       for(j=firstrow;j<=lastrow;j++) {
          t2a[j][jm-1] = t2a[j][jm-1] +
-                                  t2b[j][jm-1];
+				  t2b[j][jm-1];
        }
      }
-     for (i=firstrow;i<=lastrow;i++) {
+     for(i=firstrow;i<=lastrow;i++) {
        t1a = (double *) t2a[i];
        t1b = (double *) t2b[i];
-       for (iindex=firstcol;iindex<=lastcol;iindex++) {
+       for(iindex=firstcol;iindex<=lastcol;iindex++) {
          t1a[iindex] = t1a[iindex] + t1b[iindex];
        }
      }
@@ -786,36 +785,36 @@ eof(double) +
      }
      if ((gp[procid].neighbors[DOWN] == -1) && (gp[procid].neighbors[RIGHT] == -1)) {
        t2a[im-1][jm-1] = t2a[im-1][jm-1] +
-                                   t2b[im-1][jm-1];
+				   t2b[im-1][jm-1];
      }
      if (gp[procid].neighbors[UP] == -1) {
        t1a = (double *) t2a[0];
        t1b = (double *) t2b[0];
-       for (j=firstcol;j<=lastcol;j++) {
+       for(j=firstcol;j<=lastcol;j++) {
          t1a[j] = t1a[j]+t1b[j];
        }
      }
      if (gp[procid].neighbors[DOWN] == -1) {
        t1a = (double *) t2a[im-1];
        t1b = (double *) t2b[im-1];
-       for (j=firstcol;j<=lastcol;j++) {
+       for(j=firstcol;j<=lastcol;j++) {
          t1a[j] = t1a[j]+t1b[j];
        }
      }
      if (gp[procid].neighbors[LEFT] == -1) {
-       for (j=firstrow;j<=lastrow;j++) {
+       for(j=firstrow;j<=lastrow;j++) {
          t2a[j][0] = t2a[j][0]+t2b[j][0];
        }
      }
      if (gp[procid].neighbors[RIGHT] == -1) {
-       for (j=firstrow;j<=lastrow;j++) {
+       for(j=firstrow;j<=lastrow;j++) {
          t2a[j][jm-1] = t2a[j][jm-1] + t2b[j][jm-1];
        }
      }
-     for (i=firstrow;i<=lastrow;i++) {
+     for(i=firstrow;i<=lastrow;i++) {
        t1a = (double *) t2a[i];
        t1b = (double *) t2b[i];
-       for (iindex=firstcol;iindex<=lastcol;iindex++) {
+       for(iindex=firstcol;iindex<=lastcol;iindex++) {
          t1a[iindex] = t1a[iindex] + t1b[iindex];
        }
      }

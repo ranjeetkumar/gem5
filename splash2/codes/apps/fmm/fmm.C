@@ -66,20 +66,19 @@
 
  */
 
-#include <cerrno>
-#include <cmath>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-
-#include "box.h"
-#include "construct_grid.h"
-#include "cost_zones.h"
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
 #include "defs.h"
-#include "interactions.h"
 #include "memory.h"
 #include "particle.h"
+#include "box.h"
 #include "partition_grid.h"
+#include "cost_zones.h"
+#include "construct_grid.h"
+#include "interactions.h"
 
 #define BASE ((((double) 4) - sqrt((double) 2)) / sqrt((double) 2))
 #define MAX_LINE_SIZE 100
@@ -189,7 +188,7 @@ ParallelExecute ()
    }
    else {
       CreateParticleList(my_id, ((Total_Particles * PDF)
-                                 / Number_Of_Processors));
+				 / Number_Of_Processors));
       InitParticleList(my_id, 0, 0);
    }
    num_boxes = 1.333 * (Total_Particles / (OCCUPANCY * MAX_PARTICLES_PER_BOX));
@@ -200,7 +199,7 @@ ParallelExecute ()
 
    if (my_id == 0) {
       LockedPrint("Starting FMM with %d processor%s\n", Number_Of_Processors,
-                  (Number_Of_Processors == 1) ? "" : "s");
+		  (Number_Of_Processors == 1) ? "" : "s");
    }
    BARRIER(G_Memory->synch, Number_Of_Processors);
    Local[my_id].Time = 0.0;
@@ -218,10 +217,10 @@ ParallelExecute ()
       }
 
       if (MY_TIME_STEP == 0) {
-         CLOCK(start);
+	 CLOCK(start);
       }
       else
-         start = finish;
+	 start = finish;
       ConstructGrid(my_id,local_time,time_all);
       ConstructLists(my_id,local_time,time_all);
       PartitionGrid(my_id,local_time,time_all);
@@ -316,12 +315,12 @@ GetArguments ()
       Cluster = ONE_CLUSTER;
    else {
       if ((*input == '\0') || (strcmp(input, "two cluster") == 0))
-         Cluster = TWO_CLUSTER;
+	 Cluster = TWO_CLUSTER;
       else {
-         fprintf(stderr, "ERROR: The only cluster types available are ");
-         fprintf(stderr, "\"one cluster\" or \"two cluster\".\n");
-         fprintf(stderr, "If you need help, type \"nbody -help\".\n");
-         exit(-1);
+	 fprintf(stderr, "ERROR: The only cluster types available are ");
+	 fprintf(stderr, "\"one cluster\" or \"two cluster\".\n");
+	 fprintf(stderr, "If you need help, type \"nbody -help\".\n");
+	 exit(-1);
       }
    }
 
@@ -330,12 +329,12 @@ GetArguments ()
       Model = UNIFORM;
    else {
       if ((*input == '\0') || (strcmp(input, "plummer") == 0))
-         Model = PLUMMER;
+	 Model = PLUMMER;
       else {
-         fprintf(stderr, "ERROR: The only distributions available are ");
-         fprintf(stderr, "\"uniform\" or \"plummer\".\n");
-         fprintf(stderr, "If you need help, type \"nbody -help\".\n");
-         exit(-1);
+	 fprintf(stderr, "ERROR: The only distributions available are ");
+	 fprintf(stderr, "\"uniform\" or \"plummer\".\n");
+	 fprintf(stderr, "If you need help, type \"nbody -help\".\n");
+	 exit(-1);
       }
    }
 
@@ -416,12 +415,12 @@ GetArguments ()
       Partition_Flag = COST_ZONES;
    else {
       if (strcmp(input, "orb") == 0)
-         Partition_Flag = ORB;
+	 Partition_Flag = ORB;
       else {
-         fprintf(stderr, "ERROR: The only partitioning schemes available ");
-         fprintf(stderr, "are \"cost zones\" \n\t or \"orb\".\n");
-         fprintf(stderr, "If you need help, type \"nbody -help\".\n");
-         exit(-1);
+	 fprintf(stderr, "ERROR: The only partitioning schemes available ");
+	 fprintf(stderr, "are \"cost zones\" \n\t or \"orb\".\n");
+	 fprintf(stderr, "If you need help, type \"nbody -help\".\n");
+	 exit(-1);
       }
    }
 }
@@ -465,21 +464,21 @@ PrintTimes ()
    for (i = 0; i < Time_Steps; i++) {
       fprintf(fp, "Time Step %ld\n", i);
       for (j = 0; j < Number_Of_Processors; j++) {
-         timing = &(Local[j].Timing[i]);
-         fprintf(fp, "Processor %ld\n", j);
-         fprintf(fp, "\tTotal Time = %lu\n", timing->total_time);
-         if (do_stats) {
-            fprintf(fp, "\tTree Construction Time = %lu\n",
-                    timing->construct_time);
-            fprintf(fp, "\tList Construction Time = %lu\n", timing->list_time);
-            fprintf(fp, "\tPartition Time = %lu\n", timing->partition_time);
-            fprintf(fp, "\tTree Pass Time = %lu\n", timing->pass_time);
-            fprintf(fp, "\tInter Particle Time = %lu\n", timing->inter_time);
-            fprintf(fp, "\tBarrier Time = %lu\n", timing->barrier_time);
-            fprintf(fp, "\tIntra Particle Time = %lu\n", timing->intra_time);
-            fprintf(fp, "\tOther Time = %lu\n", timing->other_time);
-         }
-         fflush(fp);
+	 timing = &(Local[j].Timing[i]);
+	 fprintf(fp, "Processor %ld\n", j);
+	 fprintf(fp, "\tTotal Time = %lu\n", timing->total_time);
+	 if (do_stats) {
+	    fprintf(fp, "\tTree Construction Time = %lu\n",
+		    timing->construct_time);
+	    fprintf(fp, "\tList Construction Time = %lu\n", timing->list_time);
+	    fprintf(fp, "\tPartition Time = %lu\n", timing->partition_time);
+	    fprintf(fp, "\tTree Pass Time = %lu\n", timing->pass_time);
+	    fprintf(fp, "\tInter Particle Time = %lu\n", timing->inter_time);
+	    fprintf(fp, "\tBarrier Time = %lu\n", timing->barrier_time);
+	    fprintf(fp, "\tIntra Particle Time = %lu\n", timing->intra_time);
+	    fprintf(fp, "\tOther Time = %lu\n", timing->other_time);
+	 }
+	 fflush(fp);
       }
    }
    fprintf(fp, "END\n");
@@ -554,8 +553,8 @@ PrintTimes ()
      P = Number_Of_Processors;
      printf("  Avg %12.0f%12.0f%12.0f%12.0f%12.0f%12.0f%12.0f%12.0f%12.0f\n",
              t_total_time/P,t_tree_time/P,t_list_time/P,t_part_time/P,
-             t_pass_time/P,t_inter_time/P,t_bar_time/P,t_intra_time/P,
-             t_other_time/P);
+	     t_pass_time/P,t_inter_time/P,t_bar_time/P,t_intra_time/P,
+	     t_other_time/P);
    }
    printf("\n");
    if (Time_Steps > 2) {

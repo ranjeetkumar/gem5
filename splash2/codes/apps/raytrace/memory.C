@@ -29,10 +29,11 @@
  */
 
 
-#include <cmath>
-#include <cstdio>
-
+#include <stdio.h>
+#include <math.h>
 #include "rt.h"
+
+
 
 #define CKSM		0x55AA55AA
 #define PAGESIZE	(4*1024)
@@ -100,18 +101,18 @@ INT	maxmem_pepArray;
  */
 
 VOID	*LocalMalloc(UINT n, CHAR *msg)
-        {
-        VOID	*p;
+	{
+	VOID	*p;
 
-        p = (VOID *) /*malloc*/G_MALLOC(n);
-        if (!p)
-                {
-                printf("%s: %s cannot allocate local memory.\n", ProgName, msg);
-                exit(-1);
-                }
+	p = (VOID *) /*malloc*/G_MALLOC(n);
+	if (!p)
+		{
+		printf("%s: %s cannot allocate local memory.\n", ProgName, msg);
+		exit(-1);
+		}
 
-        return (p);
-        }
+	return (p);
+	}
 
 
 
@@ -134,10 +135,10 @@ VOID	*LocalMalloc(UINT n, CHAR *msg)
  */
 
 VOID	LocalFree(VOID *p)
-        {
-        free(p);
+	{
+	free(p);
 
-        }
+	}
 
 
 
@@ -156,34 +157,34 @@ VOID	LocalFree(VOID *p)
  */
 
 VOID	GlobalHeapWalk()
-        {
-        NODE	huge	*curr;
+	{
+	NODE	huge	*curr;
 
-        LOCK(gm->memlock)
-        curr = begmem;
+	LOCK(gm->memlock)
+	curr = begmem;
 
-        printf("freelist ->\t0x%08lX\n\n", (U32)gm->freelist);
+	printf("freelist ->\t0x%08lX\n\n", (U32)gm->freelist);
 
-        printf("node addr \tnode->next\tnode->size\tnode->free\tnode->cksm\n");
-        printf("==========\t==========\t==========\t==========\t==========\n");
+	printf("node addr \tnode->next\tnode->size\tnode->free\tnode->cksm\n");
+	printf("==========\t==========\t==========\t==========\t==========\n");
 
-        while (curr < endmem)
-                {
-                printf("0x%08lX\t0x%08lX\t%10ld\t%s\t\t0x%08lX\n",
-                        (U32)curr, (U32)curr->next, curr->size,
-                        (curr->free ? "FREE" : "    "), curr->cksm);
+	while (curr < endmem)
+		{
+		printf("0x%08lX\t0x%08lX\t%10ld\t%s\t\t0x%08lX\n",
+			(U32)curr, (U32)curr->next, curr->size,
+			(curr->free ? "FREE" : "    "), curr->cksm);
 
-                if (curr->cksm != CKSM)
-                        {
-                        fprintf(stderr, "GlobalHeapWalk: Invalid checksum in node.\n");
-                        exit(1);
-                        }
+		if (curr->cksm != CKSM)
+			{
+			fprintf(stderr, "GlobalHeapWalk: Invalid checksum in node.\n");
+			exit(1);
+			}
 
-                curr = NODE_ADD(curr, curr->size + nodesize);
-                }
+		curr = NODE_ADD(curr, curr->size + nodesize);
+		}
 
-        UNLOCK(gm->memlock)
-        }
+	UNLOCK(gm->memlock)
+	}
 
 
 
@@ -212,27 +213,27 @@ VOID	GlobalHeapWalk()
  */
 
 BOOL	GlobalHeapInit(UINT size)
-        {
-        size	     = ROUND_UP(size);
-        gm->freelist = (NODE huge *)G_MALLOC(size);
+	{
+	size	     = ROUND_UP(size);
+	gm->freelist = (NODE huge *)G_MALLOC(size);
 
-        if (!gm->freelist)
-                return (FALSE);
+	if (!gm->freelist)
+		return (FALSE);
 
-        nodesize = sizeof(NODE);
-        begmem	 = gm->freelist;
-        endmem	 = NODE_ADD(gm->freelist, size);
+	nodesize = sizeof(NODE);
+	begmem	 = gm->freelist;
+	endmem	 = NODE_ADD(gm->freelist, size);
 
-        gm->freelist->size = size - nodesize;
-        gm->freelist->next = NULL;
-        gm->freelist->free = TRUE;
-        gm->freelist->cksm = CKSM;
+	gm->freelist->size = size - nodesize;
+	gm->freelist->next = NULL;
+	gm->freelist->free = TRUE;
+	gm->freelist->cksm = CKSM;
 
 /* NOTE TO USERS: Here's where one can allocate the memory segment from
-        begmem to endmem round-robin among memories or however one desires */
+	begmem to endmem round-robin among memories or however one desires */
 
-        return (TRUE);
-        }
+	return (TRUE);
+	}
 
 
 
@@ -265,81 +266,81 @@ BOOL	GlobalHeapInit(UINT size)
  */
 
 VOID	*GlobalMalloc(UINT size, CHAR *msg)
-        {
-        NODE	huge   *prev;
-        NODE	huge   *curr;
-        NODE	huge   *next;
+	{
+	NODE	huge   *prev;
+	NODE	huge   *curr;
+	NODE	huge   *next;
 
-        if (!size)
-                return (NULL);
+	if (!size)
+		return (NULL);
 
-        LOCK(gm->memlock)
+	LOCK(gm->memlock)
 
-        prev = NULL;
-        curr = gm->freelist;
-        size = ROUND_UP(size);
+	prev = NULL;
+	curr = gm->freelist;
+	size = ROUND_UP(size);
 
-        /*
-         *	Scan through list for large enough node (first fit).
-         */
+	/*
+	 *	Scan through list for large enough node (first fit).
+	 */
 
-        while (curr && curr->size < size)
-                {
-                if (curr->cksm != CKSM)
-                        {
-                        fprintf(stderr, "GlobalMalloc: Invalid checksum in node.\n");
-                        exit(1);
-                        }
+	while (curr && curr->size < size)
+		{
+		if (curr->cksm != CKSM)
+			{
+			fprintf(stderr, "GlobalMalloc: Invalid checksum in node.\n");
+			exit(1);
+			}
 
-                if (curr->free != TRUE)
-                        {
-                        fprintf(stderr, "GlobalMalloc: Node in free list not marked as free.\n");
-                        exit(1);
-                        }
+		if (curr->free != TRUE)
+			{
+			fprintf(stderr, "GlobalMalloc: Node in free list not marked as free.\n");
+			exit(1);
+			}
 
-                prev = curr;
-                curr = curr->next;
-                }
-
-
-        if (!curr)
-                {
-                fprintf(stderr, "%s: %s cannot allocate global memory.\n", ProgName, msg);
-                exit(-1);
-                }
+		prev = curr;
+		curr = curr->next;
+		}
 
 
-        /*
-         *	If node is larger than needed, free extra space at end
-         *	by inserting remaining space into free list.
-         */
-
-        if (curr->size - size > THRESHOLD)
-                {
-                next	    = NODE_ADD(curr, nodesize + size);
-                next->size  = curr->size - nodesize - size;
-                next->next  = curr->next;
-                next->free  = TRUE;
-                next->cksm  = CKSM;
-                curr->size  = size;
-                }
-        else
-                next = curr->next;
+	if (!curr)
+		{
+		fprintf(stderr, "%s: %s cannot allocate global memory.\n", ProgName, msg);
+		exit(-1);
+		}
 
 
-        if (!prev)
-                gm->freelist = next;
-        else
-                prev->next   = next;
+	/*
+	 *	If node is larger than needed, free extra space at end
+	 *	by inserting remaining space into free list.
+	 */
+
+	if (curr->size - size > THRESHOLD)
+		{
+		next	    = NODE_ADD(curr, nodesize + size);
+		next->size  = curr->size - nodesize - size;
+		next->next  = curr->next;
+		next->free  = TRUE;
+		next->cksm  = CKSM;
+		curr->size  = size;
+		}
+	else
+		next = curr->next;
 
 
-        UNLOCK(gm->memlock)
-        curr->next = NULL;
-        curr->free = FALSE;
-        curr	   = NODE_ADD(curr, nodesize);
+	if (!prev)
+		gm->freelist = next;
+	else
+		prev->next   = next;
 
-        return ((VOID *)curr);
-        }
+
+	UNLOCK(gm->memlock)
+	curr->next = NULL;
+	curr->free = FALSE;
+	curr	   = NODE_ADD(curr, nodesize);
+
+	return ((VOID *)curr);
+	}
 
 
 
@@ -366,21 +367,21 @@ VOID	*GlobalMalloc(UINT size, CHAR *msg)
  */
 
 VOID	*GlobalCalloc(UINT n, UINT size)
-        {
-        UINT	nbytes;
-        UINT	huge	*p;
-        VOID	huge	*q;
+	{
+	UINT	nbytes;
+	UINT	huge	*p;
+	VOID	huge	*q;
 
-        nbytes = ROUND_UP(n*size);
+	nbytes = ROUND_UP(n*size);
 
-        p = q = GlobalMalloc(nbytes, "GlobalCalloc");
+	p = q = GlobalMalloc(nbytes, "GlobalCalloc");
 
-        nbytes >>= 2;				/* Need size in words.	     */
-        while (nbytes--)
-                *p++ = 0;
+	nbytes >>= 2;				/* Need size in words.	     */
+	while (nbytes--)
+		*p++ = 0;
 
-        return (q);
-        }
+	return (q);
+	}
 
 
 
@@ -441,162 +442,162 @@ VOID	*GlobalCalloc(UINT n, UINT size)
  */
 
 VOID	*GlobalRealloc(VOID *p, UINT size)
-        {
-        UINT		oldsize;
-        UINT		newsize;
-        UINT		totsize;
-        VOID	huge	*q;
-        UINT	huge	*r;
-        UINT	huge	*s;
-        NODE	huge	*pn;
-        NODE	huge	*prev;
-        NODE	huge	*curr;
-        NODE	huge	*next;
-        NODE	huge	*node;
+	{
+	UINT		oldsize;
+	UINT		newsize;
+	UINT		totsize;
+	VOID	huge	*q;
+	UINT	huge	*r;
+	UINT	huge	*s;
+	NODE	huge	*pn;
+	NODE	huge	*prev;
+	NODE	huge	*curr;
+	NODE	huge	*next;
+	NODE	huge	*node;
 
-        if (!size)
-                {
-                GlobalFree(p);
-                return (NULL);
-                }
+	if (!size)
+		{
+		GlobalFree(p);
+		return (NULL);
+		}
 
-        if (!p)
-                return (GlobalMalloc(size, "GlobalRealloc"));
-
-
-        pn = NODE_ADD(p, -nodesize);		/* Adjust ptr back to arena. */
-
-        if (pn->cksm != CKSM)
-                {
-                fprintf(stderr, "GlobalRealloc: Attempted to realloc node with invalid checksum.\n");
-                exit(1);
-                }
-
-        if (pn->free)
-                {
-                fprintf(stderr, "GlobalRealloc: Attempted to realloc an unallocated node.\n");
-                exit(1);
-                }
+	if (!p)
+		return (GlobalMalloc(size, "GlobalRealloc"));
 
 
-        newsize = ROUND_UP(size);
-        oldsize = pn->size;
+	pn = NODE_ADD(p, -nodesize);		/* Adjust ptr back to arena. */
+
+	if (pn->cksm != CKSM)
+		{
+		fprintf(stderr, "GlobalRealloc: Attempted to realloc node with invalid checksum.\n");
+		exit(1);
+		}
+
+	if (pn->free)
+		{
+		fprintf(stderr, "GlobalRealloc: Attempted to realloc an unallocated node.\n");
+		exit(1);
+		}
 
 
-        /*
-         *	If new size is less than current node size, truncate the node
-         *	and return end to free list.
-         */
-
-        if (newsize <= oldsize)
-                {
-                if (oldsize - newsize < THRESHOLD)
-                        return (p);
-
-                pn->size    = newsize;
-
-                next	    = NODE_ADD(p, newsize);
-                next->size  = oldsize - nodesize - newsize;
-                next->next  = NULL;
-                next->free  = FALSE;
-                next->cksm  = CKSM;
-                next	    = NODE_ADD(next, nodesize);
-
-                GlobalFree(next);
-                return (p);
-                }
+	newsize = ROUND_UP(size);
+	oldsize = pn->size;
 
 
-        /*
-         *	New size is bigger than current node.  Try to expand next node
-         *	in list.
-         */
+	/*
+	 *	If new size is less than current node size, truncate the node
+	 *	and return end to free list.
+	 */
 
-        next	= NODE_ADD(p, oldsize);
-        totsize = oldsize + nodesize + next->size;
+	if (newsize <= oldsize)
+		{
+		if (oldsize - newsize < THRESHOLD)
+			return (p);
 
-        LOCK(gm->memlock)
-        if (next < endmem && next->free && totsize >= newsize)
-                {
-                /* Find next in free list. */
+		pn->size    = newsize;
 
-                prev = NULL;
-                curr = gm->freelist;
+		next	    = NODE_ADD(p, newsize);
+		next->size  = oldsize - nodesize - newsize;
+		next->next  = NULL;
+		next->free  = FALSE;
+		next->cksm  = CKSM;
+		next	    = NODE_ADD(next, nodesize);
 
-                while (curr && curr < next && curr < endmem)
-                        {
-                        prev = curr;
-                        curr = curr->next;
-                        }
-
-                if (curr != next)
-                        {
-                        fprintf(stderr, "GlobalRealloc: Could not find next node in free list.\n");
-                        exit(1);
-                        }
-
-                if (totsize - newsize < THRESHOLD)
-                        {
-                        /* Just remove next from free list. */
-
-                        if (!prev)
-                                gm->freelist = next->next;
-                        else
-                                prev->next   = next->next;
-
-                        next->next = NULL;
-                        next->free = FALSE;
-                        pn->size   = totsize;
-
-                        UNLOCK(gm->memlock)
-                        return (p);
-                        }
-                else
-                        {
-                        /* Remove next from free list while adding node. */
-
-                        node	   = NODE_ADD(p, newsize);
-                        node->next = next->next;
-                        node->size = totsize - nodesize - newsize;
-                        node->free = TRUE;
-                        node->cksm = CKSM;
-
-                        if (!prev)
-                                gm->freelist = node;
-                        else
-                                prev->next   = node;
-
-                        next->next = NULL;
-                        next->free = FALSE;
-                        pn->size   = newsize;
-
-                        UNLOCK(gm->memlock)
-                        return (p);
-                        }
-                }
+		GlobalFree(next);
+		return (p);
+		}
 
 
-        /*
-         *	New size is bigger than current node, but next node in list
-         *	could not be expanded.	Try to allocate new node and move data
-         *	to new location.
-         */
+	/*
+	 *	New size is bigger than current node.  Try to expand next node
+	 *	in list.
+	 */
 
-        UNLOCK(gm->memlock)
+	next	= NODE_ADD(p, oldsize);
+	totsize = oldsize + nodesize + next->size;
 
-        s = q = GlobalMalloc(newsize, "GlobalRealloc");
-        if (!q)
-                return (NULL);
+	LOCK(gm->memlock)
+	if (next < endmem && next->free && totsize >= newsize)
+		{
+		/* Find next in free list. */
 
-        r = (UINT huge *)p;
-        oldsize >>= 2;
+		prev = NULL;
+		curr = gm->freelist;
 
-        while (oldsize--)
-                *s++ = *r++;
+		while (curr && curr < next && curr < endmem)
+			{
+			prev = curr;
+			curr = curr->next;
+			}
 
-        GlobalFree(p);
-        return (q);
-        }
+		if (curr != next)
+			{
+			fprintf(stderr, "GlobalRealloc: Could not find next node in free list.\n");
+			exit(1);
+			}
+
+		if (totsize - newsize < THRESHOLD)
+			{
+			/* Just remove next from free list. */
+
+			if (!prev)
+				gm->freelist = next->next;
+			else
+				prev->next   = next->next;
+
+			next->next = NULL;
+			next->free = FALSE;
+			pn->size   = totsize;
+
+			UNLOCK(gm->memlock)
+			return (p);
+			}
+		else
+			{
+			/* Remove next from free list while adding node. */
+
+			node	   = NODE_ADD(p, newsize);
+			node->next = next->next;
+			node->size = totsize - nodesize - newsize;
+			node->free = TRUE;
+			node->cksm = CKSM;
+
+			if (!prev)
+				gm->freelist = node;
+			else
+				prev->next   = node;
+
+			next->next = NULL;
+			next->free = FALSE;
+			pn->size   = newsize;
+
+			UNLOCK(gm->memlock)
+			return (p);
+			}
+		}
+
+
+	/*
+	 *	New size is bigger than current node, but next node in list
+	 *	could not be expanded.	Try to allocate new node and move data
+	 *	to new location.
+	 */
+
+	UNLOCK(gm->memlock)
+
+	s = q = GlobalMalloc(newsize, "GlobalRealloc");
+	if (!q)
+		return (NULL);
+
+	r = (UINT huge *)p;
+	oldsize >>= 2;
+
+	while (oldsize--)
+		*s++ = *r++;
+
+	GlobalFree(p);
+	return (q);
+	}
 
 
 
@@ -619,175 +620,175 @@ VOID	*GlobalRealloc(VOID *p, UINT size)
  */
 
 VOID	GlobalFree(VOID *p)
-        {
-        BOOL		pcom;			/* TRUE if prev can combine. */
-        BOOL		ncom;			/* TRUE if next can combine. */
-        NODE	huge	*pn;
-        NODE	huge	*prev;			/* Pointer to previous node. */
-        NODE	huge	*curr;			/* Pointer to this node.     */
-        NODE	huge	*next;			/* Pointer to next node.     */
+	{
+	BOOL		pcom;			/* TRUE if prev can combine. */
+	BOOL		ncom;			/* TRUE if next can combine. */
+	NODE	huge	*pn;
+	NODE	huge	*prev;			/* Pointer to previous node. */
+	NODE	huge	*curr;			/* Pointer to this node.     */
+	NODE	huge	*next;			/* Pointer to next node.     */
 
-        if (!begmem)
-                return;
-
-
-        pn = NODE_ADD(p, -nodesize);		/* Adjust ptr back to arena. */
-
-        if (pn->cksm != CKSM)
-                {
-                fprintf(stderr, "GlobalFree: Attempted to free node with invalid checksum.\n");
-                exit(1);
-                }
-
-        if (pn->free)
-                {
-                fprintf(stderr, "GlobalFree: Attempted to free unallocated node.\n");
-                exit(1);
-                }
+	if (!begmem)
+		return;
 
 
-        pcom = FALSE;
-        prev = NULL;
+	pn = NODE_ADD(p, -nodesize);		/* Adjust ptr back to arena. */
 
-        LOCK(gm->memlock)
-        if (gm->freelist)
-                {
-                /*
-                 *	Search the memory arena blocks for previous free neighbor.
-                 */
+	if (pn->cksm != CKSM)
+		{
+		fprintf(stderr, "GlobalFree: Attempted to free node with invalid checksum.\n");
+		exit(1);
+		}
 
-                curr = gm->freelist;
-
-                while (curr < pn && curr < endmem)
-                        {
-                        if (curr->cksm != CKSM)
-                                {
-                                fprintf(stderr, "GlobalFree: Invalid checksum in previous node.\n");
-                                exit(1);
-                                }
-
-                        if (curr->free)
-                                {
-                                prev = curr;
-                                pcom = TRUE;
-                                }
-                        else
-                                pcom = FALSE;
-
-                        curr = NODE_ADD(curr, curr->size + nodesize);
-                        }
+	if (pn->free)
+		{
+		fprintf(stderr, "GlobalFree: Attempted to free unallocated node.\n");
+		exit(1);
+		}
 
 
-                /*
-                 *	Make sure we found the original node.
-                 */
+	pcom = FALSE;
+	prev = NULL;
 
-                if (curr >= endmem)
-                        {
-                        fprintf(stdout, "freelist=0x%p, curr=0x%p, size=0x%lu, pn=0x%p, endmem=0x%p\n", gm->freelist, curr, curr->size, pn, endmem);
-                        fprintf(stderr, "GlobalFree: Search for previous block fell off end of memory.\n");
-                        exit(1);
-                        }
-                }
+	LOCK(gm->memlock)
+	if (gm->freelist)
+		{
+		/*
+		 *	Search the memory arena blocks for previous free neighbor.
+		 */
 
+		curr = gm->freelist;
 
-        /*
-         *	Search the memory arena blocks for next free neighbor.
-         */
+		while (curr < pn && curr < endmem)
+			{
+			if (curr->cksm != CKSM)
+				{
+				fprintf(stderr, "GlobalFree: Invalid checksum in previous node.\n");
+				exit(1);
+				}
 
-        ncom = TRUE;
-        next = NULL;
-        curr = NODE_ADD(pn, pn->size + nodesize);
+			if (curr->free)
+				{
+				prev = curr;
+				pcom = TRUE;
+				}
+			else
+				pcom = FALSE;
 
-        while (!next && curr < endmem)
-                {
-                if (curr->cksm != CKSM)
-                        {
-                        fprintf(stderr, "GlobalFree: Invalid checksum in next node.\n");
-                        exit(1);
-                        }
-
-                if (curr->free)
-                        next = curr;
-                else
-                        ncom = FALSE;
-
-                curr = NODE_ADD(curr, curr->size + nodesize);
-                }
+			curr = NODE_ADD(curr, curr->size + nodesize);
+			}
 
 
-        if (!next)				/* Loop may have fallen thru.*/
-                ncom = FALSE;
+		/*
+		 *	Make sure we found the original node.
+		 */
 
-        curr = pn;
-        curr->free = TRUE;			/* Mark NODE as free.	     */
+		if (curr >= endmem)
+			{
+			fprintf(stdout, "freelist=0x%p, curr=0x%p, size=0x%lu, pn=0x%p, endmem=0x%p\n", gm->freelist, curr, curr->size, pn, endmem);
+			fprintf(stderr, "GlobalFree: Search for previous block fell off end of memory.\n");
+			exit(1);
+			}
+		}
 
 
-        /*
-         *	Attempt to combine the three nodes (prev, current, next).
-         *	There are 9 cases to consider (16 total, but 7 are degenerate).
-         */
+	/*
+	 *	Search the memory arena blocks for next free neighbor.
+	 */
+
+	ncom = TRUE;
+	next = NULL;
+	curr = NODE_ADD(pn, pn->size + nodesize);
+
+	while (!next && curr < endmem)
+		{
+		if (curr->cksm != CKSM)
+			{
+			fprintf(stderr, "GlobalFree: Invalid checksum in next node.\n");
+			exit(1);
+			}
+
+		if (curr->free)
+			next = curr;
+		else
+			ncom = FALSE;
+
+		curr = NODE_ADD(curr, curr->size + nodesize);
+		}
 
 
-        if (next && !ncom && pcom)
-                {
-                prev->next  = next;
-                prev->size += curr->size + nodesize;
-                }
-        else
-        if (next && !ncom && prev && !pcom)
-                {
-                prev->next  = curr;
-                curr->next  = next;
-                }
-        else
-        if (next && !ncom && !prev)
-                {
-                gm->freelist = curr;
-                curr->next   = next;
-                }
-        else
-        if (ncom && pcom)
-                {
-                prev->next  = next->next;
-                prev->size += curr->size + next->size + 2*nodesize;
-                }
-        else
-        if (ncom && prev && !pcom)
-                {
-                prev->next  = curr;
-                curr->next  = next->next;
-                curr->size += next->size + nodesize;
-                }
-        else
-        if (ncom && !prev)
-                {
-                gm->freelist = curr;
-                curr->next   = next->next;
-                curr->size  += next->size + nodesize;
-                }
-        else
-        if (!next && pcom)
-                {
-                prev->next  = NULL;
-                prev->size += curr->size + nodesize;
-                }
-        else
-        if (!next && prev && !pcom)
-                {
-                prev->next  = curr;
-                curr->next  = NULL;
-                }
-        else
-        if (!next && !prev)
-                {
-                gm->freelist = curr;
-                curr->next   = NULL;
-                }
+	if (!next)				/* Loop may have fallen thru.*/
+		ncom = FALSE;
 
-        UNLOCK(gm->memlock)
-        return;
-        }
+	curr = pn;
+	curr->free = TRUE;			/* Mark NODE as free.	     */
+
+
+	/*
+	 *	Attempt to combine the three nodes (prev, current, next).
+	 *	There are 9 cases to consider (16 total, but 7 are degenerate).
+	 */
+
+
+	if (next && !ncom && pcom)
+		{
+		prev->next  = next;
+		prev->size += curr->size + nodesize;
+		}
+	else
+	if (next && !ncom && prev && !pcom)
+		{
+		prev->next  = curr;
+		curr->next  = next;
+		}
+	else
+	if (next && !ncom && !prev)
+		{
+		gm->freelist = curr;
+		curr->next   = next;
+		}
+	else
+	if (ncom && pcom)
+		{
+		prev->next  = next->next;
+		prev->size += curr->size + next->size + 2*nodesize;
+		}
+	else
+	if (ncom && prev && !pcom)
+		{
+		prev->next  = curr;
+		curr->next  = next->next;
+		curr->size += next->size + nodesize;
+		}
+	else
+	if (ncom && !prev)
+		{
+		gm->freelist = curr;
+		curr->next   = next->next;
+		curr->size  += next->size + nodesize;
+		}
+	else
+	if (!next && pcom)
+		{
+		prev->next  = NULL;
+		prev->size += curr->size + nodesize;
+		}
+	else
+	if (!next && prev && !pcom)
+		{
+		prev->next  = curr;
+		curr->next  = NULL;
+		}
+	else
+	if (!next && !prev)
+		{
+		gm->freelist = curr;
+		curr->next   = NULL;
+		}
+
+	UNLOCK(gm->memlock)
+	return;
+	}
 
 
 
@@ -807,25 +808,25 @@ VOID	GlobalFree(VOID *p)
  */
 
 UINT	GlobalMemAvl()
-        {
-        UINT	total;
-        NODE	huge	*curr;
+	{
+	UINT	total;
+	NODE	huge	*curr;
 
-        LOCK(gm->memlock)
-        total = 0;
-        curr  = gm->freelist;
+	LOCK(gm->memlock)
+	total = 0;
+	curr  = gm->freelist;
 
-        while (curr)
-                {
-                total += curr->size;
-                curr   = curr->next;
-                }
+	while (curr)
+		{
+		total += curr->size;
+		curr   = curr->next;
+		}
 
-        total = ROUND_DN(total);
+	total = ROUND_DN(total);
 
-        UNLOCK(gm->memlock)
-        return (total);
-        }
+	UNLOCK(gm->memlock)
+	return (total);
+	}
 
 
 
@@ -846,25 +847,25 @@ UINT	GlobalMemAvl()
  */
 
 UINT	GlobalMemMax()
-        {
-        UINT	max;
-        NODE	huge	*curr;
+	{
+	UINT	max;
+	NODE	huge	*curr;
 
-        LOCK(gm->memlock)
-        max  = 0;
-        curr = gm->freelist;
+	LOCK(gm->memlock)
+	max  = 0;
+	curr = gm->freelist;
 
-        while (curr)
-                {
-                max  = (curr->size > max ? curr->size : max);
-                curr =	curr->next;
-                }
+	while (curr)
+		{
+		max  = (curr->size > max ? curr->size : max);
+		curr =	curr->next;
+		}
 
-        max = ROUND_DN(max);
+	max = ROUND_DN(max);
 
-        UNLOCK(gm->memlock)
-        return (max);
-        }
+	UNLOCK(gm->memlock)
+	return (max);
+	}
 
 
 
@@ -889,86 +890,86 @@ UINT	GlobalMemMax()
  */
 
 VOID	*ObjectMalloc(INT ObjectType, INT count)
-        {
-        INT	n;
-        VOID	*p;
+	{
+	INT	n;
+	VOID	*p;
 
-        switch (ObjectType)
-                {
-                case OT_GRID:
-                        n = count*sizeof(GRID);
-                        p = GlobalMalloc(n, "GRID");
+	switch (ObjectType)
+		{
+		case OT_GRID:
+			n = count*sizeof(GRID);
+			p = GlobalMalloc(n, "GRID");
 
-                        mem_grid += n;
-                        maxmem_grid = Max(mem_grid, maxmem_grid);
-                        break;
+			mem_grid += n;
+			maxmem_grid = Max(mem_grid, maxmem_grid);
+			break;
 
-                case OT_VOXEL:
-                        n = count*sizeof(VOXEL);
-                        p = GlobalMalloc(n, "VOXEL");
+		case OT_VOXEL:
+			n = count*sizeof(VOXEL);
+			p = GlobalMalloc(n, "VOXEL");
 
-                        mem_voxel += n;
-                        maxmem_voxel = Max(mem_voxel, maxmem_voxel);
-                        break;
+			mem_voxel += n;
+			maxmem_voxel = Max(mem_voxel, maxmem_voxel);
+			break;
 
-                case OT_HASHTABLE:
-                        {
-                        INT	i;
-                        VOXEL	**x;
+		case OT_HASHTABLE:
+			{
+			INT	i;
+			VOXEL	**x;
 
-                        n = count*sizeof(VOXEL *);
-                        p = GlobalMalloc(n, "HASHTABLE");
-                        x = p;
+			n = count*sizeof(VOXEL *);
+			p = GlobalMalloc(n, "HASHTABLE");
+			x = p;
 
-                        for (i = 0; i < count; i++)
-                                x[i] = NULL;
+			for (i = 0; i < count; i++)
+				x[i] = NULL;
 
-                        mem_hashtable += n;
-                        maxmem_hashtable = Max(mem_hashtable, maxmem_hashtable);
-                        }
-                        break;
+			mem_hashtable += n;
+			maxmem_hashtable = Max(mem_hashtable, maxmem_hashtable);
+			}
+			break;
 
-                case OT_EMPTYCELLS:
-                        {
-                        INT	i, w;
-                        UINT	*x;
+		case OT_EMPTYCELLS:
+			{
+			INT	i, w;
+			UINT	*x;
 
-                        w = 1 + count/(8*sizeof(UINT));
-                        n = w*sizeof(UINT);
-                        p = GlobalMalloc(n, "EMPTYCELLS");
-                        x = p;
+			w = 1 + count/(8*sizeof(UINT));
+			n = w*sizeof(UINT);
+			p = GlobalMalloc(n, "EMPTYCELLS");
+			x = p;
 
-                        for (i = 0; i < w; i++)
-                                x[i] = ~0;		/* 1 => empty */
+			for (i = 0; i < w; i++)
+				x[i] = ~0;		/* 1 => empty */
 
-                        mem_emptycells += n;
-                        maxmem_emptycells = Max(mem_emptycells, maxmem_emptycells);
-                        }
-                        break;
+			mem_emptycells += n;
+			maxmem_emptycells = Max(mem_emptycells, maxmem_emptycells);
+			}
+			break;
 
-                case OT_BINTREE:
-                        n = count*sizeof(BTNODE);
-                        p = GlobalMalloc(n, "BINTREE");
+		case OT_BINTREE:
+			n = count*sizeof(BTNODE);
+			p = GlobalMalloc(n, "BINTREE");
 
-                        mem_bintree += n;
-                        maxmem_bintree = Max(mem_bintree, maxmem_bintree);
-                        break;
+			mem_bintree += n;
+			maxmem_bintree = Max(mem_bintree, maxmem_bintree);
+			break;
 
-                case OT_PEPARRAY:
-                        n = count*sizeof(ELEMENT *);
-                        p = GlobalMalloc(n, "PEPARRAY");
+		case OT_PEPARRAY:
+			n = count*sizeof(ELEMENT *);
+			p = GlobalMalloc(n, "PEPARRAY");
 
-                        mem_pepArray += n;
-                        maxmem_pepArray = Max(mem_pepArray, maxmem_pepArray);
-                        break;
+			mem_pepArray += n;
+			maxmem_pepArray = Max(mem_pepArray, maxmem_pepArray);
+			break;
 
-                default:
-                        printf("ObjectMalloc: Unknown object type: %ld\n", ObjectType);
-                        exit(-1);
-                }
+		default:
+			printf("ObjectMalloc: Unknown object type: %ld\n", ObjectType);
+			exit(-1);
+		}
 
-        return (p);
-        }
+	return (p);
+	}
 
 
 
@@ -991,113 +992,113 @@ VOID	*ObjectMalloc(INT ObjectType, INT count)
  */
 
 VOID	ObjectFree(INT ObjectType, INT count, VOID *p)
-        {
-        INT	n;
+	{
+	INT	n;
 
-        GlobalFree(p);
+	GlobalFree(p);
 
-        switch (ObjectType)
-                {
-                case OT_GRID:
-                        n = count*sizeof(GRID);
-                        mem_grid -= n;
-                        break;
+	switch (ObjectType)
+		{
+		case OT_GRID:
+			n = count*sizeof(GRID);
+			mem_grid -= n;
+			break;
 
-                case OT_VOXEL:
-                        n = count*sizeof(VOXEL);
-                        mem_voxel -= n;
-                        break;
+		case OT_VOXEL:
+			n = count*sizeof(VOXEL);
+			mem_voxel -= n;
+			break;
 
-                case OT_HASHTABLE:
-                        n = count*sizeof(VOXEL *);
-                        mem_hashtable -= n;
-                        break;
+		case OT_HASHTABLE:
+			n = count*sizeof(VOXEL *);
+			mem_hashtable -= n;
+			break;
 
-                case OT_EMPTYCELLS:
-                        n = 1 + count/(8*sizeof(UINT));
-                        n = n*sizeof(UINT);
-                        mem_emptycells -= n;
-                        break;
+		case OT_EMPTYCELLS:
+			n = 1 + count/(8*sizeof(UINT));
+			n = n*sizeof(UINT);
+			mem_emptycells -= n;
+			break;
 
-                case OT_BINTREE:
-                        n = count*sizeof(BTNODE);
-                        mem_bintree -= n;
-                        break;
+		case OT_BINTREE:
+			n = count*sizeof(BTNODE);
+			mem_bintree -= n;
+			break;
 
-                case OT_PEPARRAY:
-                        n = count*sizeof(ELEMENT *);
-                        mem_pepArray -= n;
-                        break;
+		case OT_PEPARRAY:
+			n = count*sizeof(ELEMENT *);
+			mem_pepArray -= n;
+			break;
 
-                default:
-                        printf("ObjectFree: Unknown object type: %ld\n", ObjectType);
-                        exit(-1);
-                }
-        }
+		default:
+			printf("ObjectFree: Unknown object type: %ld\n", ObjectType);
+			exit(-1);
+		}
+	}
 
 
 
 
 RAYINFO *ma_rayinfo(RAY *r)
-        {
-        RAYINFO *p;
+	{
+	RAYINFO *p;
 
-        if (r->ri_indx + 1 > MAX_RAYINFO + 1)
-                {
-                fprintf(stderr, "error ma_rayinfo \n");
-                exit(-1);
-                }
+	if (r->ri_indx + 1 > MAX_RAYINFO + 1)
+		{
+		fprintf(stderr, "error ma_rayinfo \n");
+		exit(-1);
+		}
 
-        p = (RAYINFO *)(&(r->rinfo[r->ri_indx]));
+	p = (RAYINFO *)(&(r->rinfo[r->ri_indx]));
 
-        /*
-         *	It is assumed that rayinfos are allocated and released in a
-         *	stack fashion, i.e. the one released is the one most recently
-         *	allocated.
-         */
+	/*
+	 *	It is assumed that rayinfos are allocated and released in a
+	 *	stack fashion, i.e. the one released is the one most recently
+	 *	allocated.
+	 */
 
-        r->ri_indx += 1;
+	r->ri_indx += 1;
 
-        return (p);
-        }
+	return (p);
+	}
 
 
 
 VOID   free_rayinfo(RAY *r)
-        {
-        r->ri_indx -= 1;
-        }
+	{
+	r->ri_indx -= 1;
+	}
 
 
 
 VOID	reset_rayinfo(RAY *r)
-        {
-        r->ri_indx = 0;
-        }
+	{
+	r->ri_indx = 0;
+	}
 
 
 
 VOID	ma_print()
-        {
-        INT	mem_total;
-        INT	maxmem_total;
+	{
+	INT	mem_total;
+	INT	maxmem_total;
 
-        mem_total     = mem_grid + mem_hashtable + mem_emptycells;
-        mem_total    += mem_voxel + mem_bintree;
+	mem_total     = mem_grid + mem_hashtable + mem_emptycells;
+	mem_total    += mem_voxel + mem_bintree;
 
-        maxmem_total  = maxmem_grid + maxmem_hashtable + maxmem_emptycells;
-        maxmem_total += maxmem_voxel + maxmem_bintree;
+	maxmem_total  = maxmem_grid + maxmem_hashtable + maxmem_emptycells;
+	maxmem_total += maxmem_voxel + maxmem_bintree;
 
-        fprintf(stdout, "\n****** Hierarchial uniform grid memory allocation summary ******* \n\n");
-        fprintf(stdout, "     < struct >:            < current >   < maximum >    < sizeof > \n");
-        fprintf(stdout, "     <  bytes >:             <  bytes >   <   bytes >    <  bytes > \n\n");
-        fprintf(stdout, "     grid:                %11ld   %11ld   %11ld \n", mem_grid,        maxmem_grid,        sizeof(GRID)   );
-        fprintf(stdout, "     hashtable entries:   %11ld   %11ld   %11ld \n", mem_hashtable,   maxmem_hashtable,   sizeof(VOXEL**));
-        fprintf(stdout, "     emptycell entries:   %11ld   %11ld   %11ld \n", mem_emptycells,  maxmem_emptycells,  sizeof(UINT)   );
-        fprintf(stdout, "     voxel:               %11ld   %11ld   %11ld \n", mem_voxel,       maxmem_voxel,       sizeof(VOXEL)  );
-        fprintf(stdout, "     bintree_node:        %11ld   %11ld   %11ld \n", mem_bintree,     maxmem_bintree,     sizeof(BTNODE) );
+	fprintf(stdout, "\n****** Hierarchial uniform grid memory allocation summary ******* \n\n");
+	fprintf(stdout, "     < struct >:            < current >   < maximum >    < sizeof > \n");
+	fprintf(stdout, "     <  bytes >:             <  bytes >   <   bytes >    <  bytes > \n\n");
+	fprintf(stdout, "     grid:                %11ld   %11ld   %11ld \n", mem_grid,        maxmem_grid,        sizeof(GRID)   );
+	fprintf(stdout, "     hashtable entries:   %11ld   %11ld   %11ld \n", mem_hashtable,   maxmem_hashtable,   sizeof(VOXEL**));
+	fprintf(stdout, "     emptycell entries:   %11ld   %11ld   %11ld \n", mem_emptycells,  maxmem_emptycells,  sizeof(UINT)   );
+	fprintf(stdout, "     voxel:               %11ld   %11ld   %11ld \n", mem_voxel,       maxmem_voxel,       sizeof(VOXEL)  );
+	fprintf(stdout, "     bintree_node:        %11ld   %11ld   %11ld \n", mem_bintree,     maxmem_bintree,     sizeof(BTNODE) );
 
-        fprintf(stdout, "\n");
-        fprintf(stdout, "     Totals:              %11ld   %11ld      \n\n", mem_total,       maxmem_total);
-        }
+	fprintf(stdout, "\n");
+	fprintf(stdout, "     Totals:              %11ld   %11ld      \n\n", mem_total,       maxmem_total);
+	}
 

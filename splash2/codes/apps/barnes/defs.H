@@ -59,7 +59,7 @@ typedef struct _node {
    long level;
    struct _node *parent;       /* ptr to parent of this node in tree */
    long child_num;              /* Index that this node should be put
-                                  at in parent cell */
+				  at in parent cell */
 } node;
 
 typedef node* nodeptr;

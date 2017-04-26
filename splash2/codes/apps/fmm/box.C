@@ -14,13 +14,12 @@
 /*                                                                       */
 /*************************************************************************/
 
-#include <cmath>
-#include <cstdio>
-
-#include "box.h"
+#include <stdio.h>
+#include <math.h>
 #include "defs.h"
 #include "memory.h"
 #include "particle.h"
+#include "box.h"
 
 /* How many boxes can fit on one line */
 #define BOXES_PER_LINE 4
@@ -48,7 +47,7 @@ CreateBoxes (long my_id, long num_boxes)
 
    starting_address = (char *) Local[my_id].B_Heap;
    ending_address = (((char *) Local[my_id].B_Heap)
-                     + (num_boxes * sizeof(particle *)) - 1);
+		     + (num_boxes * sizeof(particle *)) - 1);
 
    Place all addresses x such that (starting_address <= x < ending_address)
    on node my_id
@@ -167,19 +166,19 @@ PrintBox (box *b)
       printf("  Type           = %d\n", b->type);
       printf("  Child Num      = %ld\n", b->child_num);
       if (b->parent == NULL)
-         printf("  Parent         = NONE\n");
+	 printf("  Parent         = NONE\n");
       else
-         printf("  Parent         = B%f\n", b->parent->id);
+	 printf("  Parent         = B%f\n", b->parent->id);
       printf("  Children's IDs : ");
       if (b->num_children != 0)
-         PrintBoxArrayIds(b->children, b->num_children);
+	 PrintBoxArrayIds(b->children, b->num_children);
       else
-         printf("NONE\n");
+	 printf("NONE\n");
       printf("  Sibling's IDs : ");
       if (b->num_siblings != 0)
-         PrintBoxArrayIds(b->siblings, b->num_siblings);
+	 PrintBoxArrayIds(b->siblings, b->num_siblings);
       else
-         printf("NONE\n");
+	 printf("NONE\n");
       printf("  Colleagues' IDs : ");
       PrintBoxArrayIds(b->colleagues, b->num_colleagues);
       printf("  U List IDs : ");
@@ -222,11 +221,11 @@ PrintBoxArrayIds (box *b_array[], long array_length)
    tab_count = 0;
    for (i = 0; i < array_length; i++) {
       if (tab_count == 0) {
-         printf("\n");
-         tab_count = BOXES_PER_LINE;
+	 printf("\n");
+	 tab_count = BOXES_PER_LINE;
       }
       if (b_array[i] != NULL)
-         printf("\tB%f", b_array[i]->id);
+	 printf("\tB%f", b_array[i]->id);
       tab_count -= 1;
    }
    printf("\n");
@@ -251,13 +250,13 @@ PrintExpansionTerms (complex expansion[])
 
    for (i = 0; i < Expansion_Terms; i++) {
       if (tab_count == 0) {
-         printf("\n");
-         tab_count = TERMS_PER_LINE;
+	 printf("\n");
+	 tab_count = TERMS_PER_LINE;
       }
       if (expansion[i].i >= (real) 0.0)
-         printf("\ta%ld = %.3e + %.3ei", i, expansion[i].r, expansion[i].i);
+	 printf("\ta%ld = %.3e + %.3ei", i, expansion[i].r, expansion[i].i);
       else
-         printf("\ta%ld = %.3e - %.3ei", i, expansion[i].r, -expansion[i].i);
+	 printf("\ta%ld = %.3e - %.3ei", i, expansion[i].r, -expansion[i].i);
       tab_count -= 1;
    }
    printf("\n");
@@ -271,8 +270,8 @@ ListIterate (long my_id, box *b, box **list, long length, list_function function
 
    for (i = 0; i < length; i++) {
       if (list[i] == NULL) {
-         LockedPrint("ERROR (P%d) : NULL list entry\n", my_id);
-         exit(-1);
+	 LockedPrint("ERROR (P%d) : NULL list entry\n", my_id);
+	 exit(-1);
       }
       (*function)(my_id, list[i], b);
    }
@@ -312,10 +311,10 @@ AdjacentBoxes (box *b1, box *b2)
       ret_val = TRUE;
    else
       if ((y_separation == exact_separation) &&
-          (x_separation <= exact_separation))
-         ret_val = TRUE;
+	  (x_separation <= exact_separation))
+	 ret_val = TRUE;
       else
-         ret_val = FALSE;
+	 ret_val = FALSE;
 
    return ret_val;
 }

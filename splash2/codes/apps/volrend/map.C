@@ -20,15 +20,14 @@
 *                                                                             *
 ******************************************************************************/
 
-#include <cstring>
-
+#include <string.h>
 #include "incl.h"
 
 /* The following declarations show the layout of the .den file.              */
 /* If changed, the version number must be incremented and code               */
 /* written to handle loading of both old and current versions.               */
 
-                                /* Version for new .den files:               */
+				/* Version for new .den files:               */
 #define	MAP_CUR_VERSION	1	/*   Initial release                         */
 short map_version;		/* Version of this .den file                 */
 
@@ -45,10 +44,10 @@ short map_min[NM],		/* Dimensions of this map                    */
       map_len[NM];		/*    lens may be != extr if warps > 0)      */
 
 short map_warps;		/* Number of warps since extraction          */
-                                /*   (0 = none)                              */
+				/*   (0 = none)                              */
 
 int map_length;		/* Total number of densities in map          */
-                                /*   (= product of lens)                     */
+				/*   (= product of lens)                     */
 DENSITY *map_address;		/* Pointer to map                            */
 
 /* End of layout of .den file.                                               */
@@ -100,7 +99,7 @@ void Allocate_Map(address, length)
   long i;
 
   printf("    Allocating density map of %ld bytes...\n",
-         length*sizeof(DENSITY));
+	 length*sizeof(DENSITY));
 
   *address = (DENSITY *)NU_MALLOC(length*sizeof(DENSITY),0);
 

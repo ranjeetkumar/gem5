@@ -16,9 +16,8 @@
 
 EXTERN_ENV
 
-#include <cmath>
-
 #include "matrix.h"
+#include <math.h>
 
 extern struct GlobalMemory *Global;
 extern BMatrix LB;
@@ -41,9 +40,9 @@ void PreAllocate1FO()
   long i;
 
   AllBlocks = (struct BlockList ***) MyMalloc(P*sizeof(struct BlockList **),
-                                               DISTRIBUTED);
+					       DISTRIBUTED);
   DiagBlock = (struct BlockList ***) MyMalloc(P*sizeof(struct BlockList **),
-                                               DISTRIBUTED);
+					       DISTRIBUTED);
   ToReceive = (long **) MyMalloc(P*sizeof(long *), DISTRIBUTED);
   NReceived = (long **) MyMalloc(P*sizeof(long *), DISTRIBUTED);
   for (i=0; i<P; i++) {
@@ -67,10 +66,10 @@ void PreAllocateFO(long MyNum, struct LocalCopies *lc)
   for (i=0; i<LB.n; i+=node[i])
     if (LB.domain[i]) {
       if (LB.col[i+node[i]]-LB.col[i] > lc->max_panel)
-        lc->max_panel = LB.col[i+node[i]]-LB.col[i];
+	lc->max_panel = LB.col[i+node[i]]-LB.col[i];
       j = LB.col[i+1]-LB.col[i]-node[i];
       if (j*(j+1)/2 > lc->max_panel)
-        lc->max_panel = j*(j+1)/2;
+	lc->max_panel = j*(j+1)/2;
     }
 
   if (LB.max_partition > BS) {  /* if blocks need to be copied */
@@ -101,14 +100,14 @@ void PreAllocateFO(long MyNum, struct LocalCopies *lc)
       update_size = LB.col[root+1]-LB.col[root]-1;
       update_size = update_size*(update_size+1)/2;
       if (update_size) {
-        LB.proc_domain_storage[i] = (double *) MyMalloc(update_size*
-                                                         sizeof(double),
-                                                         MyNum);
+	LB.proc_domain_storage[i] = (double *) MyMalloc(update_size*
+							 sizeof(double),
+							 MyNum);
         for (j=0; j<update_size; j++)
-          LB.proc_domain_storage[i][j] = 0.0;
+	  LB.proc_domain_storage[i][j] = 0.0;
       }
       else
-        LB.proc_domain_storage[i] = NULL;
+	LB.proc_domain_storage[i] = NULL;
     }
 }
 
@@ -141,11 +140,11 @@ void DriveParallelFO(long MyNum, struct LocalCopies *lc)
     if (!LB.domain[j]) {
       some = 1;
       if (BLOCK(LB.col[j])->owner == MyNum &&
-          BLOCK(LB.col[j])->remaining == 0)
-        BlockReadyFO(LB.col[j], MyNum, lc);
+	  BLOCK(LB.col[j])->remaining == 0)
+	BlockReadyFO(LB.col[j], MyNum, lc);
     }
 
-  if (some)
+  if (some) 
     while (HandleTaskFO(MyNum, lc))
       ;
 
@@ -196,7 +195,7 @@ void DiagReceived(long diag, long MyNum, struct LocalCopies *lc)
   column = BLOCKCOL(diag);
   for (i=LB.col[column]+1; i<LB.col[column+1]; i++)
     if (BLOCK(i)->owner == MyNum &&
-        BLOCK(i)->remaining == 0) {
+	BLOCK(i)->remaining == 0) {
       BDiv(diagbl->length, BLOCK(i)->length, diagbl->nz, BLOCK(i)->nz, lc);
       BlockDoneFO(i, MyNum, lc);
     }
@@ -252,7 +251,7 @@ struct BlockList *CopyOneBlock(long block, long MyNum)
   bl->theBlock = block;
   bl->row = BLOCKROW(block); bl->col = BLOCKCOL(block);
   bl->length = BLOCK(block)->length;
-
+  
     bl->structure = BLOCK(block)->structure;
     bl->nz = BLOCK(block)->nz;
 
@@ -263,7 +262,7 @@ struct BlockList *CopyOneBlock(long block, long MyNum)
 void FreeColumnListFO(long p, long col)
 {
   struct BlockList *bl;
-
+  
   while (AllBlocks[p][col]) {
     bl = AllBlocks[p][col];
     AllBlocks[p][col] = bl->next;
@@ -283,7 +282,7 @@ void DecrementRemaining(long dest_block, long MyNum, struct LocalCopies *lc)
   if (BLOCK(dest_block)->remaining == 0)
     BlockReadyFO(dest_block, MyNum, lc);
   else if (BLOCK(dest_block)->remaining == -1)
-    printf("*** Error rem ***\n");
+    printf("*** Error rem ***\n");  
 }
 
 
@@ -321,9 +320,9 @@ void PerformUpdate(struct BlockList *above_bl, struct BlockList *below_bl, long 
     if (destination == lc->updatetmp) {
 
       ScatterUpdateFO(below_bl->length, below_bl->structure,
-                      below_bl->length, below_bl->structure,
-                      BLOCK(dest_block)->length,
-                      lc->updatetmp, BLOCK(dest_block)->nz);
+		      below_bl->length, below_bl->structure,
+		      BLOCK(dest_block)->length,
+		      lc->updatetmp, BLOCK(dest_block)->nz);
     }
   }
 
@@ -338,7 +337,7 @@ void PerformUpdate(struct BlockList *above_bl, struct BlockList *below_bl, long 
       FindRelativeIndices(below_bl->structure, below_bl->length, BLOCK(dest_block)->structure, lc->relative);
       relative_i = lc->relative;
     }
-
+      
     if (above_bl->structure)
       relative_j = above_bl->structure;
     else
@@ -354,9 +353,9 @@ void PerformUpdate(struct BlockList *above_bl, struct BlockList *below_bl, long 
     if (destination == lc->updatetmp) {
 
       ScatterUpdateFO(below_bl->length, relative_i,
-                      above_bl->length, relative_j,
-                      BLOCK(dest_block)->length,
-                      lc->updatetmp, BLOCK(dest_block)->nz);
+		      above_bl->length, relative_j,
+		      BLOCK(dest_block)->length,
+		      lc->updatetmp, BLOCK(dest_block)->nz);
 
     }
   }
@@ -376,7 +375,7 @@ void DistributeUpdateFO(long which_domain, long MyNum, struct LocalCopies *lc)
 
       dest_block = FindBlock(desti, destj);
       Send(which_domain, dest_block, bi, bj, (struct Update *) -19,
-           OWNER(dest_block), MyNum, lc);
+	   OWNER(dest_block), MyNum, lc);
     }
   }
 }
@@ -418,9 +417,9 @@ void HandleUpdate2FO(long which_domain, long bli, long blj, long MyNum, struct L
     relative_j = NULL;
 
   ScatterUpdateFO2(BLOCK(bli)->length, relative_i,
-                  BLOCK(blj)->length, relative_j,
-                  stride, BLOCK(dest_block)->length,
-                  update, BLOCK(dest_block)->nz);
+		  BLOCK(blj)->length, relative_j,
+		  stride, BLOCK(dest_block)->length,
+		  update, BLOCK(dest_block)->nz);
 
   DecrementRemaining(dest_block, MyNum, lc);
 }
@@ -485,7 +484,7 @@ void BlockDoneFO(long block, long MyNum, struct LocalCopies *lc)
     /* send to column */
     for (i=0; i<P_dimi; i++)
       if (i != P_row)
-        Send(block, block, 0, 0, (struct Update *) NULL, i + P_col*P_dimi, MyNum, lc);
+	Send(block, block, 0, 0, (struct Update *) NULL, i + P_col*P_dimi, MyNum, lc);
   }
   else {
     for (i=0; i<P; i++)
@@ -497,13 +496,13 @@ void BlockDoneFO(long block, long MyNum, struct LocalCopies *lc)
 void CheckRemaining()
 {
   long i, j, bogus=0;
-
+  
   for (j=0; j<LB.n; j+=LB.partition_size[j])
     if (!LB.domain[j]) {
       for (i=LB.col[j]; i<LB.col[j+1]; i++)
-        if (BLOCK(i)->remaining) {
-          bogus = 1;
-        }
+	if (BLOCK(i)->remaining) {
+	  bogus = 1;
+	}
     }
 
   if (bogus)
@@ -519,9 +518,9 @@ void CheckReceived()
   for (p=0; p<P; p++)
     for (i=0; i<LB.n_partitions; i++) {
       if (AllBlocks[p][i])
-        bogus = 1;
+	bogus = 1;
       if (DiagBlock[p][i])
-        bogus = 1;
+	bogus = 1;
     }
   if (bogus)
     printf("Bad received\n");
@@ -539,17 +538,17 @@ void ComputeRemainingFO()
   for (j=0; j<LB.n; j++)
     if (!LB.domain[j]) {
       for (i=LB.col[j]; i<LB.col[j+1]; i++)
-        BLOCK(i)->nmod = 0;
+	BLOCK(i)->nmod = 0;
     }
 
   /* domain updates */
   for (k=0; k<LB.proc_domains[P]; k++) {
     for (i=LB.col[LB.n+k]; i<LB.col[LB.n+k+1]; i++) {
       for (j=LB.col[LB.n+k]; j<i; j++) {
-        destj = BLOCKROW(j);
-        desti = BLOCKROW(i);
-        dest_block = FindBlock(desti, destj);
-        BLOCK(dest_block)->nmod++;
+	destj = BLOCKROW(j);
+	desti = BLOCKROW(i);
+	dest_block = FindBlock(desti, destj);
+	BLOCK(dest_block)->nmod++;
       }
       desti = BLOCKROW(i);
       dest_block = FindBlock(desti, desti);
@@ -561,15 +560,15 @@ void ComputeRemainingFO()
   for (k=0; k<LB.n; k++)
     if (!LB.domain[k]) {
       for (i=LB.col[k]+1; i<LB.col[k+1]; i++) {
-        for (j=LB.col[k]+1; j<i; j++) {
-          destj = BLOCKROW(j);
-          desti = BLOCKROW(i);
-          dest_block = FindBlock(desti, destj);
-          BLOCK(dest_block)->nmod++;
-        }
-        desti = BLOCKROW(i);
-        dest_block = FindBlock(desti, desti);
-        BLOCK(dest_block)->nmod++;
+	for (j=LB.col[k]+1; j<i; j++) {
+	  destj = BLOCKROW(j);
+	  desti = BLOCKROW(i);
+	  dest_block = FindBlock(desti, destj);
+	  BLOCK(dest_block)->nmod++;
+	}
+	desti = BLOCKROW(i);
+	dest_block = FindBlock(desti, desti);
+	BLOCK(dest_block)->nmod++;
       }
     }
 }
@@ -583,8 +582,8 @@ void InitRemainingFO(long MyNum)
   for (k=0; k<LB.n; k++)
     if (!LB.domain[k])
       for (i=LB.col[k]; i<LB.col[k+1]; i++)
-        if (MyNum == -1 || BLOCK(i)->owner == MyNum)
-          BLOCK(i)->remaining = BLOCK(i)->nmod;
+	if (MyNum == -1 || BLOCK(i)->owner == MyNum)
+	  BLOCK(i)->remaining = BLOCK(i)->nmod;
 }
 
 
@@ -600,30 +599,30 @@ void ComputeReceivedFO()
   for (k=0; k<LB.n; k+=LB.partition_size[k])
     if (!LB.domain[k]) {
       for (block=LB.col[k]; block<LB.col[k+1]; block++) {
+	
+	/* should be identical to BlockDoneFO() */
+	if (scatter_decomposition) {
+	  P_row = LB.mapI[LB.renumbering[BLOCKROW(block)]]%P_dimi;
+	  P_col = LB.mapJ[LB.renumbering[BLOCKROW(block)]]%P_dimj;
 
-        /* should be identical to BlockDoneFO() */
-        if (scatter_decomposition) {
-          P_row = LB.mapI[LB.renumbering[BLOCKROW(block)]]%P_dimi;
-          P_col = LB.mapJ[LB.renumbering[BLOCKROW(block)]]%P_dimj;
+	  /* send to row */
+	  for (i=0; i<P_dimj; i++) {
+	    destp = P_row + i*P_dimi;
+	    ToReceive[destp][LB.renumbering[BLOCKCOL(block)]]++;
+	  }
 
-          /* send to row */
-          for (i=0; i<P_dimj; i++) {
-            destp = P_row + i*P_dimi;
-            ToReceive[destp][LB.renumbering[BLOCKCOL(block)]]++;
-          }
+	  /* send to column */
+	  for (i=0; i<P_dimi; i++) 
+	    if (i != P_row) {
+	      destp = i + P_col*P_dimi;
+	      ToReceive[destp][LB.renumbering[BLOCKCOL(block)]]++;
+	    }
 
-          /* send to column */
-          for (i=0; i<P_dimi; i++)
-            if (i != P_row) {
-              destp = i + P_col*P_dimi;
-              ToReceive[destp][LB.renumbering[BLOCKCOL(block)]]++;
-            }
-
-        }
-        else {
-          for (i=0; i<P; i++)
-            ToReceive[i][LB.renumbering[BLOCKCOL(block)]]++;
-        }
+	}
+	else {
+	  for (i=0; i<P; i++)
+	    ToReceive[i][LB.renumbering[BLOCKCOL(block)]]++;
+	}
       }
     }
 }
@@ -652,13 +651,13 @@ void ScatterUpdateFO(long dimi, long *structi, long dimj, long *structj, long de
     srccol = &oldupdate[j*dimi];
     if (structi)
       for (i=0; i<dimi; i++) {
-        destcol[structi[i]] += srccol[i];
-        srccol[i] = 0.0;
+	destcol[structi[i]] += srccol[i];
+	srccol[i] = 0.0;
       }
     else
       for (i=0; i<dimi; i++) {
-        destcol[i] += srccol[i];
-        srccol[i] = 0.0;
+	destcol[i] += srccol[i];
+	srccol[i] = 0.0;
       }
   }
 }
@@ -677,11 +676,11 @@ void ScatterUpdateFO2(long dimi, long *structi, long dimj, long *structj, long s
       top_of_destcol = j*destdim;
     if (structi)
       for (i=0; i<dimi; i++) {
-        newupdate[structi[i]+top_of_destcol] += oldupdate[i+top_of_srccol];
+	newupdate[structi[i]+top_of_destcol] += oldupdate[i+top_of_srccol];
       }
     else
       for (i=0; i<dimi; i++) {
-        newupdate[i+top_of_destcol] += oldupdate[i+top_of_srccol];
+	newupdate[i+top_of_destcol] += oldupdate[i+top_of_srccol];
       }
     top_of_srccol += (stride-j);
   }

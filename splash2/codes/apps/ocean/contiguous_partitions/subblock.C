@@ -16,9 +16,8 @@
 
 EXTERN_ENV
 
-#include <cmath>
-#include <cstdio>
-
+#include <stdio.h>
+#include <math.h>
 #include "decs.h"
 
 void subblock()

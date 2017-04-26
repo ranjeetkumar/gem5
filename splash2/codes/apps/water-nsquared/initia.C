@@ -15,16 +15,16 @@
 /*************************************************************************/
 
 EXTERN_ENV
+#include "math.h"
+#include "stdio.h"
+#include "mdvar.h"
+#include "water.h"
 #include "cnst.h"
 #include "fileio.h"
-#include "global.h"
-#include "math.h"
-#include "mddata.h"
-#include "mdvar.h"
 #include "parameters.h"
+#include "mddata.h"
 #include "split.h"
-#include "stdio.h"
-#include "water.h"
+#include "global.h"
 
 void INITIA()
 {

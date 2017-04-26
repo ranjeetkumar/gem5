@@ -17,7 +17,6 @@
 EXTERN_ENV
 
 #include "matrix.h"
-
 #define HashNum 1024
 #define Bucket(desti, destj, src) ((desti+destj+src)%HashNum)
 
@@ -26,12 +25,12 @@ extern struct GlobalMemory *Global;
 struct Update **updateHash;
 
 struct taskQ {
-        LOCKDEC(taskLock)
-        struct Task *volatile taskQ;
-        struct Task *volatile taskQlast;
-        struct Task *volatile probeQ;
-        struct Task *volatile probeQlast;
-        } *tasks;
+	LOCKDEC(taskLock)
+	struct Task *volatile taskQ; 
+	struct Task *volatile taskQlast;
+	struct Task *volatile probeQ; 
+	struct Task *volatile probeQlast;
+	} *tasks;
 
 extern BMatrix LB;
 
@@ -139,14 +138,14 @@ void GetBlock(long *desti, long *destj, long *src, struct Update **update, long 
       if (tasks[MyNum].probeQ) {
         t = (struct Task *) tasks[MyNum].probeQ;
         tasks[MyNum].probeQ = t->next;
-        if (!t->next)
-          tasks[MyNum].probeQlast = NULL;
+	if (!t->next)
+	  tasks[MyNum].probeQlast = NULL;
       }
       else if (tasks[MyNum].taskQ) {
         t = (struct Task *) tasks[MyNum].taskQ;
         tasks[MyNum].taskQ = t->next;
-        if (!t->next)
-          tasks[MyNum].taskQlast = NULL;
+	if (!t->next)
+	  tasks[MyNum].taskQlast = NULL;
       }
       UNLOCK(tasks[MyNum].taskLock)
       if (t)

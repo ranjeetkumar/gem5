@@ -27,49 +27,49 @@
  */
 
 
+#include <stdio.h>
 #include <fcntl.h>
-
-#include <cmath>
-#include <cstdio>
-#include <cstring>
-
+#include <math.h>
+#include <string.h>
 #include "rt.h"
+
+
 
 /*
  *	Allocate and initialize sphere function pointer array.
  */
 
 static	PPROCS	SphProcs =
-        {
-        SphName,
-        SphPrint,
-        SphRead,
-        NULL,
-        SphTransform,
-        SphIntersect,
-        SphPeIntersect,
-        SphNormal,
-        SphDataNormalize,
-        SphBoundBox
-        };
+	{
+	SphName,
+	SphPrint,
+	SphRead,
+	NULL,
+	SphTransform,
+	SphIntersect,
+	SphPeIntersect,
+	SphNormal,
+	SphDataNormalize,
+	SphBoundBox
+	};
 
 /*
  *	Allocate and initialize polygon function pointer array.
  */
 
 static	PPROCS	PolyProcs =
-        {
-        PolyName,
-        PolyPrint,
-        PolyRead,
-        NULL,
-        PolyTransform,
-        PolyIntersect,
-        PolyPeIntersect,
-        PolyNormal,
-        PolyDataNormalize,
-        PolyBoundBox
-        };
+	{
+	PolyName,
+	PolyPrint,
+	PolyRead,
+	NULL,
+	PolyTransform,
+	PolyIntersect,
+	PolyPeIntersect,
+	PolyNormal,
+	PolyDataNormalize,
+	PolyBoundBox
+	};
 
 
 
@@ -78,18 +78,18 @@ static	PPROCS	PolyProcs =
  */
 
 static	PPROCS	TriProcs =
-        {
-        TriName,
-        TriPrint,
-        TriRead,
-        NULL,
-        TriTransform,
-        TriIntersect,
-        TriPeIntersect,
-        TriNormal,
-        TriDataNormalize,
-        TriBoundBox
-        };
+	{
+	TriName,
+	TriPrint,
+	TriRead,
+	NULL,
+	TriTransform,
+	TriIntersect,
+	TriPeIntersect,
+	TriNormal,
+	TriDataNormalize,
+	TriBoundBox
+	};
 
 
 
@@ -107,34 +107,34 @@ static	PPROCS	TriProcs =
  */
 
 ELEMENT **MakeElementArray(INT *totalElements)
-        {
-        INT	 i;
-        OBJECT	*po;				/* Ptr to object.	     */
-        INT	currArrayPosition = 0;
-        ELEMENT **npepa;
+	{
+	INT	 i;
+	OBJECT	*po;				/* Ptr to object.	     */
+	INT	currArrayPosition = 0;
+	ELEMENT **npepa;
 
-        po = gm->modelroot;
-        *totalElements = 0;
+	po = gm->modelroot;
+	*totalElements = 0;
 
-        while (po)
-                {
-                (*totalElements) += po->numelements;
-                po = po->next;
-                }
+	while (po)
+		{
+		(*totalElements) += po->numelements;
+		po = po->next;
+		}
 
-        po    = gm->modelroot;
-        npepa = ObjectMalloc(OT_PEPARRAY, *totalElements);
+	po    = gm->modelroot;
+	npepa = ObjectMalloc(OT_PEPARRAY, *totalElements);
 
-        while (po)
-                {
-                for (i = 0; i < po->numelements; i++)
-                        npepa[currArrayPosition++] = po->pelem + i;
+	while (po)
+		{
+		for (i = 0; i < po->numelements; i++)
+			npepa[currArrayPosition++] = po->pelem + i;
 
-                po = po->next;
-                }
+		po = po->next;
+		}
 
-        return (npepa);
-        }
+	return (npepa);
+	}
 
 
 
@@ -151,23 +151,23 @@ ELEMENT **MakeElementArray(INT *totalElements)
  */
 
 VOID	PrintGeo(OBJECT *po)
-        {
-        while (po)
-                {
-                fprintf(stdout, "Object  %s\n", po->name);
-                fprintf(stdout, "\tcolor  %f %f %f %f %f %f\n",
-                        po->surf->fcolor[0], po->surf->fcolor[1],
-                        po->surf->fcolor[2], po->surf->bcolor[0],
-                        po->surf->bcolor[1], po->surf->bcolor[2]);
+	{
+	while (po)
+		{
+		fprintf(stdout, "Object  %s\n", po->name);
+		fprintf(stdout, "\tcolor  %f %f %f %f %f %f\n",
+			po->surf->fcolor[0], po->surf->fcolor[1],
+			po->surf->fcolor[2], po->surf->bcolor[0],
+			po->surf->bcolor[1], po->surf->bcolor[2]);
 
-                fprintf(stdout, "\tcoeffs %f %f %f %f %f\n",
-                        po->surf->kdiff, po->surf->kspec, po->surf->ktran,
-                        po->surf->refrindex, po->surf->kspecn);
+		fprintf(stdout, "\tcoeffs %f %f %f %f %f\n",
+			po->surf->kdiff, po->surf->kspec, po->surf->ktran,
+			po->surf->refrindex, po->surf->kspecn);
 
-                (*po->procs->print)(po);
-                po = po->next;
-                }
-        }
+		(*po->procs->print)(po);
+		po = po->next;
+		}
+	}
 
 
 
@@ -186,70 +186,70 @@ VOID	PrintGeo(OBJECT *po)
  */
 
 VOID	NormalizeGeo(OBJECT *po, MATRIX model, MATRIX modelInvT)
-        {
-        REAL	norm_minx;			/* Normalize min values.     */
-        REAL	norm_miny;
-        REAL	norm_minz;
-        REAL	norm_maxx;			/* Normalize max values.     */
-        REAL	norm_maxy;
-        REAL	norm_maxz;
-        REAL	scale_min;			/* Object min max values.    */
-        REAL	scale_max;
-        REAL	scale;				/* Normalization scale val.  */
-        REAL	trans;				/* Normalization xlat val.   */
-        OBJECT	*poHead;			/* Ptr to head of object list*/
-        MATRIX	normMat;			/* Normalization matrix.     */
-        MATRIX	tempMat;			/* Temporary work matrix.    */
+	{
+	REAL	norm_minx;			/* Normalize min values.     */
+	REAL	norm_miny;
+	REAL	norm_minz;
+	REAL	norm_maxx;			/* Normalize max values.     */
+	REAL	norm_maxy;
+	REAL	norm_maxz;
+	REAL	scale_min;			/* Object min max values.    */
+	REAL	scale_max;
+	REAL	scale;				/* Normalization scale val.  */
+	REAL	trans;				/* Normalization xlat val.   */
+	OBJECT	*poHead;			/* Ptr to head of object list*/
+	MATRIX	normMat;			/* Normalization matrix.     */
+	MATRIX	tempMat;			/* Temporary work matrix.    */
 
 
-        poHead = po;				/* Save ptr to head of list.  */
+	poHead = po;				/* Save ptr to head of list.  */
 
-        if (! (TraversalType == TT_LIST && ModelNorm == FALSE) )
-                {
-                /* Find global bound box min/max. */
+	if (! (TraversalType == TT_LIST && ModelNorm == FALSE) )
+		{
+		/* Find global bound box min/max. */
 
-                norm_minx = norm_miny = norm_minz =  HUGE_REAL;
-                norm_maxx = norm_maxy = norm_maxz = -HUGE_REAL;
+		norm_minx = norm_miny = norm_minz =  HUGE_REAL;
+		norm_maxx = norm_maxy = norm_maxz = -HUGE_REAL;
 
-                while (po)
-                        {
-                        norm_minx = Min(norm_minx, po->bv.dnear[0]);
-                        norm_miny = Min(norm_miny, po->bv.dnear[1]);
-                        norm_minz = Min(norm_minz, po->bv.dnear[2]);
-                        norm_maxx = Max(norm_maxx, po->bv.dfar[0]);
-                        norm_maxy = Max(norm_maxy, po->bv.dfar[1]);
-                        norm_maxz = Max(norm_maxz, po->bv.dfar[2]);
+		while (po)
+			{
+			norm_minx = Min(norm_minx, po->bv.dnear[0]);
+			norm_miny = Min(norm_miny, po->bv.dnear[1]);
+			norm_minz = Min(norm_minz, po->bv.dnear[2]);
+			norm_maxx = Max(norm_maxx, po->bv.dfar[0]);
+			norm_maxy = Max(norm_maxy, po->bv.dfar[1]);
+			norm_maxz = Max(norm_maxz, po->bv.dfar[2]);
 
-                        po = po->next;
-                        }
-
-
-                /* Compute scale factor. */
-
-                scale_min = Min(norm_minx, norm_miny);
-                scale_min = Min(scale_min, norm_minz);
-                scale_max = Max(norm_maxx, norm_maxy);
-                scale_max = Max(scale_max, norm_maxz);
-
-                scale = 1.0/(scale_max - scale_min);
-                trans = (-scale_min*scale);
-
-                Scale(tempMat, scale, scale, scale);
-                Translate(normMat, trans, trans, trans);
-                MatrixMult(normMat, tempMat, normMat);
+			po = po->next;
+			}
 
 
-                /* Now, normalize object data. */
+		/* Compute scale factor. */
 
-                po = poHead;
+		scale_min = Min(norm_minx, norm_miny);
+		scale_min = Min(scale_min, norm_minz);
+		scale_max = Max(norm_maxx, norm_maxy);
+		scale_max = Max(scale_max, norm_maxz);
 
-                while (po)
-                        {
-                        (*po->procs->normalize)(po, normMat);
-                        po = po->next;
-                        }
-                }
-        }
+		scale = 1.0/(scale_max - scale_min);
+		trans = (-scale_min*scale);
+
+		Scale(tempMat, scale, scale, scale);
+		Translate(normMat, trans, trans, trans);
+		MatrixMult(normMat, tempMat, normMat);
+
+
+		/* Now, normalize object data. */
+
+		po = poHead;
+
+		while (po)
+			{
+			(*po->procs->normalize)(po, normMat);
+			po = po->next;
+			}
+		}
+	}
 
 
 
@@ -275,187 +275,187 @@ VOID	NormalizeGeo(OBJECT *po, MATRIX model, MATRIX modelInvT)
  */
 
 VOID	ReadGeoFile(CHAR *GeoFileName)
-        {
-        INT		i;
-        INT		dummy;
-        INT		stat;			/* Input read counter.	     */
-        CHAR		comchar;
-        CHAR		primop; 		/* Primitive opcode.	     */
-        CHAR		objstr[NAME_LEN];	/* Object descriptions.      */
-        CHAR		objname[NAME_LEN];
-        FILE		*pf;			/* Ptr to geo file desc.     */
-        SURF		*ps;			/* Ptr to surface desc.      */
-        MATRIX		model;			/* Model matrix.	     */
-        MATRIX		modelInv;		/* Model matrix inverse.     */
-        MATRIX		modelInvT;		/* Model matrix inv transpose*/
-        OBJECT		*prev;			/* Ptr to previous object.   */
-        OBJECT		*curr;			/* Ptr to current object.    */
-        ELEMENT 	*pe;			/* Ptr to the element list.  */
+	{
+	INT		i;
+	INT		dummy;
+	INT		stat;			/* Input read counter.	     */
+	CHAR		comchar;
+	CHAR		primop; 		/* Primitive opcode.	     */
+	CHAR		objstr[NAME_LEN];	/* Object descriptions.      */
+	CHAR		objname[NAME_LEN];
+	FILE		*pf;			/* Ptr to geo file desc.     */
+	SURF		*ps;			/* Ptr to surface desc.      */
+	MATRIX		model;			/* Model matrix.	     */
+	MATRIX		modelInv;		/* Model matrix inverse.     */
+	MATRIX		modelInvT;		/* Model matrix inv transpose*/
+	OBJECT		*prev;			/* Ptr to previous object.   */
+	OBJECT		*curr;			/* Ptr to current object.    */
+	ELEMENT 	*pe;			/* Ptr to the element list.  */
 
 
-        /* Open the model file. */
+	/* Open the model file. */
 
-        pf = fopen(GeoFileName, "r");
-        if (!pf)
-                {
-                printf("Unable to open model file %s.\n", GeoFileName);
-                exit(1);
-                }
-
-
-        /* Initialize pointers and counters. */
-
-        curr	      = NULL;
-        prev	      = NULL;
-        gm->modelroot = NULL;
-        prim_obj_cnt  = 0;
-        prim_elem_cnt = 0;
+	pf = fopen(GeoFileName, "r");
+	if (!pf)
+		{
+		printf("Unable to open model file %s.\n", GeoFileName);
+		exit(1);
+		}
 
 
-        /* Retrieve model transform. */
+	/* Initialize pointers and counters. */
 
-        MatrixCopy(model, View.model);
-        MatrixInverse(modelInv, model);
-        MatrixTranspose(modelInvT, modelInv);
-
-
-        /* Check for comments. */
-
-        if ((comchar = getc(pf)) != '#')
-                ungetc(comchar, pf);
-        else
-                {
-                comchar = '\0';                 /* Set to other than '#'.    */
-
-                while (comchar != '#')
-                        if ((comchar = getc(pf)) == EOF)
-                                {
-                                fprintf(stderr, "Incorrect comment in geometry file.\n");
-                                exit(-1);
-                                }
-                }
+	curr	      = NULL;
+	prev	      = NULL;
+	gm->modelroot = NULL;
+	prim_obj_cnt  = 0;
+	prim_elem_cnt = 0;
 
 
-        /* Process the file data for each object. */
+	/* Retrieve model transform. */
 
-        while ((stat = fscanf(pf, "%s %s", objstr, objname)) != EOF)
-                {
-                if (stat != 2 || strcmp(objstr, "object") != 0)
-                        {
-                        printf("Invalid object definition %s.\n", objstr);
-                        exit(-1);
-                        }
+	MatrixCopy(model, View.model);
+	MatrixInverse(modelInv, model);
+	MatrixTranspose(modelInvT, modelInv);
 
 
-                /* Allocate next object and set list pointers. */
+	/* Check for comments. */
 
-                prim_obj_cnt++;
+	if ((comchar = getc(pf)) != '#')
+		ungetc(comchar, pf);
+	else
+		{
+		comchar = '\0';                 /* Set to other than '#'.    */
 
-                curr	    = GlobalMalloc(sizeof(OBJECT), "geo.c");
-                curr->index = prim_obj_cnt;
-                curr->next  = NULL;
-
-                strcpy(curr->name, objname);
-
-                if (gm->modelroot == NULL)
-                        gm->modelroot = curr;
-                else
-                        prev->next = curr;
-
-
-                /* Get surface characteristics. */
-
-                ps = GlobalMalloc(sizeof(SURF), "geo.c");
-                curr->surf = ps;
-
-                stat = fscanf(pf, "%lf %lf %lf %lf %lf %lf",
-                            &(ps->fcolor[0]), &(ps->fcolor[1]), &(ps->fcolor[2]),
-                            &(ps->bcolor[0]), &(ps->bcolor[1]), &(ps->bcolor[2]));
-
-                if (stat != 6)
-                        {
-                        printf("Object color incorrect.\n");
-                        exit(-1);
-                        }
-
-                stat = fscanf(pf, "%lf %lf %lf %lf %lf",
-                            &(ps->kdiff), &(ps->kspec), &(ps->ktran),
-                            &(ps->refrindex), &(ps->kspecn));
-
-                if (stat != 5)
-                        {
-                        printf("Object surface coefficients incorrect.\n");
-                        exit(-1);
-                        }
+		while (comchar != '#')
+			if ((comchar = getc(pf)) == EOF)
+				{
+				fprintf(stderr, "Incorrect comment in geometry file.\n");
+				exit(-1);
+				}
+		}
 
 
-                /* Get texture and flag information. */
+	/* Process the file data for each object. */
 
-                stat = fscanf(pf, "%ld %ld %ld %ld\n", &dummy, &dummy, &dummy, &dummy);
-
-                if (stat != 4)
-                        {
-                        printf("Texture and/or flag information not all present.\n");
-                        exit(-1);
-                        }
-
-
-                /* Get primitive opcode. */
-
-                stat = fscanf(pf, "%c %ld", &primop, &(curr->numelements));
-
-                if (stat != 2)
-                        {
-                        printf("Object primitive opcode.\n");
-                        exit(-1);
-                        }
-
-                switch (primop)
-                        {
-                        case 's':
-                                curr->procs = &SphProcs;
-                                break;
-
-                        case 'p':
-                                curr->procs = &PolyProcs;
-                                break;
-
-                        case 't':
-                                curr->procs = &TriProcs;
-                                break;
-
-                        case 'c':
-                        case 'q':
-                                printf("Code for cylinders and quadrics not implemented yet.\n");
-                                exit(-1);
-
-                        default:
-                                printf("Invalid primitive type \'%c\'.\n", primop);
-                                exit(-1);
-                        }
+	while ((stat = fscanf(pf, "%s %s", objstr, objname)) != EOF)
+		{
+		if (stat != 2 || strcmp(objstr, "object") != 0)
+			{
+			printf("Invalid object definition %s.\n", objstr);
+			exit(-1);
+			}
 
 
-                /* Allocate primitive elements and create indices. */
+		/* Allocate next object and set list pointers. */
 
-                pe = GlobalMalloc(sizeof(ELEMENT)*curr->numelements, "geo.c");
-                curr->pelem = pe;
+		prim_obj_cnt++;
 
-                prim_elem_cnt += curr->numelements;
+		curr	    = GlobalMalloc(sizeof(OBJECT), "geo.c");
+		curr->index = prim_obj_cnt;
+		curr->next  = NULL;
 
-                for (i = 1; i <= curr->numelements; i++, pe++)
-                        pe->index = i;
+		strcpy(curr->name, objname);
+
+		if (gm->modelroot == NULL)
+			gm->modelroot = curr;
+		else
+			prev->next = curr;
 
 
-                /* Read, transform, and compute bounding box for object. */
+		/* Get surface characteristics. */
 
-                (*curr->procs->read)(curr, pf);
-                (*curr->procs->transform)(curr, model, modelInvT);
-                (*curr->procs->bbox)(curr);
+		ps = GlobalMalloc(sizeof(SURF), "geo.c");
+		curr->surf = ps;
 
-                prev = curr;
-                }
+		stat = fscanf(pf, "%lf %lf %lf %lf %lf %lf",
+			    &(ps->fcolor[0]), &(ps->fcolor[1]), &(ps->fcolor[2]),
+			    &(ps->bcolor[0]), &(ps->bcolor[1]), &(ps->bcolor[2]));
 
-        NormalizeGeo(gm->modelroot, model, modelInvT);
-        fclose(pf);
-        }
+		if (stat != 6)
+			{
+			printf("Object color incorrect.\n");
+			exit(-1);
+			}
+
+		stat = fscanf(pf, "%lf %lf %lf %lf %lf",
+			    &(ps->kdiff), &(ps->kspec), &(ps->ktran),
+			    &(ps->refrindex), &(ps->kspecn));
+
+		if (stat != 5)
+			{
+			printf("Object surface coefficients incorrect.\n");
+			exit(-1);
+			}
+
+
+		/* Get texture and flag information. */
+
+		stat = fscanf(pf, "%ld %ld %ld %ld\n", &dummy, &dummy, &dummy, &dummy);
+
+		if (stat != 4)
+			{
+			printf("Texture and/or flag information not all present.\n");
+			exit(-1);
+			}
+
+
+		/* Get primitive opcode. */
+
+		stat = fscanf(pf, "%c %ld", &primop, &(curr->numelements));
+
+		if (stat != 2)
+			{
+			printf("Object primitive opcode.\n");
+			exit(-1);
+			}
+
+		switch (primop)
+			{
+			case 's':
+				curr->procs = &SphProcs;
+				break;
+
+			case 'p':
+				curr->procs = &PolyProcs;
+				break;
+
+			case 't':
+				curr->procs = &TriProcs;
+				break;
+
+			case 'c':
+			case 'q':
+				printf("Code for cylinders and quadrics not implemented yet.\n");
+				exit(-1);
+
+			default:
+				printf("Invalid primitive type \'%c\'.\n", primop);
+				exit(-1);
+			}
+
+
+		/* Allocate primitive elements and create indices. */
+
+		pe = GlobalMalloc(sizeof(ELEMENT)*curr->numelements, "geo.c");
+		curr->pelem = pe;
+
+		prim_elem_cnt += curr->numelements;
+
+		for (i = 1; i <= curr->numelements; i++, pe++)
+			pe->index = i;
+
+
+		/* Read, transform, and compute bounding box for object. */
+
+		(*curr->procs->read)(curr, pf);
+		(*curr->procs->transform)(curr, model, modelInvT);
+		(*curr->procs->bbox)(curr);
+
+		prev = curr;
+		}
+
+	NormalizeGeo(gm->modelroot, model, modelInvT);
+	fclose(pf);
+	}
 

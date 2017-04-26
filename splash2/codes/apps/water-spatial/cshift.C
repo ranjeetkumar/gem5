@@ -16,12 +16,11 @@
 
 EXTERN_ENV
 
-#include <cmath>
-
-#include "global.h"
-#include "mddata.h"
+#include <math.h>
 #include "parameters.h"
+#include "mddata.h"
 #include "water.h"
+#include "global.h"
 
 /* return the value of a with the same sign as b */
 #define sign(a,b)  (b < 0 ) ? ( (a < 0) ? a : -a) : ( (a < 0) ? -a : a)

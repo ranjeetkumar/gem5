@@ -21,13 +21,12 @@
 #ifndef _STDINC_H_
 #define _STDINC_H_
 
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 #include <sys/times.h>
-
-#include <cmath>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <ctime>
 
 #define error(msg, ...)	printf(msg, ##__VA_ARGS__);
 /*
@@ -60,9 +59,9 @@ typedef char byte;
  */
 
 typedef char *string;
-
+
 /*
- * REAL: default type is double;
+ * REAL: default type is double; 
  */
 
 typedef  double  real, *realptr;
@@ -99,7 +98,7 @@ typedef real (*rproc)();
 #define   FOUR_PI   12.56637061435917295385
 #define   HALF_PI    1.57079632679489661923
 #define   FRTHRD_PI  4.18879020478639098462
-
+
 /*
  *  ABS: returns the absolute value of its argument
  *  MAX: returns the argument with the highest value
@@ -108,13 +107,13 @@ typedef real (*rproc)();
 
 #define   ABS(x)       (((x) < 0) ? -(x) : (x))
 
-#include "code.h"
-#include "code_io.h"
-#include "defs.h"
-#include "getparam.h"
-#include "grav.h"
-#include "load.h"
-#include "util.h"
 #include "vectmath.h"
+#include "defs.h"
+#include "code.h"
+#include "util.h"
+#include "load.h"
+#include "code_io.h"
+#include "grav.h"
+#include "getparam.h"
 
 #endif

@@ -14,10 +14,9 @@
 /*                                                                       */
 /*************************************************************************/
 
-#include <cmath>
-#include <cstdarg>
-#include <cstdio>
-
+#include <stdio.h>
+#include <stdarg.h>
+#include <math.h>
 #include "defs.h"
 #include "memory.h"
 

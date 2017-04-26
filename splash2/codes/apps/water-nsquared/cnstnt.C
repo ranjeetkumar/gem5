@@ -15,15 +15,14 @@
 /*************************************************************************/
 
 EXTERN_ENV
-#include <cstdio>
-
-#include "cnst.h"
-#include "fileio.h"
-#include "frcnst.h"
-#include "global.h"
-#include "parameters.h"
+#include <stdio.h>
 #include "water.h"
 #include "wwpot.h"
+#include "cnst.h"
+#include "frcnst.h"
+#include "fileio.h"
+#include "parameters.h"
+#include "global.h"
 
 /* set up some constants
  * N : NORDER + 1 = 7 for a sixth-order method

@@ -16,12 +16,11 @@
 
 EXTERN_ENV
 
-#include <cmath>
-
 #include "matrix.h"
+#include <math.h>
 
 #define AddMember(set, new) { long s, n; s = set; n = new; \
-                               lc->link[n] = lc->link[s]; lc->link[s] = n; }
+			       lc->link[n] = lc->link[s]; lc->link[s] = n; }
 
 extern BMatrix LB;
 extern struct GlobalMemory *Global;
@@ -67,38 +66,38 @@ void FactorLLDomain(long which_domain, long MyNum, struct LocalCopies *lc)
       theFirst = lc->first[k];
       theLast = theFirst+1;
       while (theLast < k_length && LB.row[LB.col[k]+theLast] < j_last)
-        theLast++;
+	theLast++;
 
       if (theLast-theFirst == node[j] &&
-          k_length-theFirst == j_len) {
-        ModifySuperBySuper(k, theFirst, theLast, k_length,
-                           (double *) &LB.entry[LB.col[j]].nz);
+	  k_length-theFirst == j_len) {
+	ModifySuperBySuper(k, theFirst, theLast, k_length,
+			   (double *) &LB.entry[LB.col[j]].nz);
       }
       else if (node[k] > 1) {
-        ModifySuperBySuper(k, theFirst, theLast, k_length, lc->storage);
-        FindRelativeIndicesLeft(&LB.row[LB.col[k]+theFirst],
-                                k_length-theFirst, 0, indices, relative);
-        ScatterSuperUpdate(lc->storage, theLast-theFirst, k_length-theFirst,
-                           (double *) &LB.entry[LB.col[j]].nz,
-                           j_len, relative);
+	ModifySuperBySuper(k, theFirst, theLast, k_length, lc->storage);
+	FindRelativeIndicesLeft(&LB.row[LB.col[k]+theFirst],
+				k_length-theFirst, 0, indices, relative);
+	ScatterSuperUpdate(lc->storage, theLast-theFirst, k_length-theFirst,
+			   (double *) &LB.entry[LB.col[j]].nz,
+			   j_len, relative);
       }
       else {
-        FindRelativeIndicesLeft(&LB.row[LB.col[k]+theFirst],
-                                k_length-theFirst, 0, indices, relative);
-        ModifySuperByColumn((double *) &LB.entry[LB.col[k]+theFirst].nz,
-                            theLast-theFirst, k_length-theFirst,
-                            (double *) &LB.entry[LB.col[j]].nz,
-                            j_len, relative);
+	FindRelativeIndicesLeft(&LB.row[LB.col[k]+theFirst],
+				k_length-theFirst, 0, indices, relative);
+	ModifySuperByColumn((double *) &LB.entry[LB.col[k]+theFirst].nz,
+			    theLast-theFirst, k_length-theFirst,
+			    (double *) &LB.entry[LB.col[j]].nz,
+			    j_len, relative);
       }
 
       lc->first[k] = theLast;  /* move on */
       if (theLast < k_length) {
-        dest_super = LB.row[LB.col[k]+theLast];
-        if (dest_super > root)
-          dest_super = root+1;
-        else if (node[dest_super] < 0)
-          dest_super += node[dest_super];
-        AddMember(dest_super, k);
+	dest_super = LB.row[LB.col[k]+theLast];
+	if (dest_super > root)
+	  dest_super = root+1;
+	else if (node[dest_super] < 0)
+	  dest_super += node[dest_super];
+	AddMember(dest_super, k);
       }
     }
 
@@ -108,9 +107,9 @@ void FactorLLDomain(long which_domain, long MyNum, struct LocalCopies *lc)
     if (lc->first[j] < j_len) {
       dest_super = LB.row[LB.col[j]+lc->first[j]];
       if (dest_super > root)
-        dest_super = root+1;
+	dest_super = root+1;
       else if (node[dest_super] < 0)
-        dest_super += node[dest_super];
+	dest_super += node[dest_super];
       AddMember(dest_super, j);
     }
   }
@@ -127,7 +126,7 @@ void FactorLLDomain(long which_domain, long MyNum, struct LocalCopies *lc)
     domain_update = LB.proc_domain_storage[which_domain];
   else {
     domain_update = (double *) MyMalloc(update_size*sizeof(double),
-                                         MyNum);
+					 MyNum);
     LB.proc_domain_storage[which_domain] = domain_update;
   }
   for (i=0; i<update_size; i++)
@@ -150,16 +149,16 @@ void FactorLLDomain(long which_domain, long MyNum, struct LocalCopies *lc)
     else if (node[k] > 1) {
       ModifySuperBySuper(k, theFirst, theLast, k_length, lc->storage);
       FindRelativeIndicesLeft(&LB.row[LB.col[k]+theFirst], k_length-theFirst,
-                              0, indices, relative);
+			      0, indices, relative);
       ScatterSuperUpdate(lc->storage, k_length-theFirst, k_length-theFirst,
-                         domain_update, j_len, relative);
+			 domain_update, j_len, relative);
     }
     else {
       FindRelativeIndicesLeft(&LB.row[LB.col[k]+theFirst],
-                              k_length-theFirst, 0, indices, relative);
+			      k_length-theFirst, 0, indices, relative);
       ModifySuperByColumn((double *) &LB.entry[LB.col[k]+theFirst].nz,
-                          theLast-theFirst, k_length-theFirst,
-                          domain_update, j_len, relative);
+			  theLast-theFirst, k_length-theFirst,
+			  domain_update, j_len, relative);
     }
   }
 
@@ -197,27 +196,27 @@ void CompleteSupernodeB(long super)
     i = first;
     for (; i<last-1; i+=2) {
       ModifyTwoBySupernodeB(first, i, i-first,
-                         (double *) &LB.entry[LB.col[i]].nz,
-                         (double *) &LB.entry[LB.col[i+1]].nz);
+			 (double *) &LB.entry[LB.col[i]].nz,
+			 (double *) &LB.entry[LB.col[i+1]].nz);
       CompleteColumnB(i);
       ModifyBySupernodeB(i, i+1, 1, (double *) &LB.entry[LB.col[i+1]].nz);
       CompleteColumnB(i+1);
     }
     for (; i<last; i++) {
       ModifyBySupernodeB(first, i, i-first,
-                         (double *) &LB.entry[LB.col[i]].nz);
+			 (double *) &LB.entry[LB.col[i]].nz);
       CompleteColumnB(i);
     }
 
     i = last;
     for (; i<super+node[super]-1; i+=2)
       ModifyTwoBySupernodeB(first, last, i-first,
-                         (double *) &LB.entry[LB.col[i]].nz,
-                         (double *) &LB.entry[LB.col[i+1]].nz);
+			 (double *) &LB.entry[LB.col[i]].nz,
+			 (double *) &LB.entry[LB.col[i+1]].nz);
     for (; i<super+node[super]; i++)
       ModifyBySupernodeB(first, last, i-first,
-                         (double *) &LB.entry[LB.col[i]].nz);
-
+			 (double *) &LB.entry[LB.col[i]].nz);
+			 
 
     first = last;
   }
@@ -241,7 +240,7 @@ void CompleteColumnB(long j)
   *theNZ++ = diag;
   recip = 1.0/diag;
 
-  while (theNZ != last)
+  while (theNZ != last) 
     *theNZ++ *= recip;
 }
 
@@ -317,7 +316,7 @@ void SetDestIndices(long super, long *indices)
 
   rightRow = &LB.row[LB.col[super]];
   lastRow = rightRow + (LB.col[super+1]-
-        LB.col[super]);
+	LB.col[super]);
   i = 0;
   while (rightRow != lastRow)
     indices[*rightRow++] = i++;
@@ -363,8 +362,8 @@ void ModifySuperBySuper(long src, long theFirst, long theLast, long length, doub
     this_length = length-theFirst;
     i = theFirst;
     for (; i<theLast-1; i+=2) {
-      ModifyTwoBySupernodeB(first, last, i-(first-src),
-                            destination, destination+this_length);
+      ModifyTwoBySupernodeB(first, last, i-(first-src), 
+			    destination, destination+this_length);
       destination += this_length + this_length - 1; this_length-=2;
     }
     for (; i<theLast; i++) {
@@ -601,7 +600,7 @@ void ModifyBySupernodeB(long super, long lastcol, long theFirst, double *destina
     dest = destination;
 
     theNZ0 = &LB.entry[theFirst + LB.col[col] + (super-col)].nz;
-
+    
     ljk0 = *theNZ0++;
 
     *dest++ -= ljk0*ljk0;

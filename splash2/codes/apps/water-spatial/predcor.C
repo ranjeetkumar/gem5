@@ -16,11 +16,11 @@
 
 EXTERN_ENV
 
-#include "global.h"
-#include "mddata.h"
 #include "mdvar.h"
 #include "parameters.h"
+#include "mddata.h"
 #include "split.h"
+#include "global.h"
 
 /* predicts new values for displacement and its five derivatives
  *  using Gear's sixth-order predictor-corrector method

@@ -21,11 +21,10 @@
 
 EXTERN_ENV
 
-#include <cmath>
-#include <cstdio>
-#include <cstdlib>
-#include <ctime>
-
+#include <stdio.h>
+#include <math.h>
+#include <time.h>
+#include <stdlib.h>
 #include "decs.h"
 
 /* perform multigrid (w cycles)                                     */
@@ -124,12 +123,12 @@ void multig(long my_id)
        if (wu > wmax) {
 /* max work exceeded                                               */
          flag1 = 1;
-         fprintf(stderr,"ERROR: Maximum work limit %0.5f exceeded\n",wmax);
-         exit(-1);
+	 fprintf(stderr,"ERROR: Maximum work limit %0.5f exceeded\n",wmax);
+	 exit(-1);
        } else {
 /* if we have not converged                                        */
          if ((k != 0) && (g_error/errp >= 0.6) &&
-             (k > minlevel)) {
+	     (k > minlevel)) {
 /* if need to go to coarser grid                                   */
 
            copy_borders(k,my_num);
@@ -141,9 +140,9 @@ void multig(long my_id)
    rescal values                                                   */
 
 #if defined(MULTIPLE_BARRIERS)
-           BARRIER(bars->error_barrier,nprocs)
+	   BARRIER(bars->error_barrier,nprocs)
 #else
-           BARRIER(bars->barrier,nprocs)
+	   BARRIER(bars->barrier,nprocs)
 #endif
 
            rescal(k,my_num);
@@ -235,8 +234,8 @@ void relax(long k, double *err, long color, long my_num)
        t1d = (double *) t2a[i+1];
        for (j=evenjstart;j<jend;j+=2) {
          a = t1a[j+1] + t1a[j-1] +
-             t1c[j] + t1d[j] -
-             t1b[j] ;
+	     t1c[j] + t1d[j] -
+	     t1b[j] ;
          oldval = t1a[j];
          newval = a / factor;
          newerr = oldval - newval;
@@ -253,8 +252,8 @@ void relax(long k, double *err, long color, long my_num)
        t1d = (double *) t2a[i+1];
        for (j=oddjstart;j<jend;j+=2) {
          a = t1a[j+1] + t1a[j-1] +
-             t1c[j] + t1d[j] -
-             t1b[j] ;
+	     t1c[j] + t1d[j] -
+	     t1b[j] ;
          oldval = t1a[j];
          newval = a / factor;
          newerr = oldval - newval;
@@ -272,8 +271,8 @@ void relax(long k, double *err, long color, long my_num)
        t1d = (double *) t2a[i+1];
        for (j=oddjstart;j<jend;j+=2) {
          a = t1a[j+1] + t1a[j-1] +
-             t1c[j] + t1d[j] -
-             t1b[j] ;
+	     t1c[j] + t1d[j] -
+	     t1b[j] ;
          oldval = t1a[j];
          newval = a / factor;
          newerr = oldval - newval;
@@ -290,8 +289,8 @@ void relax(long k, double *err, long color, long my_num)
        t1d = (double *) t2a[i+1];
        for (j=evenjstart;j<jend;j+=2) {
          a = t1a[j+1] + t1a[j-1] +
-             t1c[j] + t1d[j] -
-             t1b[j] ;
+	     t1c[j] + t1d[j] -
+	     t1b[j] ;
          oldval = t1a[j];
          newval = a / factor;
          newerr = oldval - newval;
@@ -371,7 +370,7 @@ void rescal(long kf, long my_num)
    t2b = (double **) rhs_multi[my_num][kf];
    t2c = (double **) rhs_multi[my_num][krc];
    if17=2*(istart-1);
-   for (ic=istart;ic<=iend;ic++) {
+   for(ic=istart;ic<=iend;ic++) {
      if17+=2;
      i_int_factor = (ic+i_off) * i_int_coeff[krc] * 0.5;
      jf = 2 * (jstart - 1);
@@ -383,7 +382,7 @@ void rescal(long kf, long my_num)
      t1f = (double *) t2a[if17-2];
      t1g = (double *) t2a[if17-3];
      t1h = (double *) t2b[if17-2];
-     for (jc=jstart;jc<=jend;jc++) {
+     for(jc=jstart;jc<=jend;jc++) {
        jf+=2;
        j_int_factor = (jc+j_off)*j_int_coeff[krc] * 0.5;
 
@@ -393,32 +392,32 @@ void rescal(long kf, long my_num)
        s = t1a[jf+1] + t1a[jf-1] + t1d[jf] + t1e[jf];
        s1 = 2.0 * (t1b[jf] - s + factor * t1a[jf]);
        if (((if17 == 2) && (gp[my_num].neighbors[UP] == -1)) ||
-           ((jf == 2) && (gp[my_num].neighbors[LEFT] == -1))) {
+	   ((jf == 2) && (gp[my_num].neighbors[LEFT] == -1))) {
           s2 = 0;
           s3 = 0;
           s4 = 0;
        } else if ((if17 == 2) || (jf == 2)) {
-          if (jf == 2) {
-            temp = q_multi[left_proc][kf][if17][jm-1];
+	  if (jf == 2) {
+	    temp = q_multi[left_proc][kf][if17][jm-1];
           } else {
             temp = t1a[jf-3];
           }
           s = t1a[jf-1] + temp + t1d[jf-2] + t1e[jf-2];
           s2 = 2.0 * (t1b[jf-2] - s + factor * t1a[jf-2]);
-          if (if17 == 2) {
-            temp = q_multi[up_proc][kf][im-1][jf];
+	  if (if17 == 2) {
+	    temp = q_multi[up_proc][kf][im-1][jf];
           } else {
             temp = t1g[jf];
           }
           s = t1f[jf+1]+ t1f[jf-1]+ temp + t1d[jf];
           s3 = 2.0 * (t1h[jf] - s + factor * t1f[jf]);
-          if (jf == 2) {
-            temp = q_multi[left_proc][kf][if17-2][jm-1];
+	  if (jf == 2) {
+	    temp = q_multi[left_proc][kf][if17-2][jm-1];
           } else {
             temp = t1f[jf-3];
           }
-          if (if17 == 2) {
-            temp2 = q_multi[up_proc][kf][im-1][jf-2];
+	  if (if17 == 2) {
+	    temp2 = q_multi[up_proc][kf][im-1][jf-2];
           } else {
             temp2 = t1g[jf-2];
           }
@@ -484,7 +483,7 @@ void intadd(long kc, long my_num)
    t2a = (double **) q_multi[my_num][kc];
    t2b = (double **) q_multi[my_num][kf];
    if17 = 2*(istart-1);
-   for (ic=istart;ic<=iend;ic++) {
+   for(ic=istart;ic<=iend;ic++) {
      if17+=2;
      i_int_factor1= ((imx[kc]-2)-(ic+i_off-1)) * (i_int_coeff[kf]);
      i_int_factor2= (ic+i_off) * i_int_coeff[kf];
@@ -495,7 +494,7 @@ void intadd(long kc, long my_num)
      t1c = (double *) t2a[ic+1];
      t1d = (double *) t2b[if17];
      t1e = (double *) t2b[if17-1];
-     for (jc=jstart;jc<=jend;jc++) {
+     for(jc=jstart;jc<=jend;jc++) {
        jf+=2;
        j_int_factor1= ((jmx[kc]-2)-(jc+j_off-1)) * (j_int_coeff[kf]);
        j_int_factor2= (jc+j_off) * j_int_coeff[kf];

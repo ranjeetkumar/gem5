@@ -18,10 +18,9 @@
 
 EXTERN_ENV
 
-#include <cmath>
-#include <cstdio>
-#include <ctime>
-
+#include <stdio.h>
+#include <math.h>
+#include <time.h>
 #include "decs.h"
 
 void laplacalc(long procid, double ****x, double ****z, long psiindex, long firstrow, long lastrow, long firstcol, long lastcol)
@@ -85,7 +84,7 @@ void laplacalc(long procid, double ****x, double ****z, long psiindex, long firs
        indexp1 = iindex+1;
        indexm1 = iindex-1;
        t1b[iindex] = factlap*(t1c[iindex]+
-                              t1d[iindex]+t1a[indexp1]+
+			      t1d[iindex]+t1a[indexp1]+
                               t1a[indexm1]-4.*t1a[iindex]);
      }
    }

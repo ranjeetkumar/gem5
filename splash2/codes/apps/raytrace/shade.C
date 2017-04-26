@@ -28,10 +28,11 @@
  */
 
 
-#include <cmath>
-#include <cstdio>
-
+#include <stdio.h>
+#include <math.h>
 #include "rt.h"
+
+
 
 /*
  * NAME
@@ -48,23 +49,23 @@
  */
 
 VOID	SpecularDirection(POINT R, POINT N, POINT I)
-        {
-        REAL	I_dot_N;		/* I*N				     */
-        POINT	N2;			/* 2N				     */
-        POINT	vprime; 		/* Scale of I			     */
+	{
+	REAL	I_dot_N;		/* I*N				     */
+	POINT	N2;			/* 2N				     */
+	POINT	vprime; 		/* Scale of I			     */
 
-        /*  Turner's calculation from first paper.  */
+	/*  Turner's calculation from first paper.  */
 
-        I_dot_N = VecDot(I,N);
-        I_dot_N = ABS(I_dot_N);
-        I_dot_N = 1.0/I_dot_N;
+	I_dot_N = VecDot(I,N);
+	I_dot_N = ABS(I_dot_N);
+	I_dot_N = 1.0/I_dot_N;
 
-        VecScale(vprime, I_dot_N, I);
-        VecScale(N2, 2.0, N);
+	VecScale(vprime, I_dot_N, I);
+	VecScale(N2, 2.0, N);
 
-        VecAdd(R, vprime, N2);
-        VecNorm(R);
-        }
+	VecAdd(R, vprime, N2);
+	VecNorm(R);
+	}
 
 
 
@@ -84,41 +85,41 @@ VOID	SpecularDirection(POINT R, POINT N, POINT I)
  */
 
 BOOL	TransmissionDirection(POINT T, POINT N, POINT I, REAL kn)
-        {
-        POINT	vprime; 		/* Parameters in calculation.	     */
-        POINT	vplusn;
-        REAL	I_dot_N;
-        REAL	kf;
-        REAL	vprime_sq;
-        REAL	vplusn_sq;
+	{
+	POINT	vprime; 		/* Parameters in calculation.	     */
+	POINT	vplusn;
+	REAL	I_dot_N;
+	REAL	kf;
+	REAL	vprime_sq;
+	REAL	vplusn_sq;
 
-        /*  Turner's calculation from first paper.  */
+	/*  Turner's calculation from first paper.  */
 
-        I_dot_N = VecDot(I,N);
-        I_dot_N = ABS(I_dot_N);
-        I_dot_N = 1.0/I_dot_N;
+	I_dot_N = VecDot(I,N);
+	I_dot_N = ABS(I_dot_N);
+	I_dot_N = 1.0/I_dot_N;
 
-        VecScale(vprime, I_dot_N, I);
-        VecAdd(vplusn, vprime, N);
+	VecScale(vprime, I_dot_N, I);
+	VecAdd(vplusn, vprime, N);
 
-        vprime_sq = VecDot(vprime, vprime);
-        vplusn_sq = VecDot(vplusn, vplusn);
+	vprime_sq = VecDot(vprime, vprime);
+	vplusn_sq = VecDot(vplusn, vplusn);
 
-        kf = kn*kn*vprime_sq - vplusn_sq;
+	kf = kn*kn*vprime_sq - vplusn_sq;
 
-        if (kf > RAYEPS)
-                {
-                kf = 1.0/sqrt(kf);
+	if (kf > RAYEPS)
+		{
+		kf = 1.0/sqrt(kf);
 
-                VecScale(vplusn, kf, vplusn);
-                VecSub(T, vplusn, N);
-                VecNorm(T);
-                }
-        else
-                return (FALSE);
+		VecScale(vplusn, kf, vplusn);
+		VecSub(T, vplusn, N);
+		VecNorm(T);
+		}
+	else
+		return (FALSE);
 
-        return (TRUE);
-        }
+	return (TRUE);
+	}
 
 
 
@@ -139,162 +140,162 @@ BOOL	TransmissionDirection(POINT T, POINT N, POINT I, REAL kn)
  */
 
 VOID	Shade(VEC3 iP, VEC3 N, RAY *ray, IRECORD *hit, INT pid)
-        {
-        VEC3	Lvec;			/* Light vector.		     */
-        VEC3	Hvec;			/* Highlight vector.		     */
-        VEC3	Evec;			/* Eye vector.			     */
-        RAY	shad_ray;		/* Shadow ray.			     */
-        RAY	secondary_ray;		/* Secondary ray.		     */
-        COLOR	surfcol;		/* Primitive surface color.	     */
-        COLOR	col;			/* Ray color contribution.	     */
-        REAL	NdotL;			/* Diffuse conritbution.	     */
-        REAL	Diff;			/* Diffuse variable.		     */
-        REAL	NdotH;			/* Highlight contribution.	     */
-        REAL	spec;			/* Highlight variable.		     */
-        OBJECT	*po;			/* Ptr to object.		     */
-        SURF	*s;			/* Surface pointer.		     */
-        INT	i;			/* Index variables.		     */
-        REAL	lightlen;		/* Length of light vector.	     */
-        REAL	shadtrans;		/* Shadow transmission. 	     */
-        LIGHT	*lptr;			/* Light pointer.		     */
+	{
+	VEC3	Lvec;			/* Light vector.		     */
+	VEC3	Hvec;			/* Highlight vector.		     */
+	VEC3	Evec;			/* Eye vector.			     */
+	RAY	shad_ray;		/* Shadow ray.			     */
+	RAY	secondary_ray;		/* Secondary ray.		     */
+	COLOR	surfcol;		/* Primitive surface color.	     */
+	COLOR	col;			/* Ray color contribution.	     */
+	REAL	NdotL;			/* Diffuse conritbution.	     */
+	REAL	Diff;			/* Diffuse variable.		     */
+	REAL	NdotH;			/* Highlight contribution.	     */
+	REAL	spec;			/* Highlight variable.		     */
+	OBJECT	*po;			/* Ptr to object.		     */
+	SURF	*s;			/* Surface pointer.		     */
+	INT	i;			/* Index variables.		     */
+	REAL	lightlen;		/* Length of light vector.	     */
+	REAL	shadtrans;		/* Shadow transmission. 	     */
+	LIGHT	*lptr;			/* Light pointer.		     */
 
-        /* Initialize primitive info and ray color. */
+	/* Initialize primitive info and ray color. */
 
-        po = hit->pelem->parent;
-        s  = po->surf;
-        VecCopy(surfcol, s->fcolor);
+	po = hit->pelem->parent;
+	s  = po->surf;
+	VecCopy(surfcol, s->fcolor);
 
-        /* Initialize color to ambient. */
+	/* Initialize color to ambient. */
 
-        col[0] = View.ambient[0] * surfcol[0];
-        col[1] = View.ambient[1] * surfcol[1];
-        col[2] = View.ambient[2] * surfcol[2];
+	col[0] = View.ambient[0] * surfcol[0];
+	col[1] = View.ambient[1] * surfcol[1];
+	col[2] = View.ambient[2] * surfcol[2];
 
-        /* Set shadow ray origin. */
+	/* Set shadow ray origin. */
 
-        VecCopy(shad_ray.P, iP);
-        VecNegate(Evec, ray->D);
+	VecCopy(shad_ray.P, iP);
+	VecNegate(Evec, ray->D);
 
-        /* Account for all lights. */
+	/* Account for all lights. */
 
-        lptr = lights;
-        for (i = 0; i < nlights; i++)
-                {
-                VecSub(Lvec, lptr->pos, iP);
-                lightlen = VecLen(Lvec);
-                VecNorm(Lvec);
-                VecCopy(shad_ray.D, Lvec);
+	lptr = lights;
+	for (i = 0; i < nlights; i++)
+		{
+		VecSub(Lvec, lptr->pos, iP);
+		lightlen = VecLen(Lvec);
+		VecNorm(Lvec);
+		VecCopy(shad_ray.D, Lvec);
 
-                LOCK(gm->ridlock);
-                shad_ray.id = gm->rid++;
-                UNLOCK(gm->ridlock);
+		LOCK(gm->ridlock);
+		shad_ray.id = gm->rid++;
+		UNLOCK(gm->ridlock);
 
-                NdotL = VecDot(N, Lvec);
+		NdotL = VecDot(N, Lvec);
 
-                if (NdotL > 0.0)
-                        {
-                        /* Test to see if point shadowed. */
+		if (NdotL > 0.0)
+			{
+			/* Test to see if point shadowed. */
 
-                        if (View.shad && !lptr->shadow)
-                                {
-                                switch (TraversalType)
-                                        {
-                                        case TT_LIST:
-                                                shadtrans = ShadowIntersect(&shad_ray, lightlen, hit->pelem);
-                                                break;
+			if (View.shad && !lptr->shadow)
+				{
+				switch (TraversalType)
+					{
+					case TT_LIST:
+						shadtrans = ShadowIntersect(&shad_ray, lightlen, hit->pelem);
+						break;
 
-                                        case TT_HUG:
-                                                shadtrans = HuniformShadowIntersect(&shad_ray, lightlen, hit->pelem, pid);
-                                                break;
-                                        }
-                                }
-                        else
-                                shadtrans = 1.0;
+					case TT_HUG:
+						shadtrans = HuniformShadowIntersect(&shad_ray, lightlen, hit->pelem, pid);
+						break;
+					}
+				}
+			else
+				shadtrans = 1.0;
 
-                        /* Compute non-shadowed shades. */
+			/* Compute non-shadowed shades. */
 
-                        if (shadtrans > 0.0)
-                                {
-                                Diff = po->surf->kdiff * NdotL * shadtrans;
+			if (shadtrans > 0.0)
+				{
+				Diff = po->surf->kdiff * NdotL * shadtrans;
 
-                                col[0] += surfcol[0] * lptr->col[0] * Diff;
-                                col[1] += surfcol[1] * lptr->col[1] * Diff;
-                                col[2] += surfcol[2] * lptr->col[2] * Diff;
+				col[0] += surfcol[0] * lptr->col[0] * Diff;
+				col[1] += surfcol[1] * lptr->col[1] * Diff;
+				col[2] += surfcol[2] * lptr->col[2] * Diff;
 
-                                /* Add specular. */
+				/* Add specular. */
 
-                                if (s->kspec > 0.0)
-                                        {
-                                        VecAdd(Hvec,Lvec,Evec);
-                                        VecNorm(Hvec);
-                                        NdotH = VecDot(N,Hvec);
+				if (s->kspec > 0.0)
+					{
+					VecAdd(Hvec,Lvec,Evec);
+					VecNorm(Hvec);
+					NdotH = VecDot(N,Hvec);
 
-                                        if (NdotH > 0.0)
-                                                {
-                                                spec  = pow(NdotH, s->kspecn);
-                                                spec *= s->kspec;
+					if (NdotH > 0.0)
+						{
+						spec  = pow(NdotH, s->kspecn);
+						spec *= s->kspec;
 
-                                                col[0] += lptr->col[0]*spec;
-                                                col[1] += lptr->col[1]*spec;
-                                                col[2] += lptr->col[2]*spec;
-                                                }
-                                        }
-                                }
-                        }
+						col[0] += lptr->col[0]*spec;
+						col[1] += lptr->col[1]*spec;
+						col[2] += lptr->col[2]*spec;
+						}
+					}
+				}
+			}
 
-                lptr = lptr->next;
-                }
+		lptr = lptr->next;
+		}
 
-        /* Add color to pixel frame buffer. */
+	/* Add color to pixel frame buffer. */
 
-        VecScale(col, ray->weight, col);
-        AddPixelColor(col, ray->x, ray->y);
+	VecScale(col, ray->weight, col);
+	AddPixelColor(col, ray->x, ray->y);
 
-        /* Recurse if not at maximum level. */
+	/* Recurse if not at maximum level. */
 
-        if ((ray->level) + 1 < Display.maxlevel)
-                {
-                VecCopy(secondary_ray.P, iP);
+	if ((ray->level) + 1 < Display.maxlevel)
+		{
+		VecCopy(secondary_ray.P, iP);
 
-                /* Specular. */
-                secondary_ray.weight = po->surf->kspec * ray->weight;
+		/* Specular. */
+		secondary_ray.weight = po->surf->kspec * ray->weight;
 
-                if (secondary_ray.weight > Display.minweight)
-                        {
-                        SpecularDirection(secondary_ray.D, N, ray->D);
-                        secondary_ray.level = ray->level + 1;
+		if (secondary_ray.weight > Display.minweight)
+			{
+			SpecularDirection(secondary_ray.D, N, ray->D);
+			secondary_ray.level = ray->level + 1;
 
-                        LOCK(gm->ridlock);
-                        secondary_ray.id = gm->rid++;
-                        UNLOCK(gm->ridlock);
+			LOCK(gm->ridlock);
+			secondary_ray.id = gm->rid++;
+			UNLOCK(gm->ridlock);
 
-                        secondary_ray.x = ray->x;
-                        secondary_ray.y = ray->y;
+			secondary_ray.x = ray->x;
+			secondary_ray.y = ray->y;
 
-                        PushRayTreeStack(&secondary_ray, pid);
+			PushRayTreeStack(&secondary_ray, pid);
 
-                        }
+			}
 
-                /* Transmission. */
-                secondary_ray.weight = po->surf->ktran * ray->weight;
+		/* Transmission. */
+		secondary_ray.weight = po->surf->ktran * ray->weight;
 
-                if (secondary_ray.weight > Display.minweight)
-                        {
-                        if (TransmissionDirection(secondary_ray.D, N, ray->D, po->surf->refrindex))
-                                {
-                                secondary_ray.level = ray->level + 1;
+		if (secondary_ray.weight > Display.minweight)
+			{
+			if (TransmissionDirection(secondary_ray.D, N, ray->D, po->surf->refrindex))
+				{
+				secondary_ray.level = ray->level + 1;
 
-                                LOCK(gm->ridlock);
-                                secondary_ray.id = gm->rid++;
-                                UNLOCK(gm->ridlock);
+				LOCK(gm->ridlock);
+				secondary_ray.id = gm->rid++;
+				UNLOCK(gm->ridlock);
 
-                                secondary_ray.x = ray->x;
-                                secondary_ray.y = ray->y;
+				secondary_ray.x = ray->x;
+				secondary_ray.y = ray->y;
 
-                                PushRayTreeStack(&secondary_ray, pid);
+				PushRayTreeStack(&secondary_ray, pid);
 
-                                }
-                        }
-                }
-        }
+				}
+			}
+		}
+	}
 

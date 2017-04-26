@@ -35,25 +35,24 @@
  */
 
 
-#include <cmath>
-#include <cstdio>
-
+#include <stdio.h>
+#include <math.h>
 #include "rt.h"
 
 #define PAGE_SIZE    4096
 
 struct r_struct {
 INT 	pad1[PAGE_SIZE];		/* This pad is inserted to avoid
-                                           false-sharing due to artifacts
-                                           of not having a private space
-                                           in the sproc model */
+					   false-sharing due to artifacts
+					   of not having a private space
+					   in the sproc model */
 RAY	*Stack; 			/* Ptr to ray tree stack.	     */
 INT	StackTop;			/* Top of ray tree stack.	     */
 INT	StackSize;			/* Maximum size of ray tree stack.   */
 INT 	pad2[PAGE_SIZE];		/* This pad is inserted to avoid
-                                           false-sharing due to artifacts
-                                           of not having a private space
-                                           in the sproc model */
+					   false-sharing due to artifacts
+					   of not having a private space
+					   in the sproc model */
 
 } raystruct[MAX_PROCS];
 
@@ -72,19 +71,19 @@ INT 	pad2[PAGE_SIZE];		/* This pad is inserted to avoid
  */
 
 VOID	CopyRayMsg(RAY *rdst, RAY *rsrc)
-        {
-        rdst->id = rsrc->id;
-        rdst->x  = rsrc->x;
-        rdst->y  = rsrc->y;
+	{
+	rdst->id = rsrc->id;
+	rdst->x  = rsrc->x;
+	rdst->y  = rsrc->y;
 
-        VecCopy(rdst->P, rsrc->P);
-        VecCopy(rdst->D, rsrc->D);
+	VecCopy(rdst->P, rsrc->P);
+	VecCopy(rdst->D, rsrc->D);
 
-        rdst->level  = rsrc->level;
-        rdst->weight = rsrc->weight;
+	rdst->level  = rsrc->level;
+	rdst->weight = rsrc->weight;
 
-        /* Other fields are initialized with InitRay. */
-        }
+	/* Other fields are initialized with InitRay. */
+	}
 
 
 
@@ -106,12 +105,12 @@ VOID	CopyRayMsg(RAY *rdst, RAY *rsrc)
  */
 
 VOID	InitRayTreeStack(INT TreeDepth, INT pid)
-        {
-        raystruct[pid].StackSize   = powint(2, TreeDepth) - 1;
-        raystruct[pid].StackSize  += NumSubRays;
-        raystruct[pid].Stack	    = LocalMalloc(raystruct[pid].StackSize*sizeof(RAY), "raystack.c");
-        raystruct[pid].StackTop    = -1;	  /* Empty condition. */
-        }
+	{
+	raystruct[pid].StackSize   = powint(2, TreeDepth) - 1;
+	raystruct[pid].StackSize  += NumSubRays;
+	raystruct[pid].Stack	    = LocalMalloc(raystruct[pid].StackSize*sizeof(RAY), "raystack.c");
+	raystruct[pid].StackTop    = -1;	  /* Empty condition. */
+	}
 
 
 unsigned long powint(long i, long j)
@@ -139,17 +138,17 @@ unsigned long powint(long i, long j)
  */
 
 VOID	PushRayTreeStack(RAY *rmsg, INT pid)
-        {
-        raystruct[pid].StackTop++;
+	{
+	raystruct[pid].StackTop++;
 
-        if (raystruct[pid].StackTop == raystruct[pid].StackSize)
-                {
-                fprintf(stderr,"%s: Ray tree stack overflow.\n", ProgName);
-                exit(-1);
-                }
+	if (raystruct[pid].StackTop == raystruct[pid].StackSize)
+		{
+		fprintf(stderr,"%s: Ray tree stack overflow.\n", ProgName);
+		exit(-1);
+		}
 
-        CopyRayMsg(&(raystruct[pid].Stack[raystruct[pid].StackTop]), rmsg);
-        }
+	CopyRayMsg(&(raystruct[pid].Stack[raystruct[pid].StackTop]), rmsg);
+	}
 
 
 
@@ -167,13 +166,13 @@ VOID	PushRayTreeStack(RAY *rmsg, INT pid)
  */
 
 INT	PopRayTreeStack(RAY *rmsg, INT pid)
-        {
-        if (raystruct[pid].StackTop < 0)
-                return (RTS_EMPTY);
+	{
+	if (raystruct[pid].StackTop < 0)
+		return (RTS_EMPTY);
 
-        CopyRayMsg(rmsg, &(raystruct[pid].Stack[raystruct[pid].StackTop]));
+	CopyRayMsg(rmsg, &(raystruct[pid].Stack[raystruct[pid].StackTop]));
 
-        raystruct[pid].StackTop--;
-        return (RTS_VALID);
-        }
+	raystruct[pid].StackTop--;
+	return (RTS_VALID);
+	}
 

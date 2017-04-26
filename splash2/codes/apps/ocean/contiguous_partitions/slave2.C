@@ -20,11 +20,10 @@
 
 EXTERN_ENV
 
-#include <cmath>
-#include <cstdio>
-#include <cstdlib>
-#include <ctime>
-
+#include <stdio.h>
+#include <math.h>
+#include <time.h>
+#include <stdlib.h>
 #include "decs.h"
 
 void slave2(long procid, long firstrow, long lastrow, long numrows, long firstcol, long lastcol, long numcols)
@@ -96,29 +95,29 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
    }
    if (gp[procid].neighbors[UP] == -1) {
      t1a = (double *) t2a[0];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        t1a[j] = 0.0;
      }
    }
    if (gp[procid].neighbors[DOWN] == -1) {
      t1a = (double *) t2a[im-1];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        t1a[j] = 0.0;
      }
    }
    if (gp[procid].neighbors[LEFT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2a[j][0] = 0.0;
      }
    }
    if (gp[procid].neighbors[RIGHT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2a[j][jm-1] = 0.0;
      }
    }
-   for (i=firstrow;i<=lastrow;i++) {
+   for(i=firstrow;i<=lastrow;i++) {
      t1a = (double *) t2a[i];
-     for (iindex=firstcol;iindex<=lastcol;iindex++) {
+     for(iindex=firstcol;iindex<=lastcol;iindex++) {
        t1a[iindex] = 0.0;
      }
    }
@@ -138,29 +137,29 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
    }
    if (gp[procid].neighbors[UP] == -1) {
      t1a = (double *) t2a[0];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        t1a[j] = 0.0;
      }
    }
    if (gp[procid].neighbors[DOWN] == -1) {
      t1a = (double *) t2a[im-1];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        t1a[j] = 0.0;
      }
    }
    if (gp[procid].neighbors[LEFT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2a[j][0] = 0.0;
      }
    }
    if (gp[procid].neighbors[RIGHT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2a[j][jm-1] = 0.0;
      }
    }
-   for (i=firstrow;i<=lastrow;i++) {
+   for(i=firstrow;i<=lastrow;i++) {
      t1a = (double *) t2a[i];
-     for (iindex=firstcol;iindex<=lastcol;iindex++) {
+     for(iindex=firstcol;iindex<=lastcol;iindex++) {
        t1a[iindex] = 0.0;
      }
    }
@@ -169,7 +168,7 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
    note that psi(i,j,2) represents the psi3 array in
    the original equations  */
 
-   for (psiindex=0;psiindex<=1;psiindex++) {
+   for(psiindex=0;psiindex<=1;psiindex++) {
      t2a = (double **) work1[procid][psiindex];
      if ((gp[procid].neighbors[UP] == -1) && (gp[procid].neighbors[LEFT] == -1)) {
        t2a[0][0] = 0;
@@ -184,7 +183,7 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
        t2a[im-1][jm-1] = 0;
      }
      laplacalc(procid,psi,work1,psiindex,
-               firstrow,lastrow,firstcol,lastcol);
+	       firstrow,lastrow,firstcol,lastcol);
    }
 
 /* set values of work2 array to psi1 - psi3   */
@@ -203,13 +202,13 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
    }
    if ((gp[procid].neighbors[DOWN] == -1) && (gp[procid].neighbors[RIGHT] == -1)) {
      t2a[im-1][jm-1] = t2b[im-1][jm-1] -
-                                 t2c[im-1][jm-1];
+				 t2c[im-1][jm-1];
    }
    if (gp[procid].neighbors[UP] == -1) {
      t1a = (double *) t2a[0];
      t1b = (double *) t2b[0];
      t1c = (double *) t2c[0];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        t1a[j] = t1b[j]-t1c[j];
      }
    }
@@ -217,25 +216,25 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
      t1a = (double *) t2a[im-1];
      t1b = (double *) t2b[im-1];
      t1c = (double *) t2c[im-1];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        t1a[j] = t1b[j]-t1c[j];
      }
    }
    if (gp[procid].neighbors[LEFT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2a[j][0] = t2b[j][0]-t2c[j][0];
      }
    }
    if (gp[procid].neighbors[RIGHT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2a[j][jm-1] = t2b[j][jm-1]-t2c[j][jm-1];
      }
    }
-   for (i=firstrow;i<=lastrow;i++) {
+   for(i=firstrow;i<=lastrow;i++) {
      t1a = (double *) t2a[i];
      t1b = (double *) t2b[i];
      t1c = (double *) t2c[i];
-     for (iindex=firstcol;iindex<=lastcol;iindex++) {
+     for(iindex=firstcol;iindex<=lastcol;iindex++) {
          t1a[iindex] = t1b[iindex] - t1c[iindex];
      }
    }
@@ -250,49 +249,49 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
    }
    if ((gp[procid].neighbors[DOWN] == -1) && (gp[procid].neighbors[LEFT] == -1)) {
      t2a[im-1][0] = hh3*t2a[im-1][0] +
-                              hh1*t2c[im-1][0];
+			      hh1*t2c[im-1][0];
    }
    if ((gp[procid].neighbors[UP] == -1) && (gp[procid].neighbors[RIGHT] == -1)) {
      t2a[0][jm-1] = hh3*t2a[0][jm-1] +
-                              hh1*t2c[0][jm-1];
+			      hh1*t2c[0][jm-1];
    }
    if ((gp[procid].neighbors[DOWN] == -1) && (gp[procid].neighbors[RIGHT] == -1)) {
      t2a[im-1][jm-1] = hh3*t2a[im-1][jm-1] +
-                                 hh1*t2c[im-1][jm-1];
+				 hh1*t2c[im-1][jm-1];
    }
    if (gp[procid].neighbors[UP] == -1) {
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        t2a[0][j] = hh3*t2a[0][j]+hh1*t2c[0][j];
      }
    }
    if (gp[procid].neighbors[DOWN] == -1) {
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        t2a[im-1][j] = hh3*t2a[im-1][j] +
-                                hh1*t2c[im-1][j];
+				hh1*t2c[im-1][j];
      }
    }
    if (gp[procid].neighbors[LEFT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2a[j][0] = hh3*t2a[j][0]+hh1*t2c[j][0];
      }
    }
    if (gp[procid].neighbors[RIGHT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2a[j][jm-1] = hh3*t2a[j][jm-1] +
-                                hh1*t2c[j][jm-1];
+				hh1*t2c[j][jm-1];
      }
    }
-   for (i=firstrow;i<=lastrow;i++) {
+   for(i=firstrow;i<=lastrow;i++) {
      t1a = (double *) t2a[i];
      t1c = (double *) t2c[i];
-     for (iindex=firstcol;iindex<=lastcol;iindex++) {
+     for(iindex=firstcol;iindex<=lastcol;iindex++) {
         t1a[iindex] = hh3*t1a[iindex] + hh1*t1c[iindex];
      }
    }
 
 /* set values of temparray{1,3} to psim{1,3}  */
 
-   for (psiindex=0;psiindex<=1;psiindex++) {
+   for(psiindex=0;psiindex<=1;psiindex++) {
      t2a = (double **) temparray[procid][psiindex];
      t2b = (double **) psi[procid][psiindex];
      if ((gp[procid].neighbors[UP] == -1) && (gp[procid].neighbors[LEFT] == -1)) {
@@ -308,30 +307,30 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
        t2a[im-1][jm-1] = t2b[im-1][jm-1];
      }
      if (gp[procid].neighbors[UP] == -1) {
-       for (j=firstcol;j<=lastcol;j++) {
+       for(j=firstcol;j<=lastcol;j++) {
          t2a[0][j] = t2b[0][j];
        }
      }
      if (gp[procid].neighbors[DOWN] == -1) {
-       for (j=firstcol;j<=lastcol;j++) {
+       for(j=firstcol;j<=lastcol;j++) {
          t2a[im-1][j] = t2b[im-1][j];
        }
      }
      if (gp[procid].neighbors[LEFT] == -1) {
-       for (j=firstrow;j<=lastrow;j++) {
+       for(j=firstrow;j<=lastrow;j++) {
          t2a[j][0] = t2b[j][0];
        }
      }
      if (gp[procid].neighbors[RIGHT] == -1) {
-       for (j=firstrow;j<=lastrow;j++) {
+       for(j=firstrow;j<=lastrow;j++) {
          t2a[j][jm-1] = t2b[j][jm-1];
        }
      }
 
-     for (i=firstrow;i<=lastrow;i++) {
+     for(i=firstrow;i<=lastrow;i++) {
        t1a = (double *) t2a[i];
        t1b = (double *) t2b[i];
-       for (iindex=firstcol;iindex<=lastcol;iindex++) {
+       for(iindex=firstcol;iindex<=lastcol;iindex++) {
          t1a[iindex] = t1b[iindex];
        }
      }
@@ -349,7 +348,7 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
 
    set values of psi{1,3} to psim{1,3}   */
 
-   for (psiindex=0;psiindex<=1;psiindex++) {
+   for(psiindex=0;psiindex<=1;psiindex++) {
      t2a = (double **) psi[procid][psiindex];
      t2b = (double **) psim[procid][psiindex];
      if ((gp[procid].neighbors[UP] == -1) && (gp[procid].neighbors[LEFT] == -1)) {
@@ -365,30 +364,30 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
        t2a[im-1][jm-1] = t2b[im-1][jm-1];
      }
      if (gp[procid].neighbors[UP] == -1) {
-       for (j=firstcol;j<=lastcol;j++) {
+       for(j=firstcol;j<=lastcol;j++) {
          t2a[0][j] = t2b[0][j];
        }
      }
      if (gp[procid].neighbors[DOWN] == -1) {
-       for (j=firstcol;j<=lastcol;j++) {
+       for(j=firstcol;j<=lastcol;j++) {
          t2a[im-1][j] = t2b[im-1][j];
        }
      }
      if (gp[procid].neighbors[LEFT] == -1) {
-       for (j=firstrow;j<=lastrow;j++) {
+       for(j=firstrow;j<=lastrow;j++) {
          t2a[j][0] = t2b[j][0];
        }
      }
      if (gp[procid].neighbors[RIGHT] == -1) {
-       for (j=firstrow;j<=lastrow;j++) {
+       for(j=firstrow;j<=lastrow;j++) {
          t2a[j][jm-1] = t2b[j][jm-1];
        }
      }
 
-     for (i=firstrow;i<=lastrow;i++) {
+     for(i=firstrow;i<=lastrow;i++) {
        t1a = (double *) t2a[i];
        t1b = (double *) t2b[i];
-       for (iindex=firstcol;iindex<=lastcol;iindex++) {
+       for(iindex=firstcol;iindex<=lastcol;iindex++) {
          t1a[iindex] = t1b[iindex];
        }
      }
@@ -398,7 +397,7 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
    into the work7 array; first part of a three-laplacian
    calculation to compute the friction terms  */
 
-   for (psiindex=0;psiindex<=1;psiindex++) {
+   for(psiindex=0;psiindex<=1;psiindex++) {
      t2a = (double **) work7[procid][psiindex];
      if ((gp[procid].neighbors[UP] == -1) && (gp[procid].neighbors[LEFT] == -1)) {
        t2a[0][0] = 0;
@@ -413,7 +412,7 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
        t2a[im-1][jm-1] = 0;
      }
      laplacalc(procid,psim,work7,psiindex,
-               firstrow,lastrow,firstcol,lastcol);
+	       firstrow,lastrow,firstcol,lastcol);
    }
 
 /* to the values of the work1{1,2} arrays obtained from the
@@ -421,7 +420,7 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
    elements of every column the corresponding value in the
    one-dimenional f array  */
 
-   for (psiindex=0;psiindex<=1;psiindex++) {
+   for(psiindex=0;psiindex<=1;psiindex++) {
      t2a = (double **) work1[procid][psiindex];
      if ((gp[procid].neighbors[UP] == -1) && (gp[procid].neighbors[LEFT] == -1)) {
        t2a[0][0] = t2a[0][0] + f[0];
@@ -436,28 +435,28 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
        t2a[im-1][jm-1]=t2a[im-1][jm-1] + f[jmx[numlev-1]-1];
      }
      if (gp[procid].neighbors[UP] == -1) {
-       for (j=firstcol;j<=lastcol;j++) {
+       for(j=firstcol;j<=lastcol;j++) {
          t2a[0][j] = t2a[0][j] + f[j+j_off];
        }
      }
      if (gp[procid].neighbors[DOWN] == -1) {
-       for (j=firstcol;j<=lastcol;j++) {
+       for(j=firstcol;j<=lastcol;j++) {
          t2a[im-1][j] = t2a[im-1][j] + f[j+j_off];
        }
      }
      if (gp[procid].neighbors[LEFT] == -1) {
-       for (j=firstrow;j<=lastrow;j++) {
+       for(j=firstrow;j<=lastrow;j++) {
          t2a[j][0] = t2a[j][0] + f[j+i_off];
        }
      }
      if (gp[procid].neighbors[RIGHT] == -1) {
-       for (j=firstrow;j<=lastrow;j++) {
+       for(j=firstrow;j<=lastrow;j++) {
          t2a[j][jm-1] = t2a[j][jm-1] + f[j+i_off];
        }
      }
-     for (i=firstrow;i<=lastrow;i++) {
+     for(i=firstrow;i<=lastrow;i++) {
        t1a = (double *) t2a[i];
-       for (iindex=firstcol;iindex<=lastcol;iindex++) {
+       for(iindex=firstcol;iindex<=lastcol;iindex++) {
          t1a[iindex]=t1a[iindex] + f[iindex+j_off];
        }
      }
@@ -471,19 +470,19 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
 
                  t h i r d   p h a s e
 
-        *******************************************************
+ 	*******************************************************
 
    put the jacobian of the work1{1,2} and psi{1,3} arrays
    (the latter currently in temparray) in the work5{1,2} arrays  */
 
-   for (psiindex=0;psiindex<=1;psiindex++) {
+   for(psiindex=0;psiindex<=1;psiindex++) {
      jacobcalc2(work1,temparray,work5,psiindex,procid,firstrow,lastrow,
-               firstcol,lastcol);
+	       firstcol,lastcol);
    }
 
 /* set values of psim{1,3} to temparray{1,3}  */
 
-   for (psiindex=0;psiindex<=1;psiindex++) {
+   for(psiindex=0;psiindex<=1;psiindex++) {
      t2a = (double **) psim[procid][psiindex];
      t2b = (double **) temparray[procid][psiindex];
      if ((gp[procid].neighbors[UP] == -1) && (gp[procid].neighbors[LEFT] == -1)) {
@@ -501,31 +500,31 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
      if (gp[procid].neighbors[UP] == -1) {
        t1a = (double *) t2a[0];
        t1b = (double *) t2b[0];
-       for (j=firstcol;j<=lastcol;j++) {
+       for(j=firstcol;j<=lastcol;j++) {
          t1a[j] = t1b[j];
        }
      }
      if (gp[procid].neighbors[DOWN] == -1) {
        t1a = (double *) t2a[im-1];
        t1b = (double *) t2b[im-1];
-       for (j=firstcol;j<=lastcol;j++) {
+       for(j=firstcol;j<=lastcol;j++) {
          t1a[j] = t1b[j];
        }
      }
      if (gp[procid].neighbors[LEFT] == -1) {
-       for (j=firstrow;j<=lastrow;j++) {
+       for(j=firstrow;j<=lastrow;j++) {
          t2a[j][0] = t2b[j][0];
        }
      }
      if (gp[procid].neighbors[RIGHT] == -1) {
-       for (j=firstrow;j<=lastrow;j++) {
+       for(j=firstrow;j<=lastrow;j++) {
          t2a[j][jm-1] = t2b[j][jm-1];
        }
      }
-     for (i=firstrow;i<=lastrow;i++) {
+     for(i=firstrow;i<=lastrow;i++) {
        t1a = (double *) t2a[i];
        t1b = (double *) t2b[i];
-       for (iindex=firstcol;iindex<=lastcol;iindex++) {
+       for(iindex=firstcol;iindex<=lastcol;iindex++) {
          t1a[iindex] = t1b[iindex];
        }
      }
@@ -534,9 +533,9 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
 /* put the laplacian of the work7{1,2} arrays in the work4{1,2}
    arrays; second step in the three-laplacian friction calculation  */
 
-   for (psiindex=0;psiindex<=1;psiindex++) {
+   for(psiindex=0;psiindex<=1;psiindex++) {
      laplacalc(procid,work7,work4,psiindex,
-               firstrow,lastrow,firstcol,lastcol);
+	       firstrow,lastrow,firstcol,lastcol);
    }
 #if defined(MULTIPLE_BARRIERS)
    BARRIER(bars->sl_phase_3,nprocs)
@@ -557,9 +556,9 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
 /* put the laplacian of the work4{1,2} arrays in the work7{1,2}
    arrays; third step in the three-laplacian friction calculation  */
 
-   for (psiindex=0;psiindex<=1;psiindex++) {
+   for(psiindex=0;psiindex<=1;psiindex++) {
      laplacalc(procid,work4,work7,psiindex,
-               firstrow,lastrow,firstcol,lastcol);
+	       firstrow,lastrow,firstcol,lastcol);
    }
 #if defined(MULTIPLE_BARRIERS)
    BARRIER(bars->sl_phase_4,nprocs)
@@ -589,37 +588,37 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
    t2h = (double **) tauz[procid];
    if ((gp[procid].neighbors[UP] == -1) && (gp[procid].neighbors[LEFT] == -1)) {
      t2a[0][0] = t2c[0][0]-t2d[0][0] +
-                        eig2*t2g[0][0]+h1inv*t2h[0][0] +
-                        lf*t2e[0][0]-lf*t2f[0][0];
+			eig2*t2g[0][0]+h1inv*t2h[0][0] +
+			lf*t2e[0][0]-lf*t2f[0][0];
      t2b[0][0] = hh1*t2c[0][0]+hh3*t2d[0][0] +
-                        hinv*t2h[0][0]+lf*hh1*t2e[0][0] +
-                        lf*hh3*t2f[0][0];
+			hinv*t2h[0][0]+lf*hh1*t2e[0][0] +
+		        lf*hh3*t2f[0][0];
    }
    if ((gp[procid].neighbors[DOWN] == -1) && (gp[procid].neighbors[LEFT] == -1)) {
      t2a[im-1][0] = t2c[im-1][0]-t2d[im-1][0] +
-           eig2*t2g[im-1][0] + h1inv*t2h[im-1][0] +
-           lf*t2e[im-1][0] - lf*t2f[im-1][0];
+	   eig2*t2g[im-1][0] + h1inv*t2h[im-1][0] +
+	   lf*t2e[im-1][0] - lf*t2f[im-1][0];
      t2b[im-1][0] = hh1*t2c[im-1][0] +
-           hh3*t2d[im-1][0] + hinv*t2h[im-1][0] +
-           lf*hh1*t2e[im-1][0] + lf*hh3*t2f[im-1][0];
+	   hh3*t2d[im-1][0] + hinv*t2h[im-1][0] +
+	   lf*hh1*t2e[im-1][0] + lf*hh3*t2f[im-1][0];
    }
    if ((gp[procid].neighbors[UP] == -1) && (gp[procid].neighbors[RIGHT] == -1)) {
      t2a[0][jm-1] = t2c[0][jm-1]-t2d[0][jm-1]+
-           eig2*t2g[0][jm-1]+h1inv*t2h[0][jm-1] +
-           lf*t2e[0][jm-1]-lf*t2f[0][jm-1];
+	   eig2*t2g[0][jm-1]+h1inv*t2h[0][jm-1] +
+	   lf*t2e[0][jm-1]-lf*t2f[0][jm-1];
      t2b[0][jm-1] = hh1*t2c[0][jm-1] +
-           hh3*t2d[0][jm-1]+hinv*t2h[0][jm-1] +
-           lf*hh1*t2e[0][jm-1]+lf*hh3*t2f[0][jm-1];
+	   hh3*t2d[0][jm-1]+hinv*t2h[0][jm-1] +
+	   lf*hh1*t2e[0][jm-1]+lf*hh3*t2f[0][jm-1];
    }
    if ((gp[procid].neighbors[DOWN] == -1) && (gp[procid].neighbors[RIGHT] == -1)) {
      t2a[im-1][jm-1] = t2c[im-1][jm-1] -
-           t2d[im-1][jm-1]+eig2*t2g[im-1][jm-1] +
-           h1inv*t2h[im-1][jm-1]+lf*t2e[im-1][jm-1] -
-           lf*t2f[im-1][jm-1];
+	   t2d[im-1][jm-1]+eig2*t2g[im-1][jm-1] +
+	   h1inv*t2h[im-1][jm-1]+lf*t2e[im-1][jm-1] -
+	   lf*t2f[im-1][jm-1];
      t2b[im-1][jm-1] = hh1*t2c[im-1][jm-1] +
-           hh3*t2d[im-1][jm-1]+hinv*t2h[im-1][jm-1] +
-           lf*hh1*t2e[im-1][jm-1] +
-           lf*hh3*t2f[im-1][jm-1];
+	   hh3*t2d[im-1][jm-1]+hinv*t2h[im-1][jm-1] +
+	   lf*hh1*t2e[im-1][jm-1] +
+	   lf*hh3*t2f[im-1][jm-1];
    }
    if (gp[procid].neighbors[UP] == -1) {
      t1a = (double *) t2a[0];
@@ -630,13 +629,13 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
      t1f = (double *) t2f[0];
      t1g = (double *) t2g[0];
      t1h = (double *) t2h[0];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        t1a[j] = t1c[j]-t1d[j] +
-           eig2*t1g[j]+h1inv*t1h[j] +
-           lf*t1e[j]-lf*t1f[j];
+	   eig2*t1g[j]+h1inv*t1h[j] +
+	   lf*t1e[j]-lf*t1f[j];
        t1b[j] = hh1*t1c[j] +
-           hh3*t1d[j]+hinv*t1h[j] +
-           lf*hh1*t1e[j]+lf*hh3*t1f[j];
+	   hh3*t1d[j]+hinv*t1h[j] +
+	   lf*hh1*t1e[j]+lf*hh3*t1f[j];
      }
    }
    if (gp[procid].neighbors[DOWN] == -1) {
@@ -648,39 +647,39 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
      t1f = (double *) t2f[im-1];
      t1g = (double *) t2g[im-1];
      t1h = (double *) t2h[im-1];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        t1a[j] = t1c[j] -
-           t1d[j]+eig2*t1g[j] +
-           h1inv*t1h[j]+lf*t1e[j] -
-           lf*t1f[j];
+	   t1d[j]+eig2*t1g[j] +
+	   h1inv*t1h[j]+lf*t1e[j] -
+	   lf*t1f[j];
        t1b[j] = hh1*t1c[j] +
-           hh3*t1d[j]+hinv*t1h[j] +
-           lf*hh1*t1e[j]+lf*hh3*t1f[j];
+	   hh3*t1d[j]+hinv*t1h[j] +
+	   lf*hh1*t1e[j]+lf*hh3*t1f[j];
      }
    }
    if (gp[procid].neighbors[LEFT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2a[j][0] = t2c[j][0]-t2d[j][0] +
-           eig2*t2g[j][0]+h1inv*t2h[j][0] +
-           lf*t2e[j][0]-lf*t2f[j][0];
+	   eig2*t2g[j][0]+h1inv*t2h[j][0] +
+	   lf*t2e[j][0]-lf*t2f[j][0];
        t2b[j][0] = hh1*t2c[j][0] +
-           hh3*t2d[j][0]+hinv*t2h[j][0] +
-           lf*hh1*t2e[j][0]+lf*hh3*t2f[j][0];
+	   hh3*t2d[j][0]+hinv*t2h[j][0] +
+	   lf*hh1*t2e[j][0]+lf*hh3*t2f[j][0];
      }
    }
    if (gp[procid].neighbors[RIGHT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2a[j][jm-1] = t2c[j][jm-1] -
-           t2d[j][jm-1]+eig2*t2g[j][jm-1] +
-           h1inv*t2h[j][jm-1]+lf*t2e[j][jm-1] -
-           lf*t2f[j][jm-1];
+	   t2d[j][jm-1]+eig2*t2g[j][jm-1] +
+	   h1inv*t2h[j][jm-1]+lf*t2e[j][jm-1] -
+	   lf*t2f[j][jm-1];
        t2b[j][jm-1] = hh1*t2c[j][jm-1] +
-           hh3*t2d[j][jm-1]+hinv*t2h[j][jm-1] +
-           lf*hh1*t2e[j][jm-1]+lf*hh3*t2f[j][jm-1];
+	   hh3*t2d[j][jm-1]+hinv*t2h[j][jm-1] +
+	   lf*hh1*t2e[j][jm-1]+lf*hh3*t2f[j][jm-1];
      }
    }
 
-   for (i=firstrow;i<=lastrow;i++) {
+   for(i=firstrow;i<=lastrow;i++) {
      t1a = (double *) t2a[i];
      t1b = (double *) t2b[i];
      t1c = (double *) t2c[i];
@@ -689,15 +688,15 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
      t1f = (double *) t2f[i];
      t1g = (double *) t2g[i];
      t1h = (double *) t2h[i];
-     for (iindex=firstcol;iindex<=lastcol;iindex++) {
+     for(iindex=firstcol;iindex<=lastcol;iindex++) {
        t1a[iindex] = t1c[iindex] -
-           t1d[iindex]+eig2*t1g[iindex] +
-           h1inv*t1h[iindex]+lf*t1e[iindex] -
-           lf*t1f[iindex];
+	   t1d[iindex]+eig2*t1g[iindex] +
+	   h1inv*t1h[iindex]+lf*t1e[iindex] -
+	   lf*t1f[iindex];
        t1b[iindex] = hh1*t1c[iindex] +
-           hh3*t1d[iindex]+hinv*t1h[iindex] +
-           lf*hh1*t1e[iindex] +
-           lf*hh3*t1f[iindex];
+	   hh3*t1d[iindex]+hinv*t1h[iindex] +
+	   lf*hh1*t1e[iindex] +
+	   lf*hh3*t1f[iindex];
      }
    }
 #if defined(MULTIPLE_BARRIERS)
@@ -736,10 +735,10 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
    t2b = (double **) ga[procid];
    t2c = (double **) oldga[procid];
    t2d = (double **) q_multi[procid][numlev-1];
-   for (i=istart;i<=iend;i++) {
+   for(i=istart;i<=iend;i++) {
      t1a = (double *) t2a[i];
      t1b = (double *) t2b[i];
-     for (j=jstart;j<=jend;j++) {
+     for(j=jstart;j<=jend;j++) {
        t1a[j] = t1b[j] * ressqr;
      }
    }
@@ -747,33 +746,33 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
    if (gp[procid].neighbors[UP] == -1) {
      t1d = (double *) t2d[0];
      t1b = (double *) t2b[0];
-     for (j=jstart;j<=jend;j++) {
+     for(j=jstart;j<=jend;j++) {
        t1d[j] = t1b[j];
      }
    }
    if (gp[procid].neighbors[DOWN] == -1) {
      t1d = (double *) t2d[im-1];
      t1b = (double *) t2b[im-1];
-     for (j=jstart;j<=jend;j++) {
+     for(j=jstart;j<=jend;j++) {
        t1d[j] = t1b[j];
      }
    }
    if (gp[procid].neighbors[LEFT] == -1) {
-     for (i=istart;i<=iend;i++) {
+     for(i=istart;i<=iend;i++) {
        t2d[i][0] = t2b[i][0];
      }
    }
    if (gp[procid].neighbors[RIGHT] == -1) {
-     for (i=istart;i<=iend;i++) {
+     for(i=istart;i<=iend;i++) {
        t2d[i][jm-1] = t2b[i][jm-1];
      }
    }
 
    fac = 1.0 / (4.0 - ressqr*eig2);
-   for (i=ist;i<=ien;i++) {
+   for(i=ist;i<=ien;i++) {
      t1d = (double *) t2d[i];
      t1c = (double *) t2c[i];
-     for (j=jst;j<=jen;j++) {
+     for(j=jst;j<=jen;j++) {
        t1d[j] = t1c[j];
      }
    }
@@ -798,11 +797,11 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
 
 /*  copy the solution for use as initial guess in next time-step  */
 
-   for (i=istart;i<=iend;i++) {
+   for(i=istart;i<=iend;i++) {
      t1b = (double *) t2b[i];
      t1c = (double *) t2c[i];
      t1d = (double *) t2d[i];
-     for (j=jstart;j<=jend;j++) {
+     for(j=jstart;j<=jend;j++) {
        t1b[j] = t1d[j];
        t1c[j] = t1d[j];
      }
@@ -837,29 +836,29 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
    }
    if (gp[procid].neighbors[UP] == -1) {
      t1a = (double *) t2a[0];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        psiaipriv = psiaipriv + 0.5*t1a[j];
      }
    }
    if (gp[procid].neighbors[DOWN] == -1) {
      t1a = (double *) t2a[im-1];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        psiaipriv = psiaipriv + 0.5*t1a[j];
      }
    }
    if (gp[procid].neighbors[LEFT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        psiaipriv = psiaipriv + 0.5*t2a[j][0];
      }
    }
    if (gp[procid].neighbors[RIGHT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        psiaipriv = psiaipriv + 0.5*t2a[j][jm-1];
      }
    }
-   for (i=firstrow;i<=lastrow;i++) {
+   for(i=firstrow;i<=lastrow;i++) {
      t1a = (double *) t2a[i];
-     for (iindex=firstcol;iindex<=lastcol;iindex++) {
+     for(iindex=firstcol;iindex<=lastcol;iindex++) {
        psiaipriv = psiaipriv + t1a[iindex];
      }
    }
@@ -898,36 +897,36 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
    }
    if ((gp[procid].neighbors[DOWN] == -1) && (gp[procid].neighbors[RIGHT] == -1)) {
      t2a[im-1][jm-1] = t2a[im-1][jm-1] +
-                              f4*t2b[im-1][jm-1];
+			      f4*t2b[im-1][jm-1];
    }
    if (gp[procid].neighbors[UP] == -1) {
      t1a = (double *) t2a[0];
      t1b = (double *) t2b[0];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        t1a[j] = t1a[j]+f4*t1b[j];
      }
    }
    if (gp[procid].neighbors[DOWN] == -1) {
      t1a = (double *) t2a[im-1];
      t1b = (double *) t2b[im-1];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        t1a[j] = t1a[j]+f4*t1b[j];
      }
    }
    if (gp[procid].neighbors[LEFT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2a[j][0] = t2a[j][0]+f4*t2b[j][0];
      }
    }
    if (gp[procid].neighbors[RIGHT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2a[j][jm-1] = t2a[j][jm-1]+f4*t2b[j][jm-1];
      }
    }
-   for (i=firstrow;i<=lastrow;i++) {
+   for(i=firstrow;i<=lastrow;i++) {
      t1a = (double *) t2a[i];
      t1b = (double *) t2b[i];
-     for (iindex=firstcol;iindex<=lastcol;iindex++) {
+     for(iindex=firstcol;iindex<=lastcol;iindex++) {
        t1a[iindex] = t1a[iindex]+f4*t1b[iindex];
      }
    }
@@ -936,43 +935,43 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
    t2b = (double **) gb[procid];
    t2c = (double **) oldgb[procid];
    t2d = (double **) q_multi[procid][numlev-1];
-   for (i=istart;i<=iend;i++) {
+   for(i=istart;i<=iend;i++) {
      t1a = (double *) t2a[i];
      t1b = (double *) t2b[i];
-     for (j=jstart;j<=jend;j++) {
+     for(j=jstart;j<=jend;j++) {
        t1a[j] = t1b[j] * ressqr;
      }
    }
    if (gp[procid].neighbors[UP] == -1) {
      t1d = (double *) t2d[0];
      t1b = (double *) t2b[0];
-     for (j=jstart;j<=jend;j++) {
+     for(j=jstart;j<=jend;j++) {
        t1d[j] = t1b[j];
      }
    }
    if (gp[procid].neighbors[DOWN] == -1) {
      t1d = (double *) t2d[im-1];
      t1b = (double *) t2b[im-1];
-     for (j=jstart;j<=jend;j++) {
+     for(j=jstart;j<=jend;j++) {
        t1d[j] = t1b[j];
      }
    }
    if (gp[procid].neighbors[LEFT] == -1) {
-     for (i=istart;i<=iend;i++) {
+     for(i=istart;i<=iend;i++) {
        t2d[i][0] = t2b[i][0];
      }
    }
    if (gp[procid].neighbors[RIGHT] == -1) {
-     for (i=istart;i<=iend;i++) {
+     for(i=istart;i<=iend;i++) {
        t2d[i][jm-1] = t2b[i][jm-1];
      }
    }
 
    fac = 1.0 / (4.0 - ressqr*eig2);
-   for (i=ist;i<=ien;i++) {
+   for(i=ist;i<=ien;i++) {
      t1d = (double *) t2d[i];
      t1c = (double *) t2c[i];
-     for (j=jst;j<=jen;j++) {
+     for(j=jst;j<=jen;j++) {
        t1d[j] = t1c[j];
      }
    }
@@ -988,11 +987,11 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
      gp[procid].multi_time += (multi_end - multi_start);
    }
 
-   for (i=istart;i<=iend;i++) {
+   for(i=istart;i<=iend;i++) {
      t1b = (double *) t2b[i];
      t1c = (double *) t2c[i];
      t1d = (double *) t2d[i];
-     for (j=jstart;j<=jend;j++) {
+     for(j=jstart;j<=jend;j++) {
        t1b[j] = t1d[j];
        t1c[j] = t1d[j];
      }
@@ -1035,16 +1034,16 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
    }
    if ((gp[procid].neighbors[DOWN] == -1) && (gp[procid].neighbors[RIGHT] == -1)) {
      t2c[im-1][jm-1] = t2b[im-1][jm-1] -
-                                 hh1*t2a[im-1][jm-1];
+				 hh1*t2a[im-1][jm-1];
      t2d[im-1][jm-1] = t2b[im-1][jm-1] +
-                                 hh3*t2a[im-1][jm-1];
+				 hh3*t2a[im-1][jm-1];
    }
    if (gp[procid].neighbors[UP] == -1) {
      t1a = (double *) t2a[0];
      t1b = (double *) t2b[0];
      t1c = (double *) t2c[0];
      t1d = (double *) t2d[0];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        t1d[j] = t1b[j]+hh3*t1a[j];
        t1c[j] = t1b[j]-hh1*t1a[j];
      }
@@ -1054,30 +1053,30 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
      t1b = (double *) t2b[im-1];
      t1c = (double *) t2c[im-1];
      t1d = (double *) t2d[im-1];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        t1d[j] = t1b[j]+hh3*t1a[j];
        t1c[j] = t1b[j]-hh1*t1a[j];
      }
    }
    if (gp[procid].neighbors[LEFT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2d[j][0] = t2b[j][0]+hh3*t2a[j][0];
        t2c[j][0] = t2b[j][0]-hh1*t2a[j][0];
      }
    }
    if (gp[procid].neighbors[RIGHT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2d[j][jm-1] = t2b[j][jm-1]+hh3*t2a[j][jm-1];
        t2c[j][jm-1] = t2b[j][jm-1]-hh1*t2a[j][jm-1];
      }
    }
 
-   for (i=firstrow;i<=lastrow;i++) {
+   for(i=firstrow;i<=lastrow;i++) {
      t1a = (double *) t2a[i];
      t1b = (double *) t2b[i];
      t1c = (double *) t2c[i];
      t1d = (double *) t2d[i];
-     for (iindex=firstcol;iindex<=lastcol;iindex++) {
+     for(iindex=firstcol;iindex<=lastcol;iindex++) {
        t1d[iindex] = t1b[iindex] + hh3*t1a[iindex];
        t1c[iindex] = t1b[iindex] - hh1*t1a[iindex];
      }
@@ -1105,45 +1104,45 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
    }
    if ((gp[procid].neighbors[DOWN] == -1) && (gp[procid].neighbors[LEFT] == -1)) {
      t2a[im-1][0] = t2a[im-1][0] +
-                               timst*t2b[im-1][0];
+			       timst*t2b[im-1][0];
    }
    if ((gp[procid].neighbors[UP] == -1) && (gp[procid].neighbors[RIGHT] == -1)) {
      t2a[0][jm-1] = t2a[0][jm-1] +
-                               timst*t2b[0][jm-1];
+			       timst*t2b[0][jm-1];
    }
    if ((gp[procid].neighbors[DOWN] == -1) && (gp[procid].neighbors[RIGHT] == -1)) {
      t2a[im-1][jm-1] = t2a[im-1][jm-1] +
-                                  timst*t2b[im-1][jm-1];
+				  timst*t2b[im-1][jm-1];
    }
    if (gp[procid].neighbors[UP] == -1) {
      t1a = (double *) t2a[0];
      t1b = (double *) t2b[0];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        t1a[j] = t1a[j] + timst*t1b[j];
      }
    }
    if (gp[procid].neighbors[DOWN] == -1) {
      t1a = (double *) t2a[im-1];
      t1b = (double *) t2b[im-1];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        t1a[j] = t1a[j] + timst*t1b[j];
      }
    }
    if (gp[procid].neighbors[LEFT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2a[j][0] = t2a[j][0] + timst*t2b[j][0];
      }
    }
    if (gp[procid].neighbors[RIGHT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2a[j][jm-1] = t2a[j][jm-1] +
-                                 timst*t2b[j][jm-1];
+				 timst*t2b[j][jm-1];
      }
    }
-   for (i=firstrow;i<=lastrow;i++) {
+   for(i=firstrow;i<=lastrow;i++) {
      t1a = (double *) t2a[i];
      t1b = (double *) t2b[i];
-     for (iindex=firstcol;iindex<=lastcol;iindex++) {
+     for(iindex=firstcol;iindex<=lastcol;iindex++) {
          t1a[iindex] = t1a[iindex] + timst*t1b[iindex];
      }
    }
@@ -1155,46 +1154,46 @@ void slave2(long procid, long firstrow, long lastrow, long numrows, long firstco
    }
    if ((gp[procid].neighbors[DOWN] == -1) && (gp[procid].neighbors[LEFT] == -1)) {
      t2a[im-1][0] = t2a[im-1][0] +
-                               timst*t2b[im-1][0];
+			       timst*t2b[im-1][0];
    }
    if ((gp[procid].neighbors[UP] == -1) && (gp[procid].neighbors[RIGHT] == -1)) {
      t2a[0][jm-1] = t2a[0][jm-1] +
-                               timst*t2b[0][jm-1];
+			       timst*t2b[0][jm-1];
    }
    if ((gp[procid].neighbors[DOWN] == -1) && (gp[procid].neighbors[RIGHT] == -1)) {
      t2a[im-1][jm-1] = t2a[im-1][jm-1] +
-                                  timst*t2b[im-1][jm-1];
+				  timst*t2b[im-1][jm-1];
    }
    if (gp[procid].neighbors[UP] == -1) {
      t1a = (double *) t2a[0];
      t1b = (double *) t2b[0];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        t1a[j] = t1a[j] + timst*t1b[j];
      }
    }
    if (gp[procid].neighbors[DOWN] == -1) {
      t1a = (double *) t2a[im-1];
      t1b = (double *) t2b[im-1];
-     for (j=firstcol;j<=lastcol;j++) {
+     for(j=firstcol;j<=lastcol;j++) {
        t1a[j] = t1a[j] + timst*t1b[j];
      }
    }
    if (gp[procid].neighbors[LEFT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2a[j][0] = t2a[j][0] + timst*t2b[j][0];
      }
    }
    if (gp[procid].neighbors[RIGHT] == -1) {
-     for (j=firstrow;j<=lastrow;j++) {
+     for(j=firstrow;j<=lastrow;j++) {
        t2a[j][jm-1] = t2a[j][jm-1] +
-                                 timst*t2b[j][jm-1];
+				 timst*t2b[j][jm-1];
      }
    }
 
-   for (i=firstrow;i<=lastrow;i++) {
+   for(i=firstrow;i<=lastrow;i++) {
      t1a = (double *) t2a[i];
      t1b = (double *) t2b[i];
-     for (iindex=firstcol;iindex<=lastcol;iindex++) {
+     for(iindex=firstcol;iindex<=lastcol;iindex++) {
          t1a[iindex] = t1a[iindex] + timst*t1b[iindex];
      }
    }

@@ -31,23 +31,24 @@
  */
 
 
-#include <cmath>
-#include <cstdio>
-
+#include <stdio.h>
+#include <math.h>
 #include "rt.h"
 
+
+
 static	struct				/* Runlength pixel definition.	     */
-        {
-        U8	r, g, b;		/* Color.			     */
-        U8	count;			/* Pixel count for color.	     */
-        }
-        image[MAX_X];
+	{
+	U8	r, g, b;		/* Color.			     */
+	U8	count;			/* Pixel count for color.	     */
+	}
+	image[MAX_X];
 
 /*
-        image does not have  have to be made an array for tango-lite
-        since it is only used in RunLengthEncode, which is only
-        called by CloseFrameBuffer, which is only called after
-        all children have terminated
+	image does not have  have to be made an array for tango-lite
+	since it is only used in RunLengthEncode, which is only
+	called by CloseFrameBuffer, which is only called after
+	all children have terminated
 */
 
 
@@ -67,48 +68,48 @@ static	struct				/* Runlength pixel definition.	     */
  */
 
 VOID	RunLengthEncode(FILE *pf, PIXEL *fb, INT xsize)
-        {
-        INT	x;			/* Original buffer entry address.    */
-        INT	rl;			/* Runlength buffer entry address.   */
-        INT	numpixels;		/* Running count of identical pixels.*/
-        U8	red, green, blue;	/* Color holders.		     */
+	{
+	INT	x;			/* Original buffer entry address.    */
+	INT	rl;			/* Runlength buffer entry address.   */
+	INT	numpixels;		/* Running count of identical pixels.*/
+	U8	red, green, blue;	/* Color holders.		     */
 
-        rl = 0;
-        numpixels = 0;
+	rl = 0;
+	numpixels = 0;
 
-        image[0].r = (U8)( (INT) (fb[0].r * 255.0));
-        image[0].g = (U8)( (INT) (fb[0].g * 255.0));
-        image[0].b = (U8)( (INT) (fb[0].b * 255.0));
+	image[0].r = (U8)( (INT) (fb[0].r * 255.0));
+	image[0].g = (U8)( (INT) (fb[0].g * 255.0));
+	image[0].b = (U8)( (INT) (fb[0].b * 255.0));
 
-        for (x = 1; x < xsize; x++)
-                {
-                red   = (U8)( (INT) (fb[x].r * 255.0));
-                green = (U8)( (INT) (fb[x].g * 255.0));
-                blue  = (U8)( (INT) (fb[x].b * 255.0));
+	for (x = 1; x < xsize; x++)
+		{
+		red   = (U8)( (INT) (fb[x].r * 255.0));
+		green = (U8)( (INT) (fb[x].g * 255.0));
+		blue  = (U8)( (INT) (fb[x].b * 255.0));
 
 
-                if (red   == image[rl].r  &&
-                    green == image[rl].g  &&
-                    blue  == image[rl].b  &&
-                    numpixels < 255)
-                        numpixels++;
-                else
-                        {
-                        image[rl].count = (U8)numpixels;
-                        rl++;
+		if (red   == image[rl].r  &&
+		    green == image[rl].g  &&
+		    blue  == image[rl].b  &&
+		    numpixels < 255)
+			numpixels++;
+		else
+			{
+			image[rl].count = (U8)numpixels;
+			rl++;
 
-                        image[rl].r = red;
-                        image[rl].g = green;
-                        image[rl].b = blue;
-                        numpixels   = 0;
-                        }
-                }
+			image[rl].r = red;
+			image[rl].g = green;
+			image[rl].b = blue;
+			numpixels   = 0;
+			}
+		}
 
-        image[rl].count = (U8)numpixels;
+	image[rl].count = (U8)numpixels;
 
-        for (x = 0; x <= rl; x++)
-                fprintf(pf, "%c%c%c%c", image[x].r, image[x].g, image[x].b, image[x].count);
-        }
+	for (x = 0; x <= rl; x++)
+		fprintf(pf, "%c%c%c%c", image[x].r, image[x].g, image[x].b, image[x].count);
+	}
 
 
 
@@ -124,20 +125,20 @@ VOID	RunLengthEncode(FILE *pf, PIXEL *fb, INT xsize)
  */
 
 VOID	OpenFrameBuffer()
-        {
-        INT	i;
-        PIXEL	*fb;
+	{
+	INT	i;
+	PIXEL	*fb;
 
-        fb = Display.framebuffer = GlobalMalloc(Display.numpixels*sizeof(PIXEL), "fbuf.c");
+	fb = Display.framebuffer = GlobalMalloc(Display.numpixels*sizeof(PIXEL), "fbuf.c");
 
-        for (i = 0; i < Display.numpixels; i++)
-                {
-                fb->r = 0.0;
-                fb->g = 0.0;
-                fb->b = 0.0;
-                fb++;
-                }
-        }
+	for (i = 0; i < Display.numpixels; i++)
+		{
+		fb->r = 0.0;
+		fb->g = 0.0;
+		fb->b = 0.0;
+		fb++;
+		}
+	}
 
 
 
@@ -156,17 +157,17 @@ VOID	OpenFrameBuffer()
  */
 
 VOID	AddPixelColor(COLOR c, INT x, INT y)
-        {
-        INT	addr;			/* Index into framebuffer.	     */
-        PIXEL	*fb;			/* Ptr to framebuffer.		     */
+	{
+	INT	addr;			/* Index into framebuffer.	     */
+	PIXEL	*fb;			/* Ptr to framebuffer.		     */
 
-        addr = Display.xres * y + x;
-        fb   = Display.framebuffer;
+	addr = Display.xres * y + x;
+	fb   = Display.framebuffer;
 
-        fb[addr].r += c[0];
-        fb[addr].g += c[1];
-        fb[addr].b += c[2];
-        }
+	fb[addr].r += c[0];
+	fb[addr].g += c[1];
+	fb[addr].b += c[2];
+	}
 
 
 
@@ -183,50 +184,50 @@ VOID	AddPixelColor(COLOR c, INT x, INT y)
  */
 
 VOID	CloseFrameBuffer(CHAR *PicFileName)
-        {
-        INT	x;
-        INT	y;
-        PIXEL	*fb;			/* Ptr to framebuffer.		     */
-        FILE	*pf;			/* Ptr to picture file. 	     */
+	{
+	INT	x;
+	INT	y;
+	PIXEL	*fb;			/* Ptr to framebuffer.		     */
+	FILE	*pf;			/* Ptr to picture file. 	     */
 
-        pf = fopen(PicFileName, "wb");
-        if (!pf)
-                {
-                printf("Unable to open picture file %s.\n", PicFileName);
-                exit(-1);
-                }
-
-
-        /* Write file header. */
-
-        x   = Display.xres;
-        y   = Display.yres;
-        fb  = Display.framebuffer;
-
-        fprintf(pf, "%c%c%c%c%c%c%c%c",
-                    (char)(0), (char)(0), (char)(x/256), (char) (x%256),
-                    (char)(0), (char)(0), (char)(y/256), (char) (y%256));
+	pf = fopen(PicFileName, "wb");
+	if (!pf)
+		{
+		printf("Unable to open picture file %s.\n", PicFileName);
+		exit(-1);
+		}
 
 
-        /* Clamp, run-length encode, and write out pixels on a scanline basis. */
+	/* Write file header. */
 
-        for (y = 0; y < Display.yres; y++)
-                {
-                for (x = 0; x < Display.xres; x++)
-                        {
-                        fb[x].r = Min(fb[x].r, 1.0);
-                        fb[x].g = Min(fb[x].g, 1.0);
-                        fb[x].b = Min(fb[x].b, 1.0);
-                        fb[x].r = Max(fb[x].r, 0.0);
-                        fb[x].g = Max(fb[x].g, 0.0);
-                        fb[x].b = Max(fb[x].b, 0.0);
-                        }
+	x   = Display.xres;
+	y   = Display.yres;
+	fb  = Display.framebuffer;
 
-                RunLengthEncode(pf, fb, Display.xres);
-                fb += Display.xres;
-                }
+	fprintf(pf, "%c%c%c%c%c%c%c%c",
+		    (char)(0), (char)(0), (char)(x/256), (char) (x%256),
+		    (char)(0), (char)(0), (char)(y/256), (char) (y%256));
 
-        fclose(pf);
-        GlobalFree(Display.framebuffer);
-        }
+
+	/* Clamp, run-length encode, and write out pixels on a scanline basis. */
+
+	for (y = 0; y < Display.yres; y++)
+		{
+		for (x = 0; x < Display.xres; x++)
+			{
+			fb[x].r = Min(fb[x].r, 1.0);
+			fb[x].g = Min(fb[x].g, 1.0);
+			fb[x].b = Min(fb[x].b, 1.0);
+			fb[x].r = Max(fb[x].r, 0.0);
+			fb[x].g = Max(fb[x].g, 0.0);
+			fb[x].b = Max(fb[x].b, 0.0);
+			}
+
+		RunLengthEncode(pf, fb, Display.xres);
+		fb += Display.xres;
+		}
+
+	fclose(pf);
+	GlobalFree(Display.framebuffer);
+	}
 

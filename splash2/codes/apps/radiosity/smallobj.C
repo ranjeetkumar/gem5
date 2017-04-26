@@ -21,7 +21,7 @@
  *
  *************************************************************************/
 
-#include <cstdio>
+#include <stdio.h>
 
 EXTERN_ENV;
 
@@ -305,7 +305,7 @@ ElemVertex *get_elemvertex(long process_id)
 {
     ElemVertex *ev ;
 
-    if ( sobj_struct[process_id].n_local_free_elemvertex == 0 )
+    if( sobj_struct[process_id].n_local_free_elemvertex == 0 )
         {
             LOCK(global->free_elemvertex_lock);
             if ( MAX_ELEMVERTICES - global->free_elemvertex
@@ -355,7 +355,7 @@ void init_elemvertex(long process_id)
     global->free_elemvertex = 0 ;
 
     /* Allocate locks */
-    for ( ev_cnt = 0 ; ev_cnt < MAX_ELEMVERTICES ; ev_cnt++ )
+    for( ev_cnt = 0 ; ev_cnt < MAX_ELEMVERTICES ; ev_cnt++ )
         global->elemvertex_buf[ ev_cnt ].ev_lock
             = get_sharedlock( SHARED_LOCK_SEGANY, process_id ) ;
 
@@ -390,14 +390,14 @@ void foreach_leaf_edge(Edge *edge, long reverse, void (*func)(), long arg1, long
 {
     Edge *first, *second ;
 
-    if ( edge == 0 )
+    if( edge == 0 )
         return ;
 
-    if ( (edge->ea == 0) && (edge->eb == 0) )
+    if( (edge->ea == 0) && (edge->eb == 0) )
         func( edge, reverse, arg1, arg2, process_id ) ;
     else
         {
-            if ( reverse )
+            if( reverse )
                 {
                     first = edge->eb ;
                     second = edge->ea ;
@@ -407,9 +407,9 @@ void foreach_leaf_edge(Edge *edge, long reverse, void (*func)(), long arg1, long
                     first = edge->ea ;
                     second = edge->eb ;
                 }
-            if ( first )
+            if( first )
                 foreach_leaf_edge( first, reverse, func, arg1, arg2, process_id ) ;
-            if ( second )
+            if( second )
                 foreach_leaf_edge( second, reverse, func, arg1, arg2, process_id ) ;
         }
 }
@@ -452,7 +452,7 @@ void subdivide_edge(Edge *e, float a_ratio, long process_id)
     LOCK(e->edge_lock->lock);
 
     /* Check if the element already has children */
-    if ( ! _LEAF_EDGE(e) )
+    if( ! _LEAF_EDGE(e) )
         {
             UNLOCK(e->edge_lock->lock);
             return ;
@@ -499,7 +499,7 @@ Edge *get_edge(long process_id)
 {
     Edge *edge ;
 
-    if ( sobj_struct[process_id].n_local_free_edge == 0 )
+    if( sobj_struct[process_id].n_local_free_edge == 0 )
         {
             LOCK(global->free_edge_lock);
             if ( MAX_EDGES - global->free_edge < N_EDGE_ALLOCATE )
@@ -548,7 +548,7 @@ void init_edge(long process_id)
     global->free_edge = 0 ;
 
     /* Allocate locks */
-    for ( edge_cnt = 0 ; edge_cnt < MAX_EDGES ; edge_cnt++ )
+    for( edge_cnt = 0 ; edge_cnt < MAX_EDGES ; edge_cnt++ )
         global->edge_buf[ edge_cnt ].edge_lock
             = get_sharedlock( SHARED_LOCK_SEG0, process_id ) ;
 
@@ -583,7 +583,7 @@ void init_sharedlock(long process_id)
 {
     long i ;
 
-    for ( i = 0 ; i < MAX_SHARED_LOCK ; i++ )
+    for( i = 0 ; i < MAX_SHARED_LOCK ; i++ )
         {
             LOCKINIT(global->sh_lock[i].lock);
         }
@@ -627,7 +627,7 @@ Shared_Lock *get_sharedlock(long segment, long process_id)
 
     /* Update the lock counter */
     sobj_struct[process_id].lock_alloc_counter++ ;
-    if ( sobj_struct[process_id].lock_alloc_counter >= MAX_SHARED_LOCK )
+    if( sobj_struct[process_id].lock_alloc_counter >= MAX_SHARED_LOCK )
         sobj_struct[process_id].lock_alloc_counter = 0 ;
 
     return( pshl ) ;

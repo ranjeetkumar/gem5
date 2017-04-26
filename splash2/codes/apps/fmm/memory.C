@@ -14,8 +14,7 @@
 /*                                                                       */
 /*************************************************************************/
 
-#include <cfloat>
-
+#include <float.h>
 #include "defs.h"
 #include "memory.h"
 

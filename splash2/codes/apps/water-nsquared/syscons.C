@@ -15,16 +15,16 @@
 /*************************************************************************/
 
 EXTERN_ENV
-#include <cmath>
-
-#include "cnst.h"
-#include "global.h"
-#include "mddata.h"
-#include "mdvar.h"
-#include "parameters.h"
 #include "stdio.h"
+#include <math.h>
+
+#include "parameters.h"
+#include "mdvar.h"
 #include "water.h"
 #include "wwpot.h"
+#include "cnst.h"
+#include "mddata.h"
+#include "global.h"
 
 void SYSCNS()                    /* sets up some system constants */
 {
@@ -50,7 +50,7 @@ void SYSCNS()                    /* sets up some system constants */
                                        box length */
     }
     if (CUTOFF > 11.0) CUTOFF = 11.0; /* cutoff never greater than 11
-                                          Angstrom*/
+					  Angstrom*/
 
     REF1= -QQ/(CUTOFF*CUTOFF*CUTOFF);
     REF2=2.00*REF1;

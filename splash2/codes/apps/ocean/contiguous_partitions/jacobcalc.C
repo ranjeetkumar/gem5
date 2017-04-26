@@ -19,10 +19,9 @@
 
 EXTERN_ENV
 
-#include <cmath>
-#include <cstdio>
-#include <ctime>
-
+#include <stdio.h>
+#include <math.h>
+#include <time.h>
 #include "decs.h"
 
 void jacobcalc(double ***x, double ***y, double ***z, long pid, long firstrow, long lastrow, long firstcol, long lastcol)

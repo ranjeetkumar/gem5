@@ -34,18 +34,18 @@ void maketree(long ProcessId)
    }
    Local[ProcessId].Current_Root = (nodeptr) Global->G_root;
    for (pp = Local[ProcessId].mybodytab;
-        pp < Local[ProcessId].mybodytab+Local[ProcessId].mynbody; pp++) {
+	pp < Local[ProcessId].mybodytab+Local[ProcessId].mynbody; pp++) {
       p = *pp;
       if (Mass(p) != 0.0) {
-         Local[ProcessId].Current_Root
-            = (nodeptr) loadtree(p, (cellptr) Local[ProcessId].Current_Root,
-                                 ProcessId);
+	 Local[ProcessId].Current_Root
+	    = (nodeptr) loadtree(p, (cellptr) Local[ProcessId].Current_Root,
+				 ProcessId);
       }
       else {
-         LOCK(Global->io_lock);
-         fprintf(stderr, "Process %ld found body %ld to have zero mass\n",
-                 ProcessId, (long) p);
-         UNLOCK(Global->io_lock);
+	 LOCK(Global->io_lock);
+	 fprintf(stderr, "Process %ld found body %ld to have zero mass\n",
+		 ProcessId, (long) p);
+	 UNLOCK(Global->io_lock);
       }
    }
    BARRIER(Global->Barrier,NPROC);
@@ -104,29 +104,29 @@ void printtree(nodeptr n)
       PRTV("Pos", Pos(n));
       printf("\n");
       for (k = 0; k < NSUB; k++) {
-         printf("Child #%ld: ", k);
-         if (Subp(c)[k] == NULL) {
-            printf("NONE");
-         }
-         else {
-            if (Type(Subp(c)[k]) == CELL) {
-               nseq = ((cellptr) Subp(c)[k])->seqnum;
-               printf("C: Cost = %ld, ", Cost(Subp(c)[k]));
-            }
-            else {
-               nseq = ((leafptr) Subp(c)[k])->seqnum;
-               printf("L: # Bodies = %2ld, Cost = %ld, ",
-                      ((leafptr) Subp(c)[k])->num_bodies, Cost(Subp(c)[k]));
-            }
-            tmp = Subp(c)[k];
-            PRTV("Pos", Pos(tmp));
-         }
-         printf("\n");
+	 printf("Child #%ld: ", k);
+	 if (Subp(c)[k] == NULL) {
+	    printf("NONE");
+	 }
+	 else {
+	    if (Type(Subp(c)[k]) == CELL) {
+	       nseq = ((cellptr) Subp(c)[k])->seqnum;
+	       printf("C: Cost = %ld, ", Cost(Subp(c)[k]));
+	    }
+	    else {
+	       nseq = ((leafptr) Subp(c)[k])->seqnum;
+	       printf("L: # Bodies = %2ld, Cost = %ld, ",
+		      ((leafptr) Subp(c)[k])->num_bodies, Cost(Subp(c)[k]));
+	    }
+	    tmp = Subp(c)[k];
+	    PRTV("Pos", Pos(tmp));
+	 }
+	 printf("\n");
       }
       for (k=0;k<NSUB;k++) {
-         if (Subp(c)[k] != NULL) {
-            printtree(Subp(c)[k]);
-         }
+	 if (Subp(c)[k] != NULL) {
+	    printtree(Subp(c)[k]);
+	 }
       }
       break;
     case LEAF:
@@ -136,11 +136,11 @@ void printtree(nodeptr n)
       PRTV("Pos", Pos(n));
       printf("\n");
       for (k = 0; k < l->num_bodies; k++) {
-         p = Bodyp(l)[k];
-         printf("Body #%2ld: Num = %2ld, Level = %ld, ",
-                p - bodytab, k, Level(p));
-         PRTV("Pos",Pos(p));
-         printf("\n");
+	 p = Bodyp(l)[k];
+	 printf("Body #%2ld: Num = %2ld, Level = %ld, ",
+		p - bodytab, k, Level(p));
+	 PRTV("Pos",Pos(p));
+	 printf("\n");
       }
       break;
     default:
@@ -171,34 +171,34 @@ nodeptr loadtree(bodyptr p, cellptr root, long ProcessId)
    }
    for (i = IMAX >> 1; i > Level(root); i >>= 1) {
       for (j = 0; j < NDIM; j++) {
-         if (xor[j] & i) {
-            valid_root = FALSE;
-            break;
-         }
+	 if (xor[j] & i) {
+	    valid_root = FALSE;
+	    break;
+	 }
       }
       if (!valid_root) {
-         break;
+	 break;
       }
    }
    if (!valid_root) {
       if (root != Global->G_root) {
-         root_level = Level(root);
-         for (j = i; j > root_level; j >>= 1) {
-            root = (cellptr) Parent(root);
-         }
-         valid_root = TRUE;
-         for (i = IMAX >> 1; i > Level(root); i >>= 1) {
-            for (j = 0; j < NDIM; j++) {
-               if (xor[j] & i) {
-                  valid_root = FALSE;
-                  break;
-               }
-            }
-            if (!valid_root) {
-               printf("P%ld body %ld\n", ProcessId, p - bodytab);
-               root = Global->G_root;
-            }
-         }
+	 root_level = Level(root);
+	 for (j = i; j > root_level; j >>= 1) {
+	    root = (cellptr) Parent(root);
+	 }
+	 valid_root = TRUE;
+	 for (i = IMAX >> 1; i > Level(root); i >>= 1) {
+	    for (j = 0; j < NDIM; j++) {
+	       if (xor[j] & i) {
+		  valid_root = FALSE;
+		  break;
+	       }
+	    }
+	    if (!valid_root) {
+	       printf("P%ld body %ld\n", ProcessId, p - bodytab);
+	       root = Global->G_root;
+	    }
+	 }
       }
    }
    root = Global->G_root;
@@ -210,50 +210,50 @@ nodeptr loadtree(bodyptr p, cellptr root, long ProcessId)
    flag = TRUE;
    while (flag) {                           /* loop descending tree     */
       if (l == 0) {
-         error("not enough levels in tree\n");
+	 error("not enough levels in tree\n");
       }
       if (*qptr == NULL) {
-         /* lock the parent cell */
-         ALOCK(CellLock->CL, ((cellptr) mynode)->seqnum % MAXLOCK);
-         if (*qptr == NULL) {
-            le = InitLeaf((cellptr) mynode, ProcessId);
-            Parent(p) = (nodeptr) le;
-            Level(p) = l;
-            ChildNum(p) = le->num_bodies;
-            ChildNum(le) = kidIndex;
-            Bodyp(le)[le->num_bodies++] = p;
-            *qptr = (nodeptr) le;
-            flag = FALSE;
-         }
-         AULOCK(CellLock->CL, ((cellptr) mynode)->seqnum % MAXLOCK);
-         /* unlock the parent cell */
+	 /* lock the parent cell */
+	 ALOCK(CellLock->CL, ((cellptr) mynode)->seqnum % MAXLOCK);
+	 if (*qptr == NULL) {
+	    le = InitLeaf((cellptr) mynode, ProcessId);
+	    Parent(p) = (nodeptr) le;
+	    Level(p) = l;
+	    ChildNum(p) = le->num_bodies;
+	    ChildNum(le) = kidIndex;
+	    Bodyp(le)[le->num_bodies++] = p;
+	    *qptr = (nodeptr) le;
+	    flag = FALSE;
+	 }
+	 AULOCK(CellLock->CL, ((cellptr) mynode)->seqnum % MAXLOCK);
+	 /* unlock the parent cell */
       }
       if (flag && *qptr && (Type(*qptr) == LEAF)) {
-         /*   reached a "leaf"?      */
-         ALOCK(CellLock->CL, ((cellptr) mynode)->seqnum % MAXLOCK);
-         /* lock the parent cell */
-         if (Type(*qptr) == LEAF) {             /* still a "leaf"?      */
-            le = (leafptr) *qptr;
-            if (le->num_bodies == MAX_BODIES_PER_LEAF) {
-               *qptr = (nodeptr) SubdivideLeaf(le, (cellptr) mynode, l,
-                                                  ProcessId);
-            }
-            else {
-               Parent(p) = (nodeptr) le;
-               Level(p) = l;
-               ChildNum(p) = le->num_bodies;
-               Bodyp(le)[le->num_bodies++] = p;
-               flag = FALSE;
-            }
-         }
-         AULOCK(CellLock->CL, ((cellptr) mynode)->seqnum % MAXLOCK);
-         /* unlock the node           */
+	 /*   reached a "leaf"?      */
+	 ALOCK(CellLock->CL, ((cellptr) mynode)->seqnum % MAXLOCK);
+	 /* lock the parent cell */
+	 if (Type(*qptr) == LEAF) {             /* still a "leaf"?      */
+	    le = (leafptr) *qptr;
+	    if (le->num_bodies == MAX_BODIES_PER_LEAF) {
+	       *qptr = (nodeptr) SubdivideLeaf(le, (cellptr) mynode, l,
+						  ProcessId);
+	    }
+	    else {
+	       Parent(p) = (nodeptr) le;
+	       Level(p) = l;
+	       ChildNum(p) = le->num_bodies;
+	       Bodyp(le)[le->num_bodies++] = p;
+	       flag = FALSE;
+	    }
+	 }
+	 AULOCK(CellLock->CL, ((cellptr) mynode)->seqnum % MAXLOCK);
+	 /* unlock the node           */
       }
       if (flag) {
-         mynode = *qptr;
+	 mynode = *qptr;
          kidIndex = subindex(xp, l);
-         qptr = &Subp(*qptr)[kidIndex];  /* move down one level  */
-         l = l >> 1;                            /* and test next bit    */
+	 qptr = &Subp(*qptr)[kidIndex];  /* move down one level  */
+	 l = l >> 1;                            /* and test next bit    */
       }
    }
    SETV(Local[ProcessId].Root_Coords, xp);
@@ -276,10 +276,10 @@ bool intcoord(long xp[NDIM], vector rp)
    for (k = 0; k < NDIM; k++) {
       xsc = (rp[k] - Global->rmin[k]) / Global->rsize;
       if (0.0 <= xsc && xsc < 1.0) {
-         xp[k] = floor(IMAX * xsc);
+	 xp[k] = floor(IMAX * xsc);
       }
       else {
-         inb = FALSE;
+	 inb = FALSE;
       }
    }
    return (inb);
@@ -304,8 +304,8 @@ long subindex(long x[NDIM], long l)
    }
    for (k = 1; k < NDIM; k++) {
       if (((x[k] & l) && !yes) || (!(x[k] & l) && yes)) {
-         i += NSUB >> (k + 1);
-         yes = TRUE;
+	 i += NSUB >> (k + 1);
+	 yes = TRUE;
       }
       else yes = FALSE;
    }
@@ -335,72 +335,72 @@ void hackcofm(long ProcessId)
    /* this way, we look at child cells before parents			 */
 
    for (ll = Local[ProcessId].myleaftab + Local[ProcessId].mynleaf - 1;
-        ll >= Local[ProcessId].myleaftab; ll--) {
+	ll >= Local[ProcessId].myleaftab; ll--) {
       l = *ll;
       Mass(l) = 0.0;
       Cost(l) = 0;
       CLRV(Pos(l));
       for (i = 0; i < l->num_bodies; i++) {
-         p = Bodyp(l)[i];
-         Mass(l) += Mass(p);
-         Cost(l) += Cost(p);
-         MULVS(tmpv, Pos(p), Mass(p));
-         ADDV(Pos(l), Pos(l), tmpv);
+	 p = Bodyp(l)[i];
+	 Mass(l) += Mass(p);
+	 Cost(l) += Cost(p);
+	 MULVS(tmpv, Pos(p), Mass(p));
+	 ADDV(Pos(l), Pos(l), tmpv);
       }
       DIVVS(Pos(l), Pos(l), Mass(l));
 #ifdef QUADPOLE
       CLRM(Quad(l));
       for (i = 0; i < l->num_bodies; i++) {
-         p = Bodyp(l)[i];
-         SUBV(dr, Pos(p), Pos(l));
-         OUTVP(drdr, dr, dr);
-         DOTVP(drsq, dr, dr);
-         SETMI(Idrsq);
-         MULMS(Idrsq, Idrsq, drsq);
-         MULMS(tmpm, drdr, 3.0);
-         SUBM(tmpm, tmpm, Idrsq);
-         MULMS(tmpm, tmpm, Mass(p));
-         ADDM(Quad(l), Quad(l), tmpm);
+	 p = Bodyp(l)[i];
+	 SUBV(dr, Pos(p), Pos(l));
+	 OUTVP(drdr, dr, dr);
+	 DOTVP(drsq, dr, dr);
+	 SETMI(Idrsq);
+	 MULMS(Idrsq, Idrsq, drsq);
+	 MULMS(tmpm, drdr, 3.0);
+	 SUBM(tmpm, tmpm, Idrsq);
+	 MULMS(tmpm, tmpm, Mass(p));
+	 ADDM(Quad(l), Quad(l), tmpm);
       }
 #endif
       Done(l)=TRUE;
    }
    for (cc = Local[ProcessId].mycelltab+Local[ProcessId].myncell-1;
-        cc >= Local[ProcessId].mycelltab; cc--) {
+	cc >= Local[ProcessId].mycelltab; cc--) {
       q = *cc;
       Mass(q) = 0.0;
       Cost(q) = 0;
       CLRV(Pos(q));
       for (i = 0; i < NSUB; i++) {
-         r = Subp(q)[i];
-         if (r != NULL) {
-            while (!Done(r)) {
-               /* wait */
-            }
-            Mass(q) += Mass(r);
-            Cost(q) += Cost(r);
-            MULVS(tmpv, Pos(r), Mass(r));
-            ADDV(Pos(q), Pos(q), tmpv);
-            Done(r) = FALSE;
-         }
+	 r = Subp(q)[i];
+	 if (r != NULL) {
+	    while(!Done(r)) {
+	       /* wait */
+	    }
+	    Mass(q) += Mass(r);
+	    Cost(q) += Cost(r);
+	    MULVS(tmpv, Pos(r), Mass(r));
+	    ADDV(Pos(q), Pos(q), tmpv);
+	    Done(r) = FALSE;
+	 }
       }
       DIVVS(Pos(q), Pos(q), Mass(q));
 #ifdef QUADPOLE
       CLRM(Quad(q));
       for (i = 0; i < NSUB; i++) {
-         r = Subp(q)[i];
-         if (r != NULL) {
-            SUBV(dr, Pos(r), Pos(q));
-            OUTVP(drdr, dr, dr);
-            DOTVP(drsq, dr, dr);
-            SETMI(Idrsq);
-            MULMS(Idrsq, Idrsq, drsq);
-            MULMS(tmpm, drdr, 3.0);
-            SUBM(tmpm, tmpm, Idrsq);
-            MULMS(tmpm, tmpm, Mass(r));
-            ADDM(tmpm, tmpm, Quad(r));
-            ADDM(Quad(q), Quad(q), tmpm);
-         }
+	 r = Subp(q)[i];
+	 if (r != NULL) {
+	    SUBV(dr, Pos(r), Pos(q));
+	    OUTVP(drdr, dr, dr);
+	    DOTVP(drsq, dr, dr);
+	    SETMI(Idrsq);
+	    MULMS(Idrsq, Idrsq, drsq);
+	    MULMS(tmpm, drdr, 3.0);
+	    SUBM(tmpm, tmpm, Idrsq);
+	    MULMS(tmpm, tmpm, Mass(r));
+	    ADDM(tmpm, tmpm, Quad(r));
+	    ADDM(Quad(q), Quad(q), tmpm);
+	 }
       }
 #endif
       Done(q)=TRUE;
@@ -446,12 +446,12 @@ cellptr SubdivideLeaf(leafptr le, cellptr parent, long l, long ProcessId)
       intcoord(xp, Pos(p));
       index = subindex(xp, l);
       if (!Subp(c)[index]) {
-         le = InitLeaf(c, ProcessId);
-         ChildNum(le) = index;
-         Subp(c)[index] = (nodeptr) le;
+	 le = InitLeaf(c, ProcessId);
+	 ChildNum(le) = index;
+	 Subp(c)[index] = (nodeptr) le;
       }
       else {
-         le = (leafptr) Subp(c)[index];
+	 le = (leafptr) Subp(c)[index];
       }
       Parent(p) = (nodeptr) le;
       ChildNum(p) = le->num_bodies;
@@ -472,7 +472,7 @@ cellptr makecell(long ProcessId)
 
    if (Local[ProcessId].mynumcell == maxmycell) {
       error("makecell: Proc %ld needs more than %ld cells; increase fcells\n",
-            ProcessId,maxmycell);
+	    ProcessId,maxmycell);
    }
    Mycell = Local[ProcessId].mynumcell++;
    c = Local[ProcessId].ctab + Mycell;
@@ -498,7 +498,7 @@ leafptr makeleaf(long ProcessId)
 
    if (Local[ProcessId].mynumleaf == maxmyleaf) {
       error("makeleaf: Proc %ld needs more than %ld leaves; increase fleaves\n",
-            ProcessId,maxmyleaf);
+	    ProcessId,maxmyleaf);
    }
    Myleaf = Local[ProcessId].mynumleaf++;
    le = Local[ProcessId].ltab + Myleaf;

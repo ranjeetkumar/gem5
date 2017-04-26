@@ -25,54 +25,54 @@
 long block_xlen,block_ylen;
 BOOLEAN adaptive;               /* adaptive ray tracing?                     */
 
-                                /* During shading:                           */
+				/* During shading:                           */
 long density_epsilon;	        /*   minimum (density*map_divisor)           */
-                                /*     (>= MIN_DENSITY)                      */
+				/*     (>= MIN_DENSITY)                      */
 long magnitude_epsilon;  	/*   minimum (magnitude*grd_divisor)**2      */
-                                /*     (> MIN_MAGNITUDE)                     */
+				/*     (> MIN_MAGNITUDE)                     */
 
                                 /* Shading parameters of reflective surface: */
 float density_opacity[MAX_DENSITY+1];	  /* opacity as function of density  */
 float magnitude_opacity[MAX_MAGNITUDE+1];/* opacity as function of magnitude*/
 
-                                /* Global lighting parameters:               */
+				/* Global lighting parameters:               */
 PIXEL background;	        /*   color of background assumed to be zero  */
                                 /*   because of hack for producing final     */
                                 /*   image on host from node images          */
 float light[NM];		/*   normalized vector from object to light  */
 
-                                /* Lighting parameters of reflective surface:*/
+				/* Lighting parameters of reflective surface:*/
 float ambient_color;	        /*   color of ambient reflection             */
 float diffuse_color;    	/*   color of diffuse reflection             */
 float specular_color;   	/*   color of specular reflection            */
 float specular_exponent;       /*   exponent of specular reflection         */
 
-                                /* Depth cueing parameters:                  */
+				/* Depth cueing parameters:                  */
 float depth_hither;		/*   percentage of full intensity at hither  */
 float depth_yon;		/*   percentage of full intensity at yon     */
 float depth_exponent;		/*   exponent of falloff from hither to yon  */
 
-                                /* During shading, rendering, ray tracing:   */
+				/* During shading, rendering, ray tracing:   */
 float opacity_epsilon;  	/*   minimum opacity                         */
-                                /*     (usually >= MIN_OPACITY,              */
-                                /*      < MIN_OPACITY during shading shades  */
-                                /*      all voxels for generation of mipmap) */
+				/*     (usually >= MIN_OPACITY,              */
+				/*      < MIN_OPACITY during shading shades  */
+				/*      all voxels for generation of mipmap) */
 
-                                /* During rendering and ray tracing:         */
+				/* During rendering and ray tracing:         */
 float opacity_cutoff;   	/*   cutoff opacity                          */
-                                /*     (<= MAX_OPACITY)                      */
+				/*     (<= MAX_OPACITY)                      */
 
-                                /* During ray tracing:                       */
+				/* During ray tracing:                       */
 long highest_sampling_boxlen;    /*   highest boxlen for adaptive sampling    */
-                                /*     (>= 1)                                */
+				/*     (>= 1)                                */
 long lowest_volume_boxlen;      	/*   lowest boxlen for volume data           */
-                                /*     (>= 1)                                */
+				/*     (>= 1)                                */
 long volume_color_difference;   	/*   minimum color diff for volume data      */
-                                /*     (>= MIN_PIXEL)                        */
+				/*     (>= MIN_PIXEL)                        */
 long pyr_highest_level; 		/*   highest level of pyramid to look at     */
-                                /*     (<= MAX_PYRLEVEL)                     */
+				/*     (<= MAX_PYRLEVEL)                     */
 long pyr_lowest_level;  		/*   lowest level of pyramid to look at      */
-                                /*     (>= 0)                                */
+				/*     (>= 0)                                */
 float angle[NM];                /* initial viewing angle                     */
 
 
@@ -145,8 +145,8 @@ void Init_Lighting()
   light[Y] = 0.7;
   light[Z] = -1.0;
   inv_magnitude = 1.0/sqrt(light[X]*light[X] +
-                         light[Y]*light[Y] +
-                         light[Z]*light[Z]);
+			 light[Y]*light[Y] +
+			 light[Z]*light[Z]);
   light[X] = light[X]*inv_magnitude;
   light[Y] = light[Y]*inv_magnitude;
   light[Z] = light[Z]*inv_magnitude;

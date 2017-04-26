@@ -16,9 +16,8 @@
 
 EXTERN_ENV
 
-#include <cmath>
-
 #include "matrix.h"
+#include <math.h>
 
 double *TriBSolve(BMatrix LB, double *b, long *PERM)
 {
@@ -45,27 +44,27 @@ double *TriBSolve(BMatrix LB, double *b, long *PERM)
       /* diagonal block */
       bl = LB.col[j];
       for (j1=j; j1<j+LB.partition_size[j]; j1++) {
-        y[j1] = bt[PERM[j1]]/
-                LB.entry[bl].block->nz[(j1-j)+(j1-j)*LB.entry[bl].block->length];
+	y[j1] = bt[PERM[j1]]/
+	        LB.entry[bl].block->nz[(j1-j)+(j1-j)*LB.entry[bl].block->length];
         for (i1=j1-j+1; i1<LB.entry[bl].block->length; i1++) {
-          if (LB.entry[bl].block->structure)
-            row = LB.row[bl] + LB.entry[bl].block->structure[i1];
-          else row = LB.row[bl] + i1;
-          bt[PERM[row]] -= LB.entry[bl].block->nz[
-                i1+(j1-j)*LB.entry[bl].block->length] * y[j1];
-        }
+	  if (LB.entry[bl].block->structure)
+	    row = LB.row[bl] + LB.entry[bl].block->structure[i1];
+	  else row = LB.row[bl] + i1;
+	  bt[PERM[row]] -= LB.entry[bl].block->nz[
+		i1+(j1-j)*LB.entry[bl].block->length] * y[j1];
+	}
       }
       /* blocks below diagonal */
       for (bl=LB.col[j]+1; bl<LB.col[j+1]; bl++) {
-        for (i1=0; i1<LB.entry[bl].block->length; i1++) {
-          if (LB.entry[bl].block->structure)
-            row = LB.row[bl] + LB.entry[bl].block->structure[i1];
-          else row = LB.row[bl] + i1;
-          for (j1=j; j1<j+LB.partition_size[j]; j1++) {
-            bt[PERM[row]] -= LB.entry[bl].block->nz[
-                i1+(j1-j)*LB.entry[bl].block->length] * y[j1];
-          }
-        }
+	for (i1=0; i1<LB.entry[bl].block->length; i1++) {
+	  if (LB.entry[bl].block->structure)
+	    row = LB.row[bl] + LB.entry[bl].block->structure[i1];
+	  else row = LB.row[bl] + i1;
+	  for (j1=j; j1<j+LB.partition_size[j]; j1++) {
+	    bt[PERM[row]] -= LB.entry[bl].block->nz[
+		i1+(j1-j)*LB.entry[bl].block->length] * y[j1];
+	  }
+	}
       }
     }
   }
@@ -86,27 +85,27 @@ double *TriBSolve(BMatrix LB, double *b, long *PERM)
       /* blocks below diagonal */
       for (bl=LB.col[j]+1; bl<LB.col[j+1]; bl++) {
         for (i1=0; i1<LB.entry[bl].block->length; i1++) {
-          if (LB.entry[bl].block->structure)
-            row = LB.row[bl] + LB.entry[bl].block->structure[i1];
-          else row = LB.row[bl] + i1;
+	  if (LB.entry[bl].block->structure)
+	    row = LB.row[bl] + LB.entry[bl].block->structure[i1];
+	  else row = LB.row[bl] + i1;
           for (j1=j; j1<j+LB.partition_size[j]; j1++) {
-            y[j1] -= LB.entry[bl].block->nz[
-                i1+(j1-j)*LB.entry[bl].block->length] * xp[row];
-          }
-        }
+	    y[j1] -= LB.entry[bl].block->nz[
+		i1+(j1-j)*LB.entry[bl].block->length] * xp[row];
+	  }
+	}
       }
       /* diagonal block */
       bl = LB.col[j];
       for (j1=j+LB.partition_size[j]-1; j1>=j; j1--) {
         for (i1=j1-j+1; i1<LB.entry[bl].block->length; i1++) {
-          if (LB.entry[bl].block->structure)
-            row = LB.row[bl] + LB.entry[bl].block->structure[i1];
-          else row = LB.row[bl] + i1;
-          y[j1] -= LB.entry[bl].block->nz[
-                i1+(j1-j)*LB.entry[bl].block->length] * xp[row];
-        }
-        xp[j1] = y[j1]/
-                LB.entry[bl].block->nz[(j1-j)+(j1-j)*LB.entry[bl].block->length];
+	  if (LB.entry[bl].block->structure)
+	    row = LB.row[bl] + LB.entry[bl].block->structure[i1];
+	  else row = LB.row[bl] + i1;
+	  y[j1] -= LB.entry[bl].block->nz[
+		i1+(j1-j)*LB.entry[bl].block->length] * xp[row];
+	}
+	xp[j1] = y[j1]/
+	        LB.entry[bl].block->nz[(j1-j)+(j1-j)*LB.entry[bl].block->length];
       }
     }
 
@@ -151,13 +150,13 @@ double *CreateVector(SMatrix M)
   if (M.nz) {
     for (j=0; j<M.n; j++)
       for (i=M.col[j]; i<M.col[j+1]; i++) {
-        b[M.row[i]] += M.nz[i];
+	b[M.row[i]] += M.nz[i];
       }
   }
   else {
     for (j=0; j<M.n; j++)
       for (i=M.col[j]; i<M.col[j+1]; i++) {
-        b[M.row[i]] += Value(M.row[i], j);
+	b[M.row[i]] += Value(M.row[i], j);
       }
   }
 

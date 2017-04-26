@@ -119,7 +119,7 @@ long scanbind(string bvec[], string name)
 
    for (i = 0; bvec[i] != NULL; i++)
       if (matchname(bvec[i], name))
-         return (i);
+	 return (i);
    return (-1);
 }
 
@@ -151,7 +151,7 @@ string extrvalue(string arg)
    ap = (char *) arg;
    while (*ap != '\0')
       if (*ap++ == '=')
-         return ((string) ap);
+	 return ((string) ap);
    return (NULL);
 }
 

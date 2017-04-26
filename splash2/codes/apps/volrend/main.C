@@ -26,13 +26,11 @@
 
 *************************************************************************/
 
-#include <sys/resource.h>
-#include <sys/time.h>
-
-#include <climits>
-#include <cstring>
-
 #include "incl.h"
+#include <string.h>
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <limits.h>
 #include "tiffio.h"
 
 #define SH_MEM_AMT 60000000
@@ -259,35 +257,35 @@ void Render_Loop()
     for (step=0; step<ROTATE_STEPS; step++) { /* do rotation sequence */
 
 /*  POSSIBLE ENHANCEMENT:  Here is where one might reset statistics, if
-                one wanted to.
+    		one wanted to.
 */
 
       frame = step;
       /* initialize images here */
       local_image_address = image_address + image_partition * my_node;
       local_mask_image_address = mask_image_address +
-        mask_image_partition * my_node;
+	mask_image_partition * my_node;
 
       BARRIER(Global->SlaveBarrier,num_nodes);
 
       if (my_node == num_nodes-1) {
-        for (i=image_partition*my_node; i<image_length; i++)
-          *local_image_address++ = background;
-        if (adaptive)
-          for (i=mask_image_partition*my_node; i<mask_image_length; i++)
-            *local_mask_image_address++ = NULL_PIXEL;
+	for (i=image_partition*my_node; i<image_length; i++)
+	  *local_image_address++ = background;
+	if (adaptive)
+	  for (i=mask_image_partition*my_node; i<mask_image_length; i++)
+	    *local_mask_image_address++ = NULL_PIXEL;
       }
       else {
-        for (i=0; i<image_partition; i++)
-          *local_image_address++ = background;
-        if (adaptive)
-          for (i=0; i<mask_image_partition; i++)
-            *local_mask_image_address++ = NULL_PIXEL;
+	for (i=0; i<image_partition; i++)
+	  *local_image_address++ = background;
+	if (adaptive)
+	  for (i=0; i<mask_image_partition; i++)
+	    *local_mask_image_address++ = NULL_PIXEL;
       }
 
       if (my_node == ROOT) {
 #ifdef DIM
-        Select_View((float)STEP_SIZE, dim);
+	Select_View((float)STEP_SIZE, dim);
 #else
         Select_View((float)STEP_SIZE, Y);
 #endif
@@ -302,33 +300,33 @@ void Render_Loop()
       Render(my_node);
 
       if (my_node == ROOT) {
-        if (ROTATE_STEPS > 1) {
+	if (ROTATE_STEPS > 1) {
 #ifdef DIM
-          sprintf(outfile, "%s_%ld",filename, 1000+dim*ROTATE_STEPS+step);
+	  sprintf(outfile, "%s_%ld",filename, 1000+dim*ROTATE_STEPS+step);
 #else
-          sprintf(outfile, "%s_%ld.tiff",filename, 1000+step);
+	  sprintf(outfile, "%s_%ld.tiff",filename, 1000+step);
 #endif
 /*	  Store_Image(outfile);
           p = image_address;
           for (zz = 0;zz < image_length;zz++) {
             tiff_image[zz] = (long) ((*p)*256*256*256 + (*p)*256*256 +
-                                    (*p)*256 + (*p));
-            p++;
+				    (*p)*256 + (*p));
+	    p++;
           }
 tiff_save_rgba(outfile,tiff_image,image_len[X],image_len[Y]);  */
 WriteGrayscaleTIFF(outfile, image_len[X],image_len[Y],image_len[X], image_address);
-        } else {
+	} else {
 /*	  Store_Image(filename);
-          p = image_address;
+	  p = image_address;
           for (zz = 0;zz < image_length;zz++) {
             tiff_image[zz] = (long) ((*p)*256*256*256 + (*p)*256*256 +
-                                    (*p)*256 + (*p));
-            p++;
+				    (*p)*256 + (*p));
+	    p++;
           }
 tiff_save_rgba(filename,tiff_image,image_len[X],image_len[Y]);    */
           strcat(filename,".tiff");
 WriteGrayscaleTIFF(filename, image_len[X],image_len[Y],image_len[X], image_address);
-        }
+	}
       }
     }
 #ifdef DIM
@@ -345,21 +343,21 @@ void Error(char string[], char *arg1, char *arg2, char *arg3, char *arg4, char *
 #else
 void Error(char string[], ...)
 {
-        va_list	ap;
-        char	*arg1 = NULL, *arg2 = NULL, *arg3 = NULL, *arg4 = NULL, *arg5 = NULL, *arg6 = NULL, *arg7 = NULL, *arg8 = NULL;
+	va_list	ap;
+	char	*arg1 = NULL, *arg2 = NULL, *arg3 = NULL, *arg4 = NULL, *arg5 = NULL, *arg6 = NULL, *arg7 = NULL, *arg8 = NULL;
 
-        va_start(ap, string);
-        arg1 = va_arg(ap, char *);
-        arg1 = va_arg(ap, char *);
-        arg1 = va_arg(ap, char *);
-        arg1 = va_arg(ap, char *);
-        arg1 = va_arg(ap, char *);
-        arg1 = va_arg(ap, char *);
-        arg1 = va_arg(ap, char *);
-        arg1 = va_arg(ap, char *);
-        va_end(ap);
-        fprintf(stderr,string,arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8);
-        exit(1);
+	va_start(ap, string);
+	arg1 = va_arg(ap, char *);
+	arg1 = va_arg(ap, char *);
+	arg1 = va_arg(ap, char *);
+	arg1 = va_arg(ap, char *);
+	arg1 = va_arg(ap, char *);
+	arg1 = va_arg(ap, char *);
+	arg1 = va_arg(ap, char *);
+	arg1 = va_arg(ap, char *);
+	va_end(ap);
+	fprintf(stderr,string,arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8);
+	exit(1);
 }
 #endif
 
@@ -372,7 +370,7 @@ void Allocate_Image(PIXEL **address, long length)
   *address = (PIXEL *)NU_MALLOC(length*sizeof(PIXEL),0);
 
   if (*address == NULL)
-          Error("    No space available for image.\n", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	  Error("    No space available for image.\n", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
   for (i=0; i<length; i++) *(*address+i) = 0;
 
@@ -440,7 +438,7 @@ void Allocate_Shading_Table(PIXEL **address1, long length)
   long i;
 
   printf("    Allocating shade lookup table of %ld bytes...\n",
-         length*sizeof(PIXEL));
+	 length*sizeof(PIXEL));
 
 /*  POSSIBLE ENHANCEMENT:  If you want to replicate the shade table,
     replace the macro with a simple malloc in the line below */

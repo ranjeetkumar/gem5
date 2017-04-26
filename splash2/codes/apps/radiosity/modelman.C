@@ -24,7 +24,7 @@
  *
  *************************************************************************/
 
-#include <cstdio>
+#include <stdio.h>
 
 EXTERN_ENV;
 
@@ -124,7 +124,7 @@ void init_modeling_tasks(long process_id)
     extern ModelDataBase room_model[] ;
     extern ModelDataBase largeroom_model[] ;
 
-    if ( ! check_task_counter() )
+    if( ! check_task_counter() )
         return ;
 
     switch( model_selector )
@@ -161,7 +161,7 @@ static void init_room_model_tasks(ModelDataBase *model, long process_id)
 {
     ModelDataBase *pm ;
 
-    for ( pm = model ; pm->type != MODEL_NULL ; pm++ )
+    for( pm = model ; pm->type != MODEL_NULL ; pm++ )
         create_modeling_task( &pm->model, pm->type, process_id ) ;
 }
 

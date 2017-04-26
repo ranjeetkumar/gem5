@@ -20,12 +20,12 @@
 
 typedef struct
 {
-        float v[4] ;                   /* x, y, z, and w */
+	float v[4] ;                   /* x, y, z, and w */
 } Vertex2;
 
 typedef struct
 {
-        float m[4][4] ;                /* m[row][column], row vector assumed */
+	float m[4][4] ;                /* m[row][column], row vector assumed */
 } Matrix;
 
 /****************************************

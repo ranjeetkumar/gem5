@@ -22,15 +22,12 @@
  *
  ***************************************************************/
 
-#include <cstdio>
-#include <cstring>
-
+#include <stdio.h>
+#include <string.h>
 #if defined(SGI_GL)
 #include <gl.h>
-
 #if defined(GL_NASA)
 #include <panel.h>
-
 #endif
 #endif
 
@@ -160,7 +157,7 @@ int main(int argc, char *argv[])
     choices[2].init_value = model_selector ;
 
     /* Initialize graphic device */
-    if ( batch_mode == 0 )
+    if( batch_mode == 0 )
         {
             g_init(argc, argv) ;
             setup_view( DFLT_VIEW_ROT_X, DFLT_VIEW_ROT_Y,
@@ -172,7 +169,7 @@ int main(int argc, char *argv[])
 
     /* Allocate global shared memory and initialize */
     global = (Global *) G_MALLOC(sizeof(Global)) ;
-    if ( global == 0 )
+    if( global == 0 )
         {
             printf( "Can't allocate memory\n" ) ;
             exit(1) ;
@@ -208,7 +205,7 @@ int main(int argc, char *argv[])
 
 */
 
-    if ( batch_mode )
+    if( batch_mode )
         {
             /* In batch mode, create child processes and start immediately */
 
@@ -216,7 +213,7 @@ int main(int argc, char *argv[])
             CLOCK( time_rad_start );
 
             global->index = 0;
-            for ( i = 0 ; i < n_processors ; i++ )
+            for( i = 0 ; i < n_processors ; i++ )
                 {
                     taskqueue_id[i] = assign_taskq(0) ;
                 }
@@ -283,16 +280,9 @@ int main(int argc, char *argv[])
                         min_vertex_time = timing[i]->vertex_time;
                 }
 
-                printf("\n\n%8s%20lu%20lu%12lu%12lu\n","Max", max_rad_time, max_refine_time,
-                       max_wait_time, max_vertex_time);
-                printf("\n%8s%20lu%20lu%12lu%12lu\n","Min", min_rad_time, min_refine_time,
-                       min_wait_time, min_vertex_time);
-                printf("\n%8s%20lu%20lu%12lu%12lu\n","Avg",
-                       (long) (((double) total_rad_time) /
-                               ((double) (1.0 * n_processors))),
-                       (long) (((double) total_refine_time) / ((double) (1.0 * n_processors))),
-                       (long) (((double) total_wait_time) / ((double) (1.0 * n_processors))),
-                       (long) (((double) total_vertex_time) / ((double) (1.0 * n_processors))));
+                printf("\n\n%8s%20lu%20lu%12lu%12lu\n","Max", max_rad_time, max_refine_time, max_wait_time, max_vertex_time);
+                printf("\n%8s%20lu%20lu%12lu%12lu\n","Min", min_rad_time, min_refine_time, min_wait_time, min_vertex_time);
+                printf("\n%8s%20lu%20lu%12lu%12lu\n","Avg", (long) (((double) total_rad_time) / ((double) (1.0 * n_processors))), (long) (((double) total_refine_time) / ((double) (1.0 * n_processors))), (long) (((double) total_wait_time) / ((double) (1.0 * n_processors))), (long) (((double) total_vertex_time) / ((double) (1.0 * n_processors))));
                 printf("\n\n");
 
             }
@@ -354,9 +344,9 @@ void start_radiosity(long val)
     val = g_get_choice_val( ap, &choices[0] ) ;
 #endif
 
-    if ( val == CHOICE_RAD_RUN )
+    if( val == CHOICE_RAD_RUN )
         {
-            if ( state == -1 )
+            if( state == -1 )
                 {
                     printf( "Please reset first\007\n" ) ;
                     return ;
@@ -456,9 +446,9 @@ void start_radiosity(long val)
             state = -1 ;
         }
 
-    else if ( val == CHOICE_RAD_STEP )
+    else if( val == CHOICE_RAD_STEP )
         {
-            if ( state == -1 )
+            if( state == -1 )
                 {
                     printf( "Please reset first\007\n" ) ;
                     return ;
@@ -488,7 +478,7 @@ void start_radiosity(long val)
                     break ;
 
                 case 1:
-                    if ( init_ray_tasks(0) )
+                    if( init_ray_tasks(0) )
                         {
                             BARRIER(global->barrier, n_processors);
                             process_tasks(0) ;
@@ -512,7 +502,7 @@ void start_radiosity(long val)
                           disp_mesh_switch, disp_interaction_switch, 0) ;
         }
 
-    else if ( val == CHOICE_RAD_RESET )
+    else if( val == CHOICE_RAD_RESET )
         {
             /* Initialize global variables again */
             init_global(0) ;
@@ -566,11 +556,11 @@ void change_display(long val)
             return ;
         }
 
-    if ( disp_fill_switch == 0 )
+    if( disp_fill_switch == 0 )
         disp_fill_mode = 0 ;
     else
         {
-            if ( disp_shade_switch == 0 )
+            if( disp_shade_switch == 0 )
                 disp_fill_mode = 1 ;
             else
                 disp_fill_mode = 2 ;
@@ -753,7 +743,7 @@ void utility_tools(long val)
             print_statistics( stdout, 0 ) ;
             break ;
         case CHOICE_UTIL_STAT_FILE:
-            if ( (fd = fopen( "radiosity_stat", "w" )) == 0 )
+            if( (fd = fopen( "radiosity_stat", "w" )) == 0 )
                 {
                     perror( "radiosity_stat" ) ;
                     break ;
@@ -814,7 +804,7 @@ void radiosity()
     process_tasks(process_id) ;
 
     /* Gather rays & do BF refinement */
-    while ( init_ray_tasks(process_id) )
+    while( init_ray_tasks(process_id) )
         {
             /* Wait till tasks are put in the queue */
             BARRIER(global->barrier, n_processors);
@@ -886,7 +876,7 @@ long init_ray_tasks(long process_id)
 
     /* If this is not the first process to initialize, then return */
     LOCK(global->avg_radiosity_lock);
-    if ( ! check_task_counter() )
+    if( ! check_task_counter() )
         {
             conv = global->converged ;
             UNLOCK(global->avg_radiosity_lock);
@@ -909,7 +899,7 @@ long init_ray_tasks(long process_id)
     UNLOCK(global->avg_radiosity_lock);
 
     /* If radiosity converged, then return 0 */
-    if ( conv )
+    if( conv )
         return( 0 ) ;
 
 
@@ -918,7 +908,7 @@ long init_ray_tasks(long process_id)
        The 'cost_sum' is not locked since no one is processing rays
        at this moment */
 
-    for ( crnt_qid = 0 ; crnt_qid < n_taskqueues ; crnt_qid++ )
+    for( crnt_qid = 0 ; crnt_qid < n_taskqueues ; crnt_qid++ )
         queue_cost[ crnt_qid ] = 0 ;
 
     avg_cost_of_q = global->cost_estimate_sum / n_taskqueues ;
@@ -964,29 +954,29 @@ static void _init_ray_tasks_cost2(Patch *p, long layer, long process_id)
     pc = &global->patch_cost[ p->seq_no ] ;
     c_est = pc->cost_estimate ;
 
-    if ( c_est < 0 )
+    if( c_est < 0 )
         /* Already processed */
         return ;
 
-    if ( c_est < avg_cost_of_patch * layer )
+    if( c_est < avg_cost_of_patch * layer )
         return ;
 
     /* Find the first available queue */
     min_cost_q = 0 ;
     min_cost = queue_cost[ 0 ] ;
-    for ( qid = 0 ; qid < n_taskqueues ; qid++ )
+    for( qid = 0 ; qid < n_taskqueues ; qid++ )
         {
-            if ( (c_est + queue_cost[ qid ]) <= avg_cost_of_q )
+            if( (c_est + queue_cost[ qid ]) <= avg_cost_of_q )
                 break ;
 
-            if ( min_cost > queue_cost[ qid ] )
+            if( min_cost > queue_cost[ qid ] )
                 {
                     min_cost_q = qid ;
                     min_cost = queue_cost[ qid ] ;
                 }
         }
 
-    if ( qid >= n_taskqueues )
+    if( qid >= n_taskqueues )
         {
             /* All queues are nearly full. Put to min-cost queue */
             qid = min_cost_q ;
@@ -1025,7 +1015,7 @@ void init_radavg_tasks(long mode, long process_id)
 {
 
     /* If this is not the first process to initialize, then return */
-    if ( ! check_task_counter() )
+    if( ! check_task_counter() )
         return ;
 
     /* Create RadAvg tasks */
@@ -1108,36 +1098,36 @@ static void parse_args(int argc, char *argv[])
     long cnt ;
 
     /* Parse arguments */
-    for ( cnt = 1 ; cnt < argc ; cnt++ )
+    for( cnt = 1 ; cnt < argc ; cnt++ )
         {
-            if ( strcmp( argv[cnt], "-p" ) == 0 ) {
+            if( strcmp( argv[cnt], "-p" ) == 0 ) {
                 sscanf( argv[++cnt], "%ld", &n_processors ) ;
                 n_taskqueues = n_processors;
             }
-            else if ( strcmp( argv[cnt], "-tq" ) == 0 )
+            else if( strcmp( argv[cnt], "-tq" ) == 0 )
                 sscanf( argv[++cnt], "%ld", &n_tasks_per_queue ) ;
-            else if ( strcmp( argv[cnt], "-ae" ) == 0 )
+            else if( strcmp( argv[cnt], "-ae" ) == 0 )
                 sscanf( argv[++cnt], "%f", &Area_epsilon ) ;
-            else if ( strcmp( argv[cnt], "-pr" ) == 0 )
+            else if( strcmp( argv[cnt], "-pr" ) == 0 )
                 sscanf( argv[++cnt], "%ld", &N_inter_parallel_bf_refine ) ;
-            else if ( strcmp( argv[cnt], "-pv" ) == 0 )
+            else if( strcmp( argv[cnt], "-pv" ) == 0 )
                 sscanf( argv[++cnt], "%ld", &N_visibility_per_task ) ;
-            else if ( strcmp( argv[cnt], "-bf" ) == 0 )
+            else if( strcmp( argv[cnt], "-bf" ) == 0 )
                 sscanf( argv[++cnt], "%f", &BFepsilon ) ;
-            else if ( strcmp( argv[cnt], "-en" ) == 0 )
+            else if( strcmp( argv[cnt], "-en" ) == 0 )
                 sscanf( argv[++cnt], "%f", &Energy_epsilon ) ;
 
-            else if ( strcmp( argv[cnt], "-batch" ) == 0 )
+            else if( strcmp( argv[cnt], "-batch" ) == 0 )
                 batch_mode = 1 ;
-            else if ( strcmp( argv[cnt], "-verbose" ) == 0 )
+            else if( strcmp( argv[cnt], "-verbose" ) == 0 )
                 verbose_mode = 1 ;
-            else if ( strcmp( argv[cnt], "-s" ) == 0 )
+            else if( strcmp( argv[cnt], "-s" ) == 0 )
                 dostats = 1 ;
-            else if ( strcmp( argv[cnt], "-room" ) == 0 )
+            else if( strcmp( argv[cnt], "-room" ) == 0 )
                 model_selector = MODEL_ROOM_DATA ;
-            else if ( strcmp( argv[cnt], "-largeroom" ) == 0 )
+            else if( strcmp( argv[cnt], "-largeroom" ) == 0 )
                 model_selector = MODEL_LARGEROOM_DATA ;
-            else if (( strcmp( argv[cnt], "-help" ) == 0 ) || ( strcmp( argv[cnt], "-h" ) == 0 ) || ( strcmp( argv[cnt], "-H" ) == 0 ))	    {
+            else if(( strcmp( argv[cnt], "-help" ) == 0 ) || ( strcmp( argv[cnt], "-h" ) == 0 ) || ( strcmp( argv[cnt], "-H" ) == 0 ))	    {
                 print_usage() ;
                 exit(0) ;
             }
@@ -1145,25 +1135,25 @@ static void parse_args(int argc, char *argv[])
 
 
     /* Then check the arguments */
-    if ( (n_processors < 1) || (MAX_PROCESSORS < n_processors) )
+    if( (n_processors < 1) || (MAX_PROCESSORS < n_processors) )
         {
             fprintf( stderr, "Bad number of processors: %ld\n",
                     n_processors ) ;
             exit(1) ;
         }
-    if ( (n_taskqueues < 1) || (MAX_TASKQUEUES < n_taskqueues) )
+    if( (n_taskqueues < 1) || (MAX_TASKQUEUES < n_taskqueues) )
         {
             fprintf( stderr, "Bad number of task queues: %ld\n",
                     n_taskqueues ) ;
             exit(1) ;
         }
     /* Check epsilon values */
-    if ( Area_epsilon < 0.0 )
+    if( Area_epsilon < 0.0 )
         {
             fprintf( stderr, "Area epsilon must be positive\n" ) ;
             exit(1) ;
         }
-    if ( BFepsilon < 0.0 )
+    if( BFepsilon < 0.0 )
         {
             fprintf( stderr, "BFepsilon must be within [0,1]\n" ) ;
             exit(1) ;

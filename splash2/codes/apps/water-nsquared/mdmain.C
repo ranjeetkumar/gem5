@@ -15,16 +15,16 @@
 /*************************************************************************/
 
 EXTERN_ENV
-#include "cnst.h"
-#include "fileio.h"
-#include "global.h"
-#include "mddata.h"
-#include "mdvar.h"
-#include "parameters.h"
-#include "split.h"
 #include "stdio.h"
+#include "parameters.h"
+#include "mdvar.h"
 #include "water.h"
 #include "wwpot.h"
+#include "cnst.h"
+#include "mddata.h"
+#include "fileio.h"
+#include "split.h"
+#include "global.h"
 
 /************************************************************************/
 

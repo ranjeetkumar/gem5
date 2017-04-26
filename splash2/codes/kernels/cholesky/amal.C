@@ -16,8 +16,7 @@
 
 EXTERN_ENV
 
-#include <cstdio>
-
+#include <stdio.h>
 #include "matrix.h"
 
 long *next_in_super, *member_of, *super_parent;
@@ -118,10 +117,10 @@ void Amalgamate2(long join, SMatrix M, long *T, long *nz, long *node, long *doma
 
   printf("%ld/%ld supers before/after\n", supers_before, supers_after);
   printf("%.0f/%.0f (%.2f) ops before/after amalgamation\n",
-         g_ops_before, work_tree[M.n], work_tree[M.n]/(double) g_ops_before);
+	 g_ops_before, work_tree[M.n], work_tree[M.n]/(double) g_ops_before);
   if (ops_added != work_tree[M.n]-g_ops_before)
     printf("Model says %ld ops added, really %.0f\n", ops_added,
-           work_tree[M.n]-g_ops_before);
+	   work_tree[M.n]-g_ops_before);
 }
 
 
@@ -149,19 +148,19 @@ void ConsiderMerge(long join, long super, SMatrix M, long *nz, long *node, long 
     time_before = 0;
     PDIV(node[super], nz[super], &dummy, &dummy, &time_before);
     PMOD(node[super], nz[super]-node[super], nz[super]-node[super],
-         &dummy, &dummy, &time_before);
+	 &dummy, &dummy, &time_before);
     PADD(nz[super]-node[super], nz[super]-node[super], &dummy, &time_before);
     PDIV(node[parent], nz[parent], &dummy, &dummy, &time_before);
     PMOD(node[parent], nz[parent]-node[parent], nz[parent]-node[parent],
-         &dummy, &dummy, &time_before);
+	 &dummy, &dummy, &time_before);
     PADD(nz[parent]-node[parent], nz[parent]-node[parent], &dummy,
-         &time_before);
+	 &time_before);
 
     time_after = 0;
     PDIV(node[super]+node[parent], node[super]+nz[parent],
-         &dummy, &dummy, &time_after);
+	 &dummy, &dummy, &time_after);
     PMOD(node[super]+node[parent], nz[parent]-node[parent],
-         nz[parent]-node[parent], &dummy, &dummy, &time_after);
+	 nz[parent]-node[parent], &dummy, &dummy, &time_after);
     PADD(nz[parent]-node[parent], nz[parent]-node[parent], &dummy, &time_after);
 
     simple_diff = (ops_after-ops_before) -
@@ -172,7 +171,7 @@ void ConsiderMerge(long join, long super, SMatrix M, long *nz, long *node, long 
     allow_critical_to_grow = 1;
     if ((!domain || domain[super] == 0) && time_before > time_after) {
       if (allow_critical_to_grow)
-        path_grows = 0;
+	path_grows = 0;
     }
     else
       path_grows = 0.0;

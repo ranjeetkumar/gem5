@@ -50,7 +50,7 @@ void pranset(long seed)
 
 double prand()
 /*
-        Return a random double in [0, 1.0)
+	Return a random double in [0, 1.0)
 */
 {
    lastrand = randx;

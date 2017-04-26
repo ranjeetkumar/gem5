@@ -14,15 +14,14 @@
 /*                                                                       */
 /*************************************************************************/
 
-#include <cmath>
-#include <cstdio>
-
-#include "box.h"
+#include <stdio.h>
+#include <math.h>
 #include "defs.h"
-#include "interactions.h"
 #include "memory.h"
 #include "particle.h"
+#include "box.h"
 #include "partition_grid.h"
+#include "interactions.h"
 
 static real Inv[MAX_EXPANSION_TERMS + 1];
 static real OverInc[MAX_EXPANSION_TERMS + 1];
@@ -59,7 +58,7 @@ InitExpTables ()
       C[i][1] = (real) i;
       C[i - 1][i] = (real) 0.0;
       for (j = 2; j <= i; j++)
-         C[i][j] = C[i - 1][j] + C[i - 1][j - 1];
+	 C[i][j] = C[i - 1][j] + C[i - 1][j - 1];
    }
 
    One.r = (real) 1.0;
@@ -83,7 +82,7 @@ PrintExpTables ()
    printf("i\tj\th(i,j)\n");
    for (i = 0; i < (2 * MAX_EXPANSION_TERMS); i++) {
       for (j = 0; j <= i; j++)
-         printf("%ld\t%ld\t%g\n", i, j, C[i][j]);
+	 printf("%ld\t%ld\t%g\n", i, j, C[i][j]);
       printf("\n");
    }
 }
@@ -101,7 +100,7 @@ UpwardPass (long my_id, box *b)
    }
    else {
       while (b->interaction_synch != b->num_children) {
-         /* wait */;
+	 /* wait */;
       }
    }
    if (b->parent != NULL) {
@@ -131,7 +130,7 @@ DownwardPass (long my_id, box *b)
 {
    if (b->parent != NULL) {
       while (b->parent->interaction_synch != 0) {
-         /* wait */;
+	 /* wait */;
       }
       ShiftLocalExp(b->parent, b);
    }
@@ -165,9 +164,9 @@ ComputeParticlePositions (long my_id, box *b)
       force.y = p->field.i * p->charge;
       VECTOR_DIV(new_acc, force, p->mass);
       if (Local[my_id].Time_Step != 0) {
-         VECTOR_SUB(delta_acc, new_acc, (p->acc));
-         VECTOR_MUL(delta_vel, delta_acc, ((real) Timestep_Dur) / (real) 2.0);
-         VECTOR_ADD((p->vel), (p->vel), delta_vel);
+	 VECTOR_SUB(delta_acc, new_acc, (p->acc));
+	 VECTOR_MUL(delta_vel, delta_acc, ((real) Timestep_Dur) / (real) 2.0);
+	 VECTOR_ADD((p->vel), (p->vel), delta_vel);
       }
       p->acc.x = new_acc.x;
       p->acc.y = new_acc.y;
@@ -242,9 +241,9 @@ ComputeMPExp (box *b)
       z0_pow_n.r = One.r;
       z0_pow_n.i = One.i;
       for (j = 1; j < Expansion_Terms; j++) {
-         COMPLEX_MUL(temp, z0_pow_n, charge);
-         COMPLEX_ADD(result_exp[j], result_exp[j], temp);
-         COMPLEX_MUL(z0_pow_n, z0_pow_n, z0);
+	 COMPLEX_MUL(temp, z0_pow_n, charge);
+	 COMPLEX_ADD(result_exp[j], result_exp[j], temp);
+	 COMPLEX_MUL(z0_pow_n, z0_pow_n, z0);
       }
    }
    ALOCK(G_Memory->lock_array, b->exp_lock_index);
@@ -289,10 +288,10 @@ ShiftMPExp (box *cb, box *pb)
       COMPLEX_MUL(z0_pow_minus_n, z0_pow_minus_n, z0_inv);
       COMPLEX_MUL(temp_exp[i], z0_pow_minus_n, cb->mp_expansion[i]);
       for (j = 1; j <= i; j++) {
-         temp.r = C[i - 1][j - 1];
-         temp.i = (real) 0.0;
-         COMPLEX_MUL(temp, temp, temp_exp[j]);
-         COMPLEX_ADD(result_exp[i], result_exp[i], temp);
+	 temp.r = C[i - 1][j - 1];
+	 temp.i = (real) 0.0;
+	 COMPLEX_MUL(temp, temp, temp_exp[j]);
+	 COMPLEX_ADD(result_exp[i], result_exp[i], temp);
       }
       temp.r = Inv[i];
       temp.i = (real) 0.0;
@@ -330,23 +329,23 @@ UListInteraction (long my_id, box *source_box, box *dest_box)
       dest_x = dest_box->particles[i]->pos.x;
       dest_y = dest_box->particles[i]->pos.y;
       for (j = 0; j < source_box->num_particles; j++) {
-         x_sep = source_box->particles[j]->pos.x - dest_x;
-         y_sep = source_box->particles[j]->pos.y - dest_y;
-         denom = ((real) 1.0) / ((x_sep * x_sep) + (y_sep * y_sep));
-         temp_vector.r = x_sep * denom;
-         temp_vector.i = y_sep * denom;
-         temp_charge.r = source_box->particles[j]->charge;
-         temp_charge.i = (real) 0.0;
-         COMPLEX_MUL(temp_result, temp_vector, temp_charge);
-         COMPLEX_SUB(result, result, temp_result);
+	 x_sep = source_box->particles[j]->pos.x - dest_x;
+	 y_sep = source_box->particles[j]->pos.y - dest_y;
+	 denom = ((real) 1.0) / ((x_sep * x_sep) + (y_sep * y_sep));
+	 temp_vector.r = x_sep * denom;
+	 temp_vector.i = y_sep * denom;
+	 temp_charge.r = source_box->particles[j]->charge;
+	 temp_charge.i = (real) 0.0;
+	 COMPLEX_MUL(temp_result, temp_vector, temp_charge);
+	 COMPLEX_SUB(result, result, temp_result);
       }
       result.i = -result.i;
       COMPLEX_ADD((dest_box->particles[i]->field),
-                  (dest_box->particles[i]->field), result);
+		  (dest_box->particles[i]->field), result);
    }
 
    dest_box->cost += U_LIST_COST(source_box->num_particles,
-                                 dest_box->num_particles);
+				 dest_box->num_particles);
 }
 
 
@@ -366,12 +365,12 @@ VListInteraction (long my_id, box *source_box, box *dest_box)
 
    if (source_box->type == CHILDLESS) {
       while (source_box->interaction_synch != 1) {
-         /* wait */;
+	 /* wait */;
       }
    }
    else {
       while (source_box->interaction_synch != source_box->num_children) {
-         /* wait */;
+	 /* wait */;
       }
    }
 
@@ -393,32 +392,32 @@ VListInteraction (long my_id, box *source_box, box *dest_box)
       result_exp.r = (real) 0.0;
       result_exp.i = (real) 0.0;
       for (j = 1; j < Expansion_Terms; j++) {
-         temp.r = C[i + j - 1][j - 1];
-         temp.i = (real) 0.0;
-         COMPLEX_MUL(temp, temp, temp_exp[j]);
-         if ((j & 0x1) == 0x0) {
-            COMPLEX_ADD(result_exp, result_exp, temp);
-         }
-         else {
-            COMPLEX_SUB(result_exp, result_exp, temp);
-         }
+	 temp.r = C[i + j - 1][j - 1];
+	 temp.i = (real) 0.0;
+	 COMPLEX_MUL(temp, temp, temp_exp[j]);
+	 if ((j & 0x1) == 0x0) {
+	    COMPLEX_ADD(result_exp, result_exp, temp);
+	 }
+	 else {
+	    COMPLEX_SUB(result_exp, result_exp, temp);
+	 }
       }
       COMPLEX_MUL(result_exp, result_exp, z0_pow_minus_n[i]);
       if (i == 0) {
-         temp.r = log(COMPLEX_ABS(z0));
-         temp.i = (real) 0.0;
-         COMPLEX_MUL(temp, temp, source_box->mp_expansion[0]);
-         COMPLEX_ADD(result_exp, result_exp, temp);
+	 temp.r = log(COMPLEX_ABS(z0));
+	 temp.i = (real) 0.0;
+	 COMPLEX_MUL(temp, temp, source_box->mp_expansion[0]);
+	 COMPLEX_ADD(result_exp, result_exp, temp);
       }
       else {
-         temp.r = Inv[i];
-         temp.i = (real) 0.0;
-         COMPLEX_MUL(temp, temp, z0_pow_minus_n[i]);
-         COMPLEX_MUL(temp, temp, source_box->mp_expansion[0]);
-         COMPLEX_SUB(result_exp, result_exp, temp);
+	 temp.r = Inv[i];
+	 temp.i = (real) 0.0;
+	 COMPLEX_MUL(temp, temp, z0_pow_minus_n[i]);
+	 COMPLEX_MUL(temp, temp, source_box->mp_expansion[0]);
+	 COMPLEX_SUB(result_exp, result_exp, temp);
       }
       COMPLEX_ADD((dest_box->local_expansion[i]),
-                  (dest_box->local_expansion[i]), result_exp);
+		  (dest_box->local_expansion[i]), result_exp);
    }
    dest_box->cost += V_LIST_COST(Expansion_Terms);
 }
@@ -445,12 +444,12 @@ WListInteraction (box *source_box, box *dest_box)
 
    if (source_box->type == CHILDLESS) {
       while (source_box->interaction_synch != 1) {
-         /* wait */;
+	 /* wait */;
       }
    }
    else {
       while (source_box->interaction_synch != source_box->num_children) {
-         /* wait */;
+	 /* wait */;
       }
    }
 
@@ -464,11 +463,11 @@ WListInteraction (box *source_box, box *dest_box)
       COMPLEX_SUB(z0, particle_pos, source_pos);
       COMPLEX_DIV(z0_inv, One, z0);
       for (j = Expansion_Terms - 1; j > 0; j--) {
-         COMPLEX_ADD(result, result, (source_box->mp_expansion[j]));
-         COMPLEX_MUL(result, result, z0_inv);
+	 COMPLEX_ADD(result, result, (source_box->mp_expansion[j]));
+	 COMPLEX_MUL(result, result, z0_inv);
       }
       COMPLEX_ADD((dest_box->particles[i]->field),
-                  (dest_box->particles[i]->field), result);
+		  (dest_box->particles[i]->field), result);
    }
 
    dest_box->cost += W_LIST_COST(dest_box->num_particles, Expansion_Terms);
@@ -505,15 +504,15 @@ XListInteraction (box *source_box, box *dest_box)
       z0_pow_minus_n.r = z0_inv.r;
       z0_pow_minus_n.i = z0_inv.i;
       for (j = 1; j < Expansion_Terms; j++) {
-         COMPLEX_MUL(z0_pow_minus_n, z0_pow_minus_n, z0_inv);
-         COMPLEX_MUL(temp, charge, z0_pow_minus_n);
-         COMPLEX_ADD(result_exp[j], result_exp[j], temp);
+	 COMPLEX_MUL(z0_pow_minus_n, z0_pow_minus_n, z0_inv);
+	 COMPLEX_MUL(temp, charge, z0_pow_minus_n);
+	 COMPLEX_ADD(result_exp[j], result_exp[j], temp);
       }
    }
    ALOCK(G_Memory->lock_array, dest_box->exp_lock_index);
    for (i = 0; i < Expansion_Terms; i++) {
       COMPLEX_SUB((dest_box->x_expansion[i]),
-                  (dest_box->x_expansion[i]), result_exp[i]);
+		  (dest_box->x_expansion[i]), result_exp[i]);
    }
    AULOCK(G_Memory->lock_array, dest_box->exp_lock_index);
    source_box->cost += X_LIST_COST(source_box->num_particles, Expansion_Terms);
@@ -540,37 +539,37 @@ ComputeSelfInteraction (box *b)
 
    for (i = 0; i < b->num_particles; i++) {
       for (j = i + 1; j < b->num_particles; j++) {
-         x_sep = b->particles[i]->pos.x - b->particles[j]->pos.x;
-         y_sep = b->particles[i]->pos.y - b->particles[j]->pos.y;
+	 x_sep = b->particles[i]->pos.x - b->particles[j]->pos.x;
+	 y_sep = b->particles[i]->pos.y - b->particles[j]->pos.y;
 
-         if ((fabs(x_sep) < Softening_Param)
-            && (fabs(y_sep) < Softening_Param)) {
-            if (x_sep >= 0.0)
-               x_sep = Softening_Param;
-            else
-               x_sep = -Softening_Param;
-            if (y_sep >= 0.0)
-               y_sep = Softening_Param;
-            else
-               y_sep = -Softening_Param;
-         }
-         denom = ((real) 1.0) / ((x_sep * x_sep) + (y_sep * y_sep));
-         temp_vector.r = x_sep * denom;
-         temp_vector.i = y_sep * denom;
+	 if ((fabs(x_sep) < Softening_Param)
+	    && (fabs(y_sep) < Softening_Param)) {
+	    if (x_sep >= 0.0)
+	       x_sep = Softening_Param;
+	    else
+	       x_sep = -Softening_Param;
+	    if (y_sep >= 0.0)
+	       y_sep = Softening_Param;
+	    else
+	       y_sep = -Softening_Param;
+	 }
+	 denom = ((real) 1.0) / ((x_sep * x_sep) + (y_sep * y_sep));
+	 temp_vector.r = x_sep * denom;
+	 temp_vector.i = y_sep * denom;
 
-         temp_charge.r = b->particles[j]->charge;
-         temp_charge.i = (real) 0.0;
-         COMPLEX_MUL(temp_result, temp_vector, temp_charge);
-         COMPLEX_ADD(results[i], results[i], temp_result);
+	 temp_charge.r = b->particles[j]->charge;
+	 temp_charge.i = (real) 0.0;
+	 COMPLEX_MUL(temp_result, temp_vector, temp_charge);
+	 COMPLEX_ADD(results[i], results[i], temp_result);
 
-         temp_charge.r = b->particles[i]->charge;
-         temp_charge.i = (real) 0.0;
-         COMPLEX_MUL(temp_result, temp_vector, temp_charge);
-         COMPLEX_SUB(results[j], results[j], temp_result);
+	 temp_charge.r = b->particles[i]->charge;
+	 temp_charge.i = (real) 0.0;
+	 COMPLEX_MUL(temp_result, temp_vector, temp_charge);
+	 COMPLEX_SUB(results[j], results[j], temp_result);
       }
       results[i].i = -results[i].i;
       COMPLEX_ADD((b->particles[i]->field),
-                  (b->particles[i]->field), results[i]);
+		  (b->particles[i]->field), results[i]);
    }
 
    b->cost += SELF_COST(b->num_particles);
@@ -604,7 +603,7 @@ ShiftLocalExp (box *pb, box *cb)
    z0_pow_minus_n.i = One.i;
    for (i = 0; i < Expansion_Terms; i++) {
       COMPLEX_ADD(pb->local_expansion[i], pb->local_expansion[i],
-                  pb->x_expansion[i]);
+		  pb->x_expansion[i]);
       COMPLEX_MUL(temp_exp[i], z0_pow_n, pb->local_expansion[i]);
       COMPLEX_MUL(z0_pow_n, z0_pow_n, z0);
    }
@@ -612,10 +611,10 @@ ShiftLocalExp (box *pb, box *cb)
       result_exp[i].r = (real) 0.0;
       result_exp[i].i = (real) 0.0;
       for (j = i; j < Expansion_Terms ; j++) {
-         temp.r = C[j][i];
-         temp.i = (real) 0.0;
-         COMPLEX_MUL(temp, temp, temp_exp[j]);
-         COMPLEX_ADD(result_exp[i], result_exp[i], temp);
+	 temp.r = C[j][i];
+	 temp.i = (real) 0.0;
+	 COMPLEX_MUL(temp, temp, temp_exp[j]);
+	 COMPLEX_ADD(result_exp[i], result_exp[i], temp);
       }
       COMPLEX_MUL(result_exp[i], temp, z0_pow_minus_n);
       COMPLEX_MUL(z0_pow_minus_n, z0_pow_minus_n, z0_inv);
@@ -623,7 +622,7 @@ ShiftLocalExp (box *pb, box *cb)
    ALOCK(G_Memory->lock_array, cb->exp_lock_index);
    for (i = 0; i < Expansion_Terms; i++) {
       COMPLEX_ADD((cb->local_expansion[i]), (cb->local_expansion[i]),
-                  result_exp[i]);
+		  result_exp[i]);
    }
    AULOCK(G_Memory->lock_array, cb->exp_lock_index);
 }
@@ -649,11 +648,11 @@ EvaluateLocalExp (box *b)
       particle_pos.i = b->particles[i]->pos.y;
       COMPLEX_SUB(z0, particle_pos, source_pos);
       for (j = Expansion_Terms - 1; j > 0; j--) {
-         temp.r = (real) j;
-         temp.i = (real) 0.0;
-         COMPLEX_MUL(result, result, z0);
-         COMPLEX_MUL(temp, temp, (b->local_expansion[j]));
-         COMPLEX_ADD(result, result, temp);
+	 temp.r = (real) j;
+	 temp.i = (real) 0.0;
+	 COMPLEX_MUL(result, result, z0);
+	 COMPLEX_MUL(temp, temp, (b->local_expansion[j]));
+	 COMPLEX_ADD(result, result, temp);
       }
       COMPLEX_ADD((b->particles[i]->field), (b->particles[i]->field), result);
       b->particles[i]->field.r = -(b->particles[i]->field.r);

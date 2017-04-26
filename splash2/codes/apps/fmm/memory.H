@@ -17,9 +17,9 @@
 #ifndef _Memory_H
 #define _Memory_H 1
 
-#include "box.h"
 #include "defs.h"
 #include "particle.h"
+#include "box.h"
 
 #define MAX_LOCKS 2048
 

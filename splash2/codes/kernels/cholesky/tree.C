@@ -40,18 +40,18 @@ void EliminationTreeFromA(SMatrix A, long *T, long *P, long *INVP)
 
       if (nabor < j) {
 
-        for (r=nabor; subtree[r] != A.n; r = subtree[r])
-          ;
-        if (r != j)
-          T[r] = subtree[r] = root = j;
-        else root = r;
+	for (r=nabor; subtree[r] != A.n; r = subtree[r])
+	  ;
+	if (r != j)
+	  T[r] = subtree[r] = root = j;
+	else root = r;
 
-        r = nabor;
-        while (subtree[r] != A.n) {
-          nextr = subtree[r];
-          subtree[r] = root;
-          r = nextr;
-        }
+	r = nabor;
+	while (subtree[r] != A.n) {
+	  nextr = subtree[r];
+	  subtree[r] = root;
+	  r = nextr;
+	}
       }
     }
   }
@@ -73,8 +73,8 @@ void ParentToChild(long *T, long n, long *firstchild, long *child)
   for (i=n; i>=0; i--) {
     parent = T[i];
     if (parent != i) {
-        next[i] = firstchild[parent];
-        firstchild[parent] = i;
+	next[i] = firstchild[parent];
+	firstchild[parent] = i;
     }
   }
 
@@ -111,8 +111,8 @@ void ComputeNZ(SMatrix A, long *T, long *nz, long *PERM, long *INVP)
       k = nabor;
       while (marker[k] != i && k < i) {
         nz[k]++;
-        marker[k] = i;
-        k = T[k];
+	marker[k] = i;
+	k = T[k];
       }
     }
   }
@@ -145,7 +145,7 @@ void FindSupernodes(SMatrix A, long *T, long *nz, long *node)
     else {
       node[current] = size;
       if (size > max_super)
-        max_super = size;
+	max_super = size;
       supers++;
       current = i;
       size = 1;
@@ -158,7 +158,7 @@ void FindSupernodes(SMatrix A, long *T, long *nz, long *node)
   node[A.n] = 0;
 
   printf("%ld supers, %4.2f nodes/super, %ld max super\n",
-         supers, A.n/(double) supers, max_super);
+	 supers, A.n/(double) supers, max_super);  
 
   free(nchild);
 }

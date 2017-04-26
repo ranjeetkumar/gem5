@@ -16,17 +16,16 @@
 
 EXTERN_ENV
 
-#include <cmath>
-#include <cstdio>
-
+#include <stdio.h>
+#include <math.h>
 #include "frcnst.h"
-#include "global.h"
-#include "mddata.h"
 #include "mdvar.h"
-#include "parameters.h"
-#include "split.h"
 #include "water.h"
 #include "wwpot.h"
+#include "parameters.h"
+#include "mddata.h"
+#include "split.h"
+#include "global.h"
 
 void INTRAF(double *VIR, long ProcID)
 {

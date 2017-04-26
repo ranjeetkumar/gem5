@@ -14,11 +14,11 @@
 /*                                                                       */
 /*************************************************************************/
 
-#include "box.h"
-#include "cost_zones.h"
 #include "defs.h"
 #include "memory.h"
+#include "box.h"
 #include "partition_grid.h"
+#include "cost_zones.h"
 
 #define NUM_DIRECTIONS 4
 
@@ -50,13 +50,13 @@ CostZones (long my_id)
    BARRIER(G_Memory->synch, Number_Of_Processors);
    Local[my_id].Total_Work = Grid->subtree_cost;
    Local[my_id].Min_Work = ((Local[my_id].Total_Work / Number_Of_Processors)
-                           * my_id);
+			   * my_id);
    if (my_id == (Number_Of_Processors - 1))
       Local[my_id].Max_Work = Local[my_id].Total_Work;
    else
       Local[my_id].Max_Work = (Local[my_id].Min_Work
-                              + (Local[my_id].Total_Work
-                                 / Number_Of_Processors));
+			      + (Local[my_id].Total_Work
+				 / Number_Of_Processors));
    InitPartition(my_id);
    CostZonesHelper(my_id, Grid, 0, RIGHT);
    BARRIER(G_Memory->synch, Number_Of_Processors);
@@ -95,25 +95,25 @@ CostZonesHelper (long my_id, box *b, long work, direction dir)
 
    if (b->type == CHILDLESS) {
       if (work >= Local[my_id].Min_Work)
-         InsertBoxInPartition(my_id, b);
+	 InsertBoxInPartition(my_id, b);
    }
    else {
       next_child = Child_Sequence[dir];
       child_dir = Direction_Sequence[dir];
       for (i = 0; (i < NUM_OFFSPRING) && (work < Local[my_id].Max_Work);
-           i++) {
-         cb = b->children[next_child[i]];
-         if (cb != NULL) {
-            if ((work + cb->subtree_cost) >= Local[my_id].Min_Work)
-               CostZonesHelper(my_id, cb, work, child_dir[i]);
-            work += cb->subtree_cost;
-         }
-         if (i == 2) {
-            if ((work >= Local[my_id].Min_Work)
-                && (work < Local[my_id].Max_Work))
-               InsertBoxInPartition(my_id, b);
-            work += b->cost;
-         }
+	   i++) {
+	 cb = b->children[next_child[i]];
+	 if (cb != NULL) {
+	    if ((work + cb->subtree_cost) >= Local[my_id].Min_Work)
+	       CostZonesHelper(my_id, cb, work, child_dir[i]);
+	    work += cb->subtree_cost;
+	 }
+	 if (i == 2) {
+	    if ((work >= Local[my_id].Min_Work)
+		&& (work < Local[my_id].Max_Work))
+	       InsertBoxInPartition(my_id, b);
+	    work += b->cost;
+	 }
       }
    }
 

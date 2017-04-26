@@ -16,13 +16,12 @@
 
 EXTERN_ENV
 
-#include <cmath>
-
-#include "global.h"
-#include "mddata.h"
+#include <math.h>
 #include "mdvar.h"
 #include "parameters.h"
+#include "mddata.h"
 #include "split.h"
+#include "global.h"
 
 /* this routine computes kinetic energy in each of the three spatial
    dimensions, and puts the computed values in the SUM array */

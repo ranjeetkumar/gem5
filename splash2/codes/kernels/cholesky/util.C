@@ -16,9 +16,8 @@
 
 EXTERN_ENV
 
-#include <cmath>
-#include <cstdio>
-
+#include <math.h>
+#include <stdio.h>
 #include "matrix.h"
 
 #define Error(m) { printf(m); exit(0); }
@@ -35,9 +34,9 @@ SMatrix NewMatrix(long n, long m, long nz)
   M.startrow = (long *) MyMalloc((n+1)*sizeof(long), DISTRIBUTED);
   M.row = (long *) MyMalloc((m+n)*sizeof(long), DISTRIBUTED);
   if (nz) {
-        M.nz = (double *) MyMalloc((m+n)*sizeof(double), DISTRIBUTED);
+	M.nz = (double *) MyMalloc((m+n)*sizeof(double), DISTRIBUTED);
   } else {
-        M.nz = NULL;
+	M.nz = NULL;
   }
 
   if (!M.col || !M.row || (nz && !M.nz)) {
@@ -77,119 +76,119 @@ double *NewVector(long n)
 double Value(long i, long j)
 {
   if (i == j) {
-        return((double) maxm+0.1);
+	return((double) maxm+0.1);
   } else {
-        return(-1.0);
+	return(-1.0);
   }
 }
 
 
 SMatrix ReadSparse(char *name, char *probName)
 {
-        FILE *fp;
-        long n, m, i, j;
-        long n_rows, tmp;
-        long numer_lines;
-        long colnum, colsize, rownum, rowsize;
-        char buf[100], type[4];
-        SMatrix M, F;
+	FILE *fp;
+	long n, m, i, j;
+	long n_rows, tmp;
+	long numer_lines;
+	long colnum, colsize, rownum, rowsize;
+	char buf[100], type[4];
+	SMatrix M, F;
 
-        if (!name || name[0] == 0) {
-                fp = stdin;
-        } else {
-                fp = fopen(name, "r");
-        }
+	if (!name || name[0] == 0) {
+		fp = stdin;
+	} else {
+		fp = fopen(name, "r");
+	}
 
-        if (!fp) {
-                Error("Error opening file\n");
-        }
+	if (!fp) {
+		Error("Error opening file\n");
+	}
 
-        fscanf(fp, "%72c", buf);
+	fscanf(fp, "%72c", buf);
 
-        fscanf(fp, "%8c", probName);
-        probName[8] = 0;
-        DumpLine(fp);
+	fscanf(fp, "%8c", probName);
+	probName[8] = 0;
+	DumpLine(fp);
 
-        for (i=0; i<5; i++) {
-          fscanf(fp, "%14c", buf);
-          sscanf(buf, "%ld", &tmp);
-          if (i == 3)
-            numer_lines = tmp;
-        }
-        DumpLine(fp);
+	for (i=0; i<5; i++) {
+	  fscanf(fp, "%14c", buf);
+	  sscanf(buf, "%ld", &tmp);
+	  if (i == 3)
+	    numer_lines = tmp;
+	}
+	DumpLine(fp);
 
-        fscanf(fp, "%3c", type);
-        type[3] = 0;
-        if (!(type[0] != 'C' && type[1] == 'S' && type[2] == 'A')) {
-          fprintf(stderr, "Wrong type: %s\n", type);
-          exit(0);
-        }
+	fscanf(fp, "%3c", type);
+	type[3] = 0;
+	if (!(type[0] != 'C' && type[1] == 'S' && type[2] == 'A')) {
+	  fprintf(stderr, "Wrong type: %s\n", type);
+	  exit(0);
+	}
 
-        fscanf(fp, "%11c", buf); /* pad */
+	fscanf(fp, "%11c", buf); /* pad */
 
-        fscanf(fp, "%14c", buf); sscanf(buf, "%ld", &n_rows);
+	fscanf(fp, "%14c", buf); sscanf(buf, "%ld", &n_rows);
 
-        fscanf(fp, "%14c", buf); sscanf(buf, "%ld", &n);
+	fscanf(fp, "%14c", buf); sscanf(buf, "%ld", &n);
 
-        fscanf(fp, "%14c", buf); sscanf(buf, "%ld", &m);
+	fscanf(fp, "%14c", buf); sscanf(buf, "%ld", &m);
 
-        fscanf(fp, "%14c", buf); sscanf(buf, "%ld", &tmp);
-        if (tmp != 0)
-          printf("This is not an assembled matrix!\n");
-        if (n_rows != n)
-          printf("Matrix is not symmetric\n");
-        DumpLine(fp);
+	fscanf(fp, "%14c", buf); sscanf(buf, "%ld", &tmp);
+	if (tmp != 0)
+	  printf("This is not an assembled matrix!\n");
+	if (n_rows != n)
+	  printf("Matrix is not symmetric\n");
+	DumpLine(fp);
 
-        fscanf(fp, "%16c", buf);
-        ParseIntFormat(buf, &colnum, &colsize);
-        fscanf(fp, "%16c", buf);
-        ParseIntFormat(buf, &rownum, &rowsize);
-        fscanf(fp, "%20c", buf);
-        fscanf(fp, "%20c", buf);
+	fscanf(fp, "%16c", buf);
+	ParseIntFormat(buf, &colnum, &colsize);
+	fscanf(fp, "%16c", buf);
+	ParseIntFormat(buf, &rownum, &rowsize);
+	fscanf(fp, "%20c", buf);
+	fscanf(fp, "%20c", buf);
+		
+	DumpLine(fp); /* format statement */
 
-        DumpLine(fp); /* format statement */
+	M = NewMatrix(n, m, 0);
 
-        M = NewMatrix(n, m, 0);
+	ReadVector(fp, n+1, M.col, colnum, colsize);
 
-        ReadVector(fp, n+1, M.col, colnum, colsize);
+	ReadVector(fp, m, M.row, rownum, rowsize);
 
-        ReadVector(fp, m, M.row, rownum, rowsize);
+	for (i=0; i<numer_lines; i++) /* dump numeric values */
+	  DumpLine(fp);
 
-        for (i=0; i<numer_lines; i++) /* dump numeric values */
-          DumpLine(fp);
+	for (i=0; i<n; i++)
+		ISort(M, i);
 
-        for (i=0; i<n; i++)
-                ISort(M, i);
+	for (i=0; i<=n; i++)
+	  M.startrow[i] = M.col[i];
 
-        for (i=0; i<=n; i++)
-          M.startrow[i] = M.col[i];
+	fclose(fp);
 
-        fclose(fp);
+	F = LowerToFull(M);
 
-        F = LowerToFull(M);
+	maxm = 0;
+	for (i=0; i<n; i++)
+	  if (F.col[i+1]-F.col[i] > maxm)
+	    maxm = F.col[i+1]-F.col[i];
 
-        maxm = 0;
-        for (i=0; i<n; i++)
-          if (F.col[i+1]-F.col[i] > maxm)
-            maxm = F.col[i+1]-F.col[i];
+	if (F.nz) {
+	  for (j=0; j<n; j++)
+	    for (i=F.col[j]; i<F.col[j+1]; i++)
+	      F.nz[i] = Value(F.row[i], j);
+	}
 
-        if (F.nz) {
-          for (j=0; j<n; j++)
-            for (i=F.col[j]; i<F.col[j+1]; i++)
-              F.nz[i] = Value(F.row[i], j);
-        }
+	FreeMatrix(M);
 
-        FreeMatrix(M);
-
-        return(F);
+	return(F);
 }
 
 void DumpLine(FILE *fp)
 {
-        long c;
+	long c;
 
-        while ((c = fgetc(fp)) != '\n')
-                ;
+	while ((c = fgetc(fp)) != '\n')
+		;
 }
 
 void ParseIntFormat(char *buf, long *num, long *size)
@@ -245,7 +244,7 @@ SMatrix LowerToFull(SMatrix L)
 
     for (j=L.col[i]; j<L.col[i+1]; j++) {
       if (L.row[j] >= i) {
-        M.row[ind++] = L.row[j];
+	M.row[ind++] = L.row[j];
       }
     }
 
@@ -255,7 +254,7 @@ SMatrix LowerToFull(SMatrix L)
       M.row[ind++] = j;
       first[j]++;
       if (first[j] < L.col[j+1]) {
-        AddMember(L.row[first[j]], j);
+	AddMember(L.row[first[j]], j);
       }
       j = nextj;
     }
@@ -266,7 +265,7 @@ SMatrix LowerToFull(SMatrix L)
     } else {
       fprintf(stderr, "Missing diagonal: %ld: ", i);
       for (j=L.col[i]; j<L.col[i+1]; j++) {
-        fprintf(stderr, "%ld ", L.row[j]);
+	fprintf(stderr, "%ld ", L.row[j]);
       }
       fprintf(stderr, "\n");
     }
@@ -294,21 +293,21 @@ SMatrix LowerToFull(SMatrix L)
 
 void ISort(SMatrix M, long k)
 {
-        long hi, lo;
-        long i, j, tmp;
+	long hi, lo;
+	long i, j, tmp;
 
-        hi = M.col[k+1];
-        lo = M.col[k];
+	hi = M.col[k+1];
+	lo = M.col[k];
 
-        for (i=lo; i<hi; i++) {
-                tmp = M.row[i];
-                j = i;
-                while (M.row[j-1] > tmp && j > lo) {
-                        M.row[j] = M.row[j-1];
-                        j--;
-                        }
-                M.row[j] = tmp;
-                }
+	for (i=lo; i<hi; i++) {
+		tmp = M.row[i];
+		j = i;
+		while (M.row[j-1] > tmp && j > lo) {
+			M.row[j] = M.row[j-1];
+			j--;
+			}
+		M.row[j] = tmp;
+		}
 
 }
 

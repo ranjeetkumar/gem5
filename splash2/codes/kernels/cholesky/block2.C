@@ -16,8 +16,7 @@
 
 EXTERN_ENV
 
-#include <cmath>
-
+#include <math.h>
 #include "matrix.h"
 
 extern long *node;  /* ALL GLOBAL */
@@ -46,13 +45,13 @@ void CreateBlockedMatrix2(SMatrix M, long block_ub, long *T, long *firstchild, l
   LB.entries_allocated = block_ub+20;
 
   LB.proc_domain_storage = (double **) MyMalloc(LB.n_domains*sizeof(double *),
-                                                 DISTRIBUTED);
+						 DISTRIBUTED);
   for (i=0; i<LB.n_domains; i++)
     LB.proc_domain_storage[i] = NULL;
 
   /* one dummy column for each domain */
   LB.partition_size = (long *) MyMalloc((LB.n+LB.n_domains+1)*sizeof(long),
-                                    DISTRIBUTED);
+				    DISTRIBUTED);
   LB.col = (long *) MyMalloc((LB.n+LB.n_domains+1)*sizeof(long), DISTRIBUTED);
 
   LB.entry = (Entry *) G_MALLOC(LB.entries_allocated*sizeof(Entry),0);
@@ -66,16 +65,16 @@ void CreateBlockedMatrix2(SMatrix M, long block_ub, long *T, long *firstchild, l
 
     for (j=0; j<M.n; j+=node[j]) {
       if (!LB.domain[j]) {
-        num_partitions = FindNumPartitions(node[j], postpass_partition_size);
-        current = j;
-        for (piece=0; piece<num_partitions; piece++) {
-          piece_size = node[j]*(piece+1)/num_partitions -
-            node[j]*piece/num_partitions;
-          for (k=current; k<current+piece_size; k++) {
-            partition[k] = current;
-          }
-          current += piece_size;
-        }
+	num_partitions = FindNumPartitions(node[j], postpass_partition_size);
+	current = j;
+	for (piece=0; piece<num_partitions; piece++) {
+	  piece_size = node[j]*(piece+1)/num_partitions -
+	    node[j]*piece/num_partitions;
+	  for (k=current; k<current+piece_size; k++) {
+	    partition[k] = current;
+	  }
+	  current += piece_size;
+	}
       }
     }
 
@@ -90,10 +89,10 @@ void CreateBlockedMatrix2(SMatrix M, long block_ub, long *T, long *firstchild, l
     else {
       k = j;
       while (partition[k] == j && k < M.n)
-        k++;
+	k++;
       LB.partition_size[j] = k-j;
       for (i=j+1; i<k; i++)
-        LB.partition_size[i] = j-i;
+	LB.partition_size[i] = j-i;
 
       if (LB.partition_size[j] > LB.max_partition)
         LB.max_partition = LB.partition_size[j];
@@ -109,7 +108,7 @@ void CreateBlockedMatrix2(SMatrix M, long block_ub, long *T, long *firstchild, l
 
   /* determine numbering based on partitions only */
   LB.renumbering = (long *) MyMalloc((LB.n+LB.n_domains)*sizeof(long),
-                                     DISTRIBUTED);
+				     DISTRIBUTED);
   ComputePartitionNumbering(LB.renumbering);
   for (j=0; j<LB.n_domains; j++)
     LB.renumbering[LB.n+j] = j%LB.n_partitions;
@@ -136,17 +135,17 @@ void CreateBlockedMatrix2(SMatrix M, long block_ub, long *T, long *firstchild, l
   for (super=0; super<LB.n; super+=node[super])
     if (domain[super]) {
       FindSuperStructure(M, super, PERM, INVP, firstchild, child,
-                         structure, nz, &n_nz);
+			 structure, nz, &n_nz);
       FindDomStructure(super, nz, n_nz);
     }
     else {
       for (j=super; j<super+node[super]; j+=LB.partition_size[j]) {
-        FindBlStructure(M, j, PERM, INVP, firstchild, child,
-                        structure, nz);
+	FindBlStructure(M, j, PERM, INVP, firstchild, child,
+			structure, nz);
 
-        /* fill in rest of partition */
-        for (i=j+1; i<j+LB.partition_size[j]; i++)
-          LB.col[i+1] = LB.col[i];
+	/* fill in rest of partition */
+	for (i=j+1; i<j+LB.partition_size[j]; i++)
+	  LB.col[i+1] = LB.col[i];
       }
     }
   /* ...then the domain dummies */
@@ -175,31 +174,31 @@ void CreateBlockedMatrix2(SMatrix M, long block_ub, long *T, long *firstchild, l
   for (j=0; j<LB.n; j+=LB.partition_size[j]) {
     if (!LB.domain[j])
       for (i=LB.col[j]; i<LB.col[j+1]; i++) {
-        BLOCK(i) = &blocks[which];
+	BLOCK(i) = &blocks[which];
         BLOCK(i)->i = LB.row[i];
         BLOCK(i)->j = j;
-        if (LB.renumbering[BLOCK(i)->i] < 0 ||
-            LB.renumbering[BLOCK(i)->j] < 0) {
-          printf("Block %ld has bad structure\n", which);
-          exit(-1);
-        }
-        BLOCK(i)->done = 0;
-        BLOCK(i)->pair = NULL;
-        which++;
+	if (LB.renumbering[BLOCK(i)->i] < 0 ||
+	    LB.renumbering[BLOCK(i)->j] < 0) {
+	  printf("Block %ld has bad structure\n", which);
+	  exit(-1);
+	}
+	BLOCK(i)->done = 0;
+	BLOCK(i)->pair = NULL;
+	which++;
       }
   }
   /* and for domain dummies */
   for (p=0; p<P; p++)
     for (j=LB.proc_domains[p]; j<LB.proc_domains[p+1]; j++)
       for (i=LB.col[LB.n+j]; i<LB.col[LB.n+j+1]; i++) {
-        BLOCK(i) = &blocks[which];
-        BLOCK(i)->i = LB.row[i];
+	BLOCK(i) = &blocks[which];
+	BLOCK(i)->i = LB.row[i];
         BLOCK(i)->j = LB.n+j;
-        BLOCK(i)->nz = NULL;
-        BLOCK(i)->owner = p;
-        BLOCK(i)->done = 0;
-        BLOCK(i)->pair = NULL;
-        which++;
+	BLOCK(i)->nz = NULL;
+	BLOCK(i)->owner = p;
+	BLOCK(i)->done = 0;
+	BLOCK(i)->pair = NULL;
+	which++;
       }
 
   ComputeBlockParents(T);
@@ -215,7 +214,7 @@ long FindNumPartitions(long set_size, long piece_size)
   else {
     num_partitions = (set_size+piece_size-1)/piece_size;
     if (piece_size - set_size/num_partitions >
-        set_size/(num_partitions-1) - piece_size)
+	set_size/(num_partitions-1) - piece_size)
       num_partitions--;
   }
 
@@ -232,16 +231,16 @@ void ComputeBlockParents(long *T)
   for (b=0; b<LB.n; b+=LB.partition_size[b])
     if (!LB.domain[b]) {
       for (i=LB.col[b]; i<LB.col[b+1]; i++) {
-        parent_col = T[b+LB.partition_size[b]-1];
-        if (parent_col == LB.n)
-          BLOCK(i)->parent = -1;
-        else if (BLOCK(i)->i <= BLOCK(i)->j)
-          BLOCK(i)->parent = -1; /* above diag */
-        else {
-          BLOCK(i)->parent = FindBlock(BLOCK(i)->i, parent_col);
-          if (BLOCK(i)->parent == -1)
-            printf("Parent not found\n");
-        }
+	parent_col = T[b+LB.partition_size[b]-1];
+	if (parent_col == LB.n)
+	  BLOCK(i)->parent = -1;
+	else if (BLOCK(i)->i <= BLOCK(i)->j)
+	  BLOCK(i)->parent = -1; /* above diag */
+	else {
+	  BLOCK(i)->parent = FindBlock(BLOCK(i)->i, parent_col);
+	  if (BLOCK(i)->parent == -1)
+	    printf("Parent not found\n");
+	}
       }
     }
 
@@ -279,10 +278,10 @@ void FillInStructure(SMatrix M, long *firstchild, long *child, long *PERM, long 
   /* find the structure of the individual blocks */
   for (super=0; super<LB.n; super+=node[super]) {
     FindSuperStructure(M, super, PERM, INVP, firstchild, child,
-                       structure, nz, &n_nz);
+		       structure, nz, &n_nz);
     if (!LB.domain[super])
       for (j=super; j<super+node[super]; j+=LB.partition_size[j]) {
-        FindDetailedStructure(j, structure, nz, n_nz);
+	FindDetailedStructure(j, structure, nz, n_nz);
       }
   }
 
@@ -301,7 +300,7 @@ void FillInNZ(SMatrix M, long *PERM, long *INVP)
   for (j=0; j<M.n; j++)
     scatter[j] = 0.0;
 
-  /* fill in non-zeroes */
+  /* fill in non-zeroes */  
   for (j=0; j<LB.n; j+=LB.partition_size[j])
     FillIn(M, j, PERM, INVP, scatter);
 
@@ -345,8 +344,8 @@ void FindDummyDomainStructure(long which_domain)
     LB.row[LB.col[LB.n+which_domain+1]] = current_block;
     LB.col[LB.n+which_domain+1]++;
     while (LB.row[row] >= current_block &&
-           LB.row[row] < current_block_last &&
-           row < LB.col[col+1])
+	   LB.row[row] < current_block_last &&
+	   row < LB.col[col+1])
       row++;
   }
 
@@ -375,10 +374,10 @@ void FindBlStructure(SMatrix M, long super, long *PERM, long *INVP, long *firstc
     for (i=M.col[truecol]; i<M.col[truecol+1]; i++) {
       bl = INVP[M.row[i]];
       if (LB.partition_size[bl] < 0)
-        bl += LB.partition_size[bl];
+	bl += LB.partition_size[bl];
       if (bl >= super && !structure[bl]) {
-        structure[bl] = 1;
-        nz[n_nz++] = bl;
+	structure[bl] = 1;
+	nz[n_nz++] = bl;
       }
     }
   }
@@ -390,10 +389,10 @@ void FindBlStructure(SMatrix M, long super, long *PERM, long *INVP, long *firstc
     for (i=LB.col[the_child]; i<LB.col[the_child+1]; i++) {
       bl = LB.row[i];
       if (LB.partition_size[bl] < 0)
-        bl += LB.partition_size[bl];
+	bl += LB.partition_size[bl];
       if (bl >= super && !structure[bl]) {
-        structure[bl] = 1;
-        nz[n_nz++] = bl;
+	structure[bl] = 1;
+	nz[n_nz++] = bl;
       }
     }
   }
@@ -427,8 +426,8 @@ void FindSuperStructure(SMatrix M, long super, long *PERM, long *INVP, long *fir
     for (i=M.col[truecol]; i<M.col[truecol+1]; i++) {
       row = INVP[M.row[i]];
       if (row >= super && !structure[row]) {
-        structure[row] = 1;
-        nz[(*n_nz)++] = row;
+	structure[row] = 1;
+	nz[(*n_nz)++] = row;
       }
     }
   }
@@ -442,23 +441,23 @@ void FindSuperStructure(SMatrix M, long super, long *PERM, long *INVP, long *fir
       for (i=LB.col[the_child]; i<LB.col[the_child+1]; i++) {
         row = LB.row[i];
         if (row >= super && !structure[row]) {
-          structure[row] = 1;
-          nz[(*n_nz)++] = row;
+	  structure[row] = 1;
+	  nz[(*n_nz)++] = row;
         }
       }
     }
     else {
       for (i=LB.col[the_child]; i<LB.col[the_child+1]; i++) {
           for (bl=0; bl<BLOCK(i)->length; bl++) {
-            if (BLOCK(i)->structure)
-              row = LB.row[i]+BLOCK(i)->structure[bl];
-            else
-              row = LB.row[i]+bl;
+	    if (BLOCK(i)->structure)
+	      row = LB.row[i]+BLOCK(i)->structure[bl];
+	    else
+	      row = LB.row[i]+bl;
             if (row >= super && !structure[row]) {
-              structure[row] = 1;
-              nz[(*n_nz)++] = row;
+	      structure[row] = 1;
+	      nz[(*n_nz)++] = row;
             }
-          }
+	  }
         }
     }
   }
@@ -494,7 +493,7 @@ void FindDetailedStructure(long col, long *structure, long *nz, long n_nz)
     else {
       owner = EmbeddedOwner(i);
       if (owner < 0)
-        printf("%ld,%ld: %ld\n", BLOCKROW(i), BLOCKCOL(i), owner);
+	printf("%ld,%ld: %ld\n", BLOCKROW(i), BLOCKCOL(i), owner);
       BLOCK(i)->structure = (long *) MyMalloc(n*sizeof(long), owner);
       n = 0;
       for (j=0; j<LB.partition_size[row]; j++)
@@ -516,10 +515,10 @@ void AllocateNZ()
   for (j=0; j<LB.n; j+=LB.partition_size[j])
     if (!LB.domain[j]) {
       for (b=LB.col[j]; b<LB.col[j+1]; b++) {
-        size = LB.partition_size[j]*BLOCK(b)->length;
-        BLOCK(b)->nz = (double *) MyMalloc(size*sizeof(double), BLOCK(b)->owner);
-        for (i=0; i<size; i++)
-          BLOCK(b)->nz[i] = 0.0;
+	size = LB.partition_size[j]*BLOCK(b)->length;
+	BLOCK(b)->nz = (double *) MyMalloc(size*sizeof(double), BLOCK(b)->owner);
+	for (i=0; i<size; i++)
+	  BLOCK(b)->nz[i] = 0.0;
       }
     }
 }
@@ -535,12 +534,12 @@ void FillIn(SMatrix M, long col, long *PERM, long *INVP, double *scatter)
     for (i=M.col[truecol]; i<M.col[truecol+1]; i++) {
       row = INVP[M.row[i]];
       if (row >= col) {
-        if (M.nz)
-          scatter[row] = M.nz[i];
-        else
-          scatter[row] = Value(M.row[i], truecol);
+	if (M.nz)
+	  scatter[row] = M.nz[i];
+	else
+	  scatter[row] = Value(M.row[i], truecol);
       }
-
+	
     }
     for (i=LB.col[col]; i<LB.col[col+1]; i++) {
       LB.entry[i].nz = scatter[LB.row[i]];
@@ -552,23 +551,23 @@ void FillIn(SMatrix M, long col, long *PERM, long *INVP, double *scatter)
     for (j1=0; j1<LB.partition_size[col]; j1++) {
       truecol = PERM[col+j1];
       for (i=M.col[truecol]; i<M.col[truecol+1]; i++) {
-        row = INVP[M.row[i]];
-        if (row >= col+j1) {
-          if (M.nz)
-            scatter[row] = M.nz[i];
-          else
-            scatter[row] = Value(M.row[i], truecol);
-        }
+	row = INVP[M.row[i]];
+	if (row >= col+j1) {
+	  if (M.nz)
+	    scatter[row] = M.nz[i];
+	  else
+	    scatter[row] = Value(M.row[i], truecol);
+	}
       }
       for (b=LB.col[col]; b<LB.col[col+1]; b++) {
-        for (i=0; i<BLOCK(b)->length; i++) {
-          if (BLOCK(b)->structure)
-            row = LB.row[b] + BLOCK(b)->structure[i];
-          else row = LB.row[b] + i;
-          BLOCK(b)->nz[i+j1*BLOCK(b)->length] =
-                scatter[row];
-          scatter[row] = 0.0;
-        }
+	for (i=0; i<BLOCK(b)->length; i++) {
+	  if (BLOCK(b)->structure)
+	    row = LB.row[b] + BLOCK(b)->structure[i];
+	  else row = LB.row[b] + i;
+	  BLOCK(b)->nz[i+j1*BLOCK(b)->length] =
+		scatter[row];
+	  scatter[row] = 0.0;
+	}
       }
     }
   }

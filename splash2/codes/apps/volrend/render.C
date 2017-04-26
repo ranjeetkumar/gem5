@@ -22,7 +22,7 @@
 
 #include "incl.h"
 
-                                /* Derived values:                           */
+				/* Derived values:                           */
 float obslight[NM];	        /*   observer transformed light vector       */
 float obshighlight[NM];		/*   observer transformed highlight vector   */
 
@@ -51,12 +51,12 @@ void Observer_Transform_Light_Vector()
   /* scaling and rotation is used during shading and ray tracing,      */
   /* light source will appear fixed relative to observer.              */
   Transform_Point(light[X],light[Y],light[Z],
-                  &obslight[X],&obslight[Y],&obslight[Z]);
+		  &obslight[X],&obslight[Y],&obslight[Z]);
 
   /* Normalize transformed light vector                                */
   inv_magnitude = 1.0/sqrt(obslight[X]*obslight[X] +
-                   obslight[Y]*obslight[Y] +
-                   obslight[Z]*obslight[Z]);
+		   obslight[Y]*obslight[Y] +
+		   obslight[Z]*obslight[Z]);
   obslight[X] = obslight[X] * inv_magnitude;
   obslight[Y] = obslight[Y] * inv_magnitude;
   obslight[Z] = obslight[Z] * inv_magnitude;
@@ -81,8 +81,8 @@ void Compute_Observer_Transformed_Highlight_Vector()
 
   /* Normalize transformed eye vector                                  */
   inv_magnitude = 1.0/sqrt(obseye[X]*obseye[X] +
-                   obseye[Y]*obseye[Y] +
-                   obseye[Z]*obseye[Z]);
+		   obseye[Y]*obseye[Y] +
+		   obseye[Z]*obseye[Z]);
   obseye[X] = obseye[X] * inv_magnitude;
   obseye[Y] = obseye[Y] * inv_magnitude;
   obseye[Z] = obseye[Z] * inv_magnitude;
@@ -96,8 +96,8 @@ void Compute_Observer_Transformed_Highlight_Vector()
 
   /* Normalize transformed highlight vector                            */
   inv_magnitude = 1.0/sqrt(obshighlight[X]*obshighlight[X] +
-                   obshighlight[Y]*obshighlight[Y] +
-                   obshighlight[Z]*obshighlight[Z]);
+		   obshighlight[Y]*obshighlight[Y] +
+		   obshighlight[Z]*obshighlight[Z]);
   obshighlight[X] = obshighlight[X] * inv_magnitude * brightness;
   obshighlight[Y] = obshighlight[Y] * inv_magnitude * brightness;
   obshighlight[Z] = obshighlight[Z] * inv_magnitude * brightness;

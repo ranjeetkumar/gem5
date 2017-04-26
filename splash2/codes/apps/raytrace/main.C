@@ -80,10 +80,10 @@
 #define VERSION 	"1.00"
 
 
-#include <cmath>
-#include <cstdio>
-
+#include <stdio.h>
+#include <math.h>
 #include "rt.h"
+
 
 CHAR	*ProgName     = "RAYTRACE";          /* The program name.                 */
 INT	nprocs	      = 1;		/* The number of processors to use.  */
@@ -104,19 +104,19 @@ INT dostats = 0;
  */
 
 VOID	Usage()
-        {
-        fprintf(stdout, "%s - parallel ray tracer\n", ProgName);
-        fprintf(stdout, "Version %s\n\n", VERSION);
+	{
+	fprintf(stdout, "%s - parallel ray tracer\n", ProgName);
+	fprintf(stdout, "Version %s\n\n", VERSION);
 
-        fprintf(stdout, "Usage:\t%s [options] envfile\n\n", ProgName);
+	fprintf(stdout, "Usage:\t%s [options] envfile\n\n", ProgName);
 
-        fprintf(stdout, "\t-h\tPrint this usage message.\n");
-        fprintf(stdout, "\t-a<n>\tEnable antialiasing with n subpixels (default = 1).\n\tWhen using with SPLASH suite for evaluation, use default (no antialiasing)\n");
-        fprintf(stdout, "\t-m<n>\tRequest n megabytes of global memory (default = 32).\n");
-        fprintf(stdout, "\t-p<n>\tRun on n processors (default = 1).\n");
+	fprintf(stdout, "\t-h\tPrint this usage message.\n");
+	fprintf(stdout, "\t-a<n>\tEnable antialiasing with n subpixels (default = 1).\n\tWhen using with SPLASH suite for evaluation, use default (no antialiasing)\n");
+	fprintf(stdout, "\t-m<n>\tRequest n megabytes of global memory (default = 32).\n");
+	fprintf(stdout, "\t-p<n>\tRun on n processors (default = 1).\n");
     fprintf(stdout, "\t-s\tMeasure and print per-process timing information.\n");
-        fprintf(stdout, "\n");
-        }
+	fprintf(stdout, "\n");
+	}
 
 
 
@@ -132,37 +132,37 @@ VOID	Usage()
  */
 
 VOID	PrintStatistics()
-        {
-        /*
-        printf("\n****** Ray trace Stats ******\n");
+	{
+	/*
+	printf("\n****** Ray trace Stats ******\n");
 
-        printf("\tResolution:\t\t%ld by %ld\n",            Display.xres+1, Display.yres+1);
-        printf("\tNumber Lights:\t\t%ld\n",                nlights);
-        printf("\tAnti level:\t\t%ld\n",                   Display.maxAAsubdiv);
-        printf("\tTotal Rays:\t\t%ld\n",                   Stats.total_rays);
-        printf("\tPrimary Rays:\t\t%ld\n",                 Stats.prim_rays);
-        printf("\tShadow Rays:\t\t%ld\n",                  Stats.shad_rays);
-        printf("\tShadow Rays Hit:\t%ld\n",                Stats.shad_rays_hit);
-        printf("\tShadow Rays Not Hit:\t%ld\n",            Stats.shad_rays_not_hit);
-        printf("\tShadow Coherence Rays:\t%ld\n",          Stats.shad_coherence_rays);
-        printf("\tReflective Rays:\t%ld\n",                Stats.refl_rays);
-        printf("\tTransmissiveRays:\t%ld\n",               Stats.trans_rays);
-        printf("\tAnti-Aliasing Rays:\t%ld\n",             Stats.aa_rays);
-        printf("\tBackground Pixels:\t%ld\n",              Stats.coverage);
-        printf("\tMax Tree depth reached:\t%ld\n",         Stats.max_tree_depth);
-        printf("\tMax # prims tested for a ray:\t%ld\n",   Stats.max_objs_ray);
-        printf("\tMax Rays shot for a pixel:\t%ld\n",      Stats.max_rays_pixel);
-        printf("\tMax # prims tested for a pixel:\t%ld\n", Stats.max_objs_pixel);
-        printf("\n");
-        */
+	printf("\tResolution:\t\t%ld by %ld\n",            Display.xres+1, Display.yres+1);
+	printf("\tNumber Lights:\t\t%ld\n",                nlights);
+	printf("\tAnti level:\t\t%ld\n",                   Display.maxAAsubdiv);
+	printf("\tTotal Rays:\t\t%ld\n",                   Stats.total_rays);
+	printf("\tPrimary Rays:\t\t%ld\n",                 Stats.prim_rays);
+	printf("\tShadow Rays:\t\t%ld\n",                  Stats.shad_rays);
+	printf("\tShadow Rays Hit:\t%ld\n",                Stats.shad_rays_hit);
+	printf("\tShadow Rays Not Hit:\t%ld\n",            Stats.shad_rays_not_hit);
+	printf("\tShadow Coherence Rays:\t%ld\n",          Stats.shad_coherence_rays);
+	printf("\tReflective Rays:\t%ld\n",                Stats.refl_rays);
+	printf("\tTransmissiveRays:\t%ld\n",               Stats.trans_rays);
+	printf("\tAnti-Aliasing Rays:\t%ld\n",             Stats.aa_rays);
+	printf("\tBackground Pixels:\t%ld\n",              Stats.coverage);
+	printf("\tMax Tree depth reached:\t%ld\n",         Stats.max_tree_depth);
+	printf("\tMax # prims tested for a ray:\t%ld\n",   Stats.max_objs_ray);
+	printf("\tMax Rays shot for a pixel:\t%ld\n",      Stats.max_rays_pixel);
+	printf("\tMax # prims tested for a pixel:\t%ld\n", Stats.max_objs_pixel);
+	printf("\n");
+	*/
 
-        if (TraversalType == TT_HUG)
-                {
-        /*	prn_ds_stats();
-                prn_tv_stats();     */
-                ma_print();
-                }
-        }
+	if (TraversalType == TT_HUG)
+		{
+	/*	prn_ds_stats();
+		prn_tv_stats();     */
+		ma_print();
+		}
+	}
 
 
 
@@ -178,47 +178,47 @@ VOID	PrintStatistics()
  */
 
 VOID	StartRayTrace()
-        {
-        INT	pid;			/* Our internal process id number.   */
-        UINT	begin;
-        UINT	end;
+	{
+	INT	pid;			/* Our internal process id number.   */
+	UINT	begin;
+	UINT	end;
 
-        LOCK(gm->pidlock)
-        pid = gm->pid++;
-        UNLOCK(gm->pidlock)
+	LOCK(gm->pidlock)
+	pid = gm->pid++;
+	UNLOCK(gm->pidlock)
 
-        BARINCLUDE(gm->start);
+	BARINCLUDE(gm->start);
 
-        if ((pid == 0) ||  (dostats))
+	if ((pid == 0) ||  (dostats))
         CLOCK(begin);
 
-        /* POSSIBLE ENHANCEMENT: Here's where one might lock processes down
-        to processors if need be */
+	/* POSSIBLE ENHANCEMENT: Here's where one might lock processes down
+	to processors if need be */
 
-        InitWorkPool(pid);
-        InitRayTreeStack(Display.maxlevel, pid);
+	InitWorkPool(pid);
+	InitRayTreeStack(Display.maxlevel, pid);
 
-        /*
-         *	Wait for all processes to be created, initialize their work
-         *	pools, and arrive at this point; then proceed.	This BARRIER
-         *	is absolutely required.  Read comments in PutJob before
-         *	moving this barrier.
-         */
+	/*
+	 *	Wait for all processes to be created, initialize their work
+	 *	pools, and arrive at this point; then proceed.	This BARRIER
+	 *	is absolutely required.  Read comments in PutJob before
+	 *	moving this barrier.
+	 */
 
-        BARRIER(gm->start, gm->nprocs)
+	BARRIER(gm->start, gm->nprocs)
 
-        /* POSSIBLE ENHANCEMENT:  Here's where one would RESET STATISTICS
-        and TIMING if one wanted to measure only the parallel part */
+	/* POSSIBLE ENHANCEMENT:  Here's where one would RESET STATISTICS
+	and TIMING if one wanted to measure only the parallel part */
 
-        RayTrace(pid);
+	RayTrace(pid);
 
 
-        if ((pid == 0) || (dostats)) {
+	if ((pid == 0) || (dostats)) {
           CLOCK(end);
           gm->partime[pid] = (end - begin) & 0x7FFFFFFF;
           if (pid == 0) gm->par_start_time = begin;
         }
-        }
+	}
 
 
 
@@ -242,191 +242,191 @@ VOID	StartRayTrace()
  */
 
 int	main(int argc, CHAR *argv[])
-        {
-        INT	i;
-        UINT	begin;
-        UINT	end;
-        UINT	lapsed;
-        MATRIX	vtrans, Vinv;		/*  View transformation and inverse. */
+	{
+	INT	i;
+	UINT	begin;
+	UINT	end;
+	UINT	lapsed;
+	MATRIX	vtrans, Vinv;		/*  View transformation and inverse. */
 
 
-        /*
-         *	First, process command line arguments.
-         */
-        i = 1;
-        while ((i < argc) && (argv[i][0] == '-')) {
-                switch (argv[i][1]) {
-                        case '?':
-                        case 'h':
-                        case 'H':
-                                Usage();
-                                exit(1);
+	/*
+	 *	First, process command line arguments.
+	 */
+	i = 1;
+	while ((i < argc) && (argv[i][0] == '-')) {
+		switch (argv[i][1]) {
+			case '?':
+			case 'h':
+			case 'H':
+				Usage();
+				exit(1);
 
-                        case 'a':
-                        case 'A':
-                                AntiAlias = TRUE;
-                                if (argv[i][2] != '\0') {
-                                        NumSubRays = atoi(&argv[i][2]);
-                                } else {
-                                        NumSubRays = atoi(&argv[++i][0]);
-                                }
-                                break;
+			case 'a':
+			case 'A':
+				AntiAlias = TRUE;
+				if (argv[i][2] != '\0') {
+					NumSubRays = atoi(&argv[i][2]);
+				} else {
+					NumSubRays = atoi(&argv[++i][0]);
+				}
+				break;
 
-                        case 'm':
-                                if (argv[i][2] != '\0') {
-                                        MaxGlobMem = atoi(&argv[i][2]);
-                                } else {
-                                        MaxGlobMem = atoi(&argv[++i][0]);
-                                }
-                                break;
+			case 'm':
+				if (argv[i][2] != '\0') {
+					MaxGlobMem = atoi(&argv[i][2]);
+				} else {
+					MaxGlobMem = atoi(&argv[++i][0]);
+				}
+				break;
 
-                        case 'p':
-                                if (argv[i][2] != '\0') {
-                                        nprocs = atoi(&argv[i][2]);
-                                } else {
-                                        nprocs = atoi(&argv[++i][0]);
-                                }
-                                break;
+			case 'p':
+				if (argv[i][2] != '\0') {
+					nprocs = atoi(&argv[i][2]);
+				} else {
+					nprocs = atoi(&argv[++i][0]);
+				}
+				break;
 
-                        case 's':
-                        case 'S':
-                                dostats = TRUE;
-                                break;
+			case 's':
+			case 'S':
+				dostats = TRUE;
+				break;
 
-                        default:
-                                fprintf(stderr, "%s: Invalid option \'%c\'.\n", ProgName, argv[i][0]);
-                                exit(1);
-                }
-                i++;
-        }
+			default:
+				fprintf(stderr, "%s: Invalid option \'%c\'.\n", ProgName, argv[i][0]);
+				exit(1);
+		}
+		i++;
+	}
 
-        if (i == argc) {
-                Usage();
-                exit(1);
-        }
-
-
-        /*
-         *	Make sure nprocs is within valid range.
-         */
-
-        if (nprocs < 1 || nprocs > MAX_PROCS)
-                {
-                fprintf(stderr, "%s: Valid range for #processors is [1, %d].\n", ProgName, MAX_PROCS);
-                exit(1);
-                }
+	if (i == argc) {
+		Usage();
+		exit(1);
+	}
 
 
-        /*
-         *	Print command line parameters.
-         */
+	/*
+	 *	Make sure nprocs is within valid range.
+	 */
 
-        printf("\n");
-        printf("Number of processors:     \t%ld\n", nprocs);
-        printf("Global shared memory size:\t%ld MB\n", MaxGlobMem);
-        printf("Samples per pixel:        \t%ld\n", NumSubRays);
-        printf("\n");
-
-
-        /*
-         *	Initialize the shared memory environment and request the total
-         *	amount of amount of shared memory we might need.  This
-         *	includes memory for the database, grid, and framebuffer.
-         */
-
-        MaxGlobMem <<= 20;			/* Convert MB to bytes.      */
-        MAIN_INITENV(,MaxGlobMem + 512*1024)
-        gm = (GMEM *)G_MALLOC(sizeof(GMEM));
+	if (nprocs < 1 || nprocs > MAX_PROCS)
+		{
+		fprintf(stderr, "%s: Valid range for #processors is [1, %d].\n", ProgName, MAX_PROCS);
+		exit(1);
+		}
 
 
-        /*
-         *	Perform shared environment initializations.
-         */
+	/*
+	 *	Print command line parameters.
+	 */
 
-        gm->nprocs = nprocs;
-        gm->pid    = 0;
-        gm->rid    = 1;
+	printf("\n");
+	printf("Number of processors:     \t%ld\n", nprocs);
+	printf("Global shared memory size:\t%ld MB\n", MaxGlobMem);
+	printf("Samples per pixel:        \t%ld\n", NumSubRays);
+	printf("\n");
 
-        BARINIT(gm->start, nprocs)
-        LOCKINIT(gm->pidlock)
-        LOCKINIT(gm->ridlock)
-        LOCKINIT(gm->memlock)
-        ALOCKINIT(gm->wplock, nprocs)
+
+	/*
+	 *	Initialize the shared memory environment and request the total
+	 *	amount of amount of shared memory we might need.  This
+	 *	includes memory for the database, grid, and framebuffer.
+	 */
+
+	MaxGlobMem <<= 20;			/* Convert MB to bytes.      */
+	MAIN_INITENV(,MaxGlobMem + 512*1024)
+	gm = (GMEM *)G_MALLOC(sizeof(GMEM));
+
+
+	/*
+	 *	Perform shared environment initializations.
+	 */
+
+	gm->nprocs = nprocs;
+	gm->pid    = 0;
+	gm->rid    = 1;
+
+	BARINIT(gm->start, nprocs)
+	LOCKINIT(gm->pidlock)
+	LOCKINIT(gm->ridlock)
+	LOCKINIT(gm->memlock)
+	ALOCKINIT(gm->wplock, nprocs)
 
 /* POSSIBLE ENHANCEMENT:  Here is where one might distribute the
    raystruct data structure across physically distributed memories as
    desired.  */
 
-        if (!GlobalHeapInit(MaxGlobMem))
-                {
-                fprintf(stderr, "%s: Cannot initialize global heap.\n", ProgName);
-                exit(1);
-                }
+	if (!GlobalHeapInit(MaxGlobMem))
+		{
+		fprintf(stderr, "%s: Cannot initialize global heap.\n", ProgName);
+		exit(1);
+		}
 
 
-        /*
-         *	Initialize HUG parameters, read environment and geometry files.
-         */
+	/*
+	 *	Initialize HUG parameters, read environment and geometry files.
+	 */
 
-        Huniform_defaults();
-        ReadEnvFile(/* *argv*/argv[i]);
-        ReadGeoFile(GeoFileName);
-        OpenFrameBuffer();
-
-
-        /*
-         *	Compute view transform and its inverse.
-         */
-
-        CreateViewMatrix();
-        MatrixCopy(vtrans, View.vtrans);
-        MatrixInverse(Vinv, vtrans);
-        MatrixCopy(View.vtransInv, Vinv);
+	Huniform_defaults();
+	ReadEnvFile(/* *argv*/argv[i]);
+	ReadGeoFile(GeoFileName);
+	OpenFrameBuffer();
 
 
-        /*
-         *	Print out what we have so far.
-         */
+	/*
+	 *	Compute view transform and its inverse.
+	 */
 
-        printf("Number of primitive objects: \t%ld\n", prim_obj_cnt);
-        printf("Number of primitive elements:\t%ld\n", prim_elem_cnt);
-
-        /*
-         *	Preprocess database into hierarchical uniform grid.
-         */
-
-        if (TraversalType == TT_HUG)
-                BuildHierarchy_Uniform();
+	CreateViewMatrix();
+	MatrixCopy(vtrans, View.vtrans);
+	MatrixInverse(Vinv, vtrans);
+	MatrixCopy(View.vtransInv, Vinv);
 
 
+	/*
+	 *	Print out what we have so far.
+	 */
 
-        /*
-         *	Now create slave processes.
-         */
+	printf("Number of primitive objects: \t%ld\n", prim_obj_cnt);
+	printf("Number of primitive elements:\t%ld\n", prim_elem_cnt);
 
-        CLOCK(begin)
-        CREATE(StartRayTrace, gm->nprocs);
-        WAIT_FOR_END(gm->nprocs);
-        CLOCK(end)
+	/*
+	 *	Preprocess database into hierarchical uniform grid.
+	 */
+
+	if (TraversalType == TT_HUG)
+		BuildHierarchy_Uniform();
 
 
 
-        /*
-         *	We are finished.  Clean up, print statistics and run time.
-         */
+	/*
+	 *	Now create slave processes.
+	 */
 
-        CloseFrameBuffer(PicFileName);
-        PrintStatistics();
+	CLOCK(begin)
+	CREATE(StartRayTrace, gm->nprocs);
+	WAIT_FOR_END(gm->nprocs);
+	CLOCK(end)
 
-        lapsed = (end - begin) & 0x7FFFFFFF;
+
+
+	/*
+	 *	We are finished.  Clean up, print statistics and run time.
+	 */
+
+	CloseFrameBuffer(PicFileName);
+	PrintStatistics();
+
+	lapsed = (end - begin) & 0x7FFFFFFF;
 
 
 
-        printf("TIMING STATISTICS MEASURED BY MAIN PROCESS:\n");
-        printf("        Overall start time     %20lu\n", begin);
-        printf("        Overall end time   %20lu\n", end);
-        printf("        Total time with initialization  %20lu\n", lapsed);
-        printf("        Total time without initialization  %20lu\n", end - gm->par_start_time);
+	printf("TIMING STATISTICS MEASURED BY MAIN PROCESS:\n");
+	printf("        Overall start time     %20lu\n", begin);
+	printf("        Overall end time   %20lu\n", end);
+	printf("        Total time with initialization  %20lu\n", lapsed);
+	printf("        Total time without initialization  %20lu\n", end - gm->par_start_time);
 
     if (dostats) {
         unsigned totalproctime, maxproctime, minproctime;
@@ -454,6 +454,6 @@ int	main(int argc, CHAR *argv[])
         printf("%20s%20d\n","Avg = ",(int) (((double) totalproctime) / ((double) (1.0 * gm->nprocs))));
     }
 
-        MAIN_END
-        }
+	MAIN_END
+	}
 

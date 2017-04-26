@@ -25,10 +25,11 @@
  */
 
 
-#include <cmath>
-#include <cstdio>
-
+#include <stdio.h>
+#include <math.h>
 #include "rt.h"
+
+
 
 /*
  * NAME
@@ -45,14 +46,14 @@
  */
 
 VOID	InquireBoundBoxValues(BBOX *pbb, REAL *minx, REAL *miny, REAL *minz, REAL *maxx, REAL *maxy, REAL *maxz)
-        {
-        *minx = pbb->dnear[0];
-        *miny = pbb->dnear[1];
-        *minz = pbb->dnear[2];
-        *maxx = pbb->dfar[0];
-        *maxy = pbb->dfar[1];
-        *maxz = pbb->dfar[2];
-        }
+	{
+	*minx = pbb->dnear[0];
+	*miny = pbb->dnear[1];
+	*minz = pbb->dnear[2];
+	*maxx = pbb->dfar[0];
+	*maxy = pbb->dfar[1];
+	*maxz = pbb->dfar[2];
+	}
 
 
 
@@ -70,31 +71,31 @@ VOID	InquireBoundBoxValues(BBOX *pbb, REAL *minx, REAL *miny, REAL *minz, REAL *
  */
 
 VOID	NormalizeBoundBox(BBOX *pbb, MATRIX mat)
-        {
-        POINT	tmp;
+	{
+	POINT	tmp;
 
-        /* dnear and dfar are only vectors of length 3 */
+	/* dnear and dfar are only vectors of length 3 */
 
-        tmp[0] = pbb->dnear[0];
-        tmp[1] = pbb->dnear[1];
-        tmp[2] = pbb->dnear[2];
-        tmp[3] = 1.0;
+	tmp[0] = pbb->dnear[0];
+	tmp[1] = pbb->dnear[1];
+	tmp[2] = pbb->dnear[2];
+	tmp[3] = 1.0;
 
-        VecMatMult(tmp, mat, tmp);
+	VecMatMult(tmp, mat, tmp);
 
-        pbb->dnear[0] = tmp[0];
-        pbb->dnear[1] = tmp[1];
-        pbb->dnear[2] = tmp[2];
+	pbb->dnear[0] = tmp[0];
+	pbb->dnear[1] = tmp[1];
+	pbb->dnear[2] = tmp[2];
 
-        tmp[0] = pbb->dfar[0];
-        tmp[1] = pbb->dfar[1];
-        tmp[2] = pbb->dfar[2];
-        tmp[3] = 1.0;
+	tmp[0] = pbb->dfar[0];
+	tmp[1] = pbb->dfar[1];
+	tmp[2] = pbb->dfar[2];
+	tmp[3] = 1.0;
 
-        VecMatMult(tmp, mat, tmp);
+	VecMatMult(tmp, mat, tmp);
 
-        pbb->dfar[0] = tmp[0];
-        pbb->dfar[1] = tmp[1];
-        pbb->dfar[2] = tmp[2];
-        }
+	pbb->dfar[0] = tmp[0];
+	pbb->dfar[1] = tmp[1];
+	pbb->dfar[2] = tmp[2];
+	}
 

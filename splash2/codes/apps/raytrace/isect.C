@@ -26,10 +26,11 @@
  */
 
 
-#include <cmath>
-#include <cstdio>
-
+#include <stdio.h>
+#include <math.h>
 #include "rt.h"
+
+
 
 /*
  * NAME
@@ -45,28 +46,28 @@
  */
 
 BOOL	Intersect(RAY *pr, IRECORD *hit)
-        {
-        OBJECT	*po;				/* Ptr to the object.	     */
-        IRECORD newhit; 			/* New intersection.	     */
+	{
+	OBJECT	*po;				/* Ptr to the object.	     */
+	IRECORD newhit; 			/* New intersection.	     */
 
-        po	   = gm->modelroot;
-        hit->t	   = HUGE_REAL;
-        hit->pelem = NULL;
+	po	   = gm->modelroot;
+	hit->t	   = HUGE_REAL;
+	hit->pelem = NULL;
 
-        while (po)
-                {
-                if ((*po->procs->intersect)(pr, po, &newhit))
-                        if (newhit.t < hit[0].t)
-                                *hit = newhit;
+	while (po)
+		{
+		if ((*po->procs->intersect)(pr, po, &newhit))
+			if (newhit.t < hit[0].t)
+				*hit = newhit;
 
-                po = po->next;
-                }
+		po = po->next;
+		}
 
-        if (hit->t < HUGE_REAL)
-                return (TRUE);
-        else
-                return (FALSE);
-        }
+	if (hit->t < HUGE_REAL)
+		return (TRUE);
+	else
+		return (FALSE);
+	}
 
 
 
@@ -88,22 +89,22 @@ BOOL	Intersect(RAY *pr, IRECORD *hit)
  */
 
 REAL	ShadowIntersect(RAY *pr, REAL lightdist, ELEMENT *pe)
-        {
-        REAL	trans;				/* Transparency factor.      */
-        OBJECT	*po;				/* Ptr to the object.	     */
-        IRECORD newhit; 			/* New hit record.	     */
+	{
+	REAL	trans;				/* Transparency factor.      */
+	OBJECT	*po;				/* Ptr to the object.	     */
+	IRECORD newhit; 			/* New hit record.	     */
 
-        trans = 1.0;
-        po    = gm->modelroot;
+	trans = 1.0;
+	po    = gm->modelroot;
 
-        while (po && trans > 0.0)
-                {
-                if ((*po->procs->intersect)(pr, po, &newhit) && newhit.pelem != pe && newhit.t < lightdist)
-                        trans *= newhit.pelem->parent->surf->ktran;
+	while (po && trans > 0.0)
+		{
+		if ((*po->procs->intersect)(pr, po, &newhit) && newhit.pelem != pe && newhit.t < lightdist)
+			trans *= newhit.pelem->parent->surf->ktran;
 
-                po = po->next;
-                }
+		po = po->next;
+		}
 
-        return (trans);
-        }
+	return (trans);
+	}
 

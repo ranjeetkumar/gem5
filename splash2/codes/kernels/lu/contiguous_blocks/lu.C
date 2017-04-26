@@ -39,10 +39,9 @@
 /*                                                                       */
 /*************************************************************************/
 
-#include <cmath>
-#include <cstdio>
-#include <cstdlib>
-
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
 MAIN_ENV
 
 #define MAXRAND                         32767.0
@@ -54,14 +53,14 @@ MAIN_ENV
 #define PAGE_SIZE			1024
 
 struct GlobalMemory {
-  double *t_in_fac;
+  double *t_in_fac;   
   double *t_in_solve;
-  double *t_in_mod;
+  double *t_in_mod; 
   double *t_in_bar;
   double *completion;
-  unsigned long starttime;
-  unsigned long rf;
-  unsigned long rs;
+  unsigned long starttime; 
+  unsigned long rf; 
+  unsigned long rs; 
   unsigned long done;
   long id;
   BARDEC(start)
@@ -132,7 +131,7 @@ int main(int argc, char *argv[])
     case 't': test_result = !test_result; break;
     case 'o': doprint = !doprint; break;
     case 'h': printf("Usage: LU <options>\n\n");
-              printf("options:\n");
+	      printf("options:\n");
               printf("  -nN : Decompose NxN matrix.\n");
               printf("  -pP : P = number of processors.\n");
               printf("  -bB : Use a block size of B. BxB elements should fit in cache for \n");
@@ -143,7 +142,7 @@ int main(int argc, char *argv[])
               printf("  -o  : Print out matrix values.\n");
               printf("  -h  : Print out command line options.\n\n");
               printf("Default: LU -n%1d -p%1d -b%1d\n",
-                     DEFAULT_N,DEFAULT_P,DEFAULT_B);
+		     DEFAULT_N,DEFAULT_P,DEFAULT_B);
               exit(0);
               break;
     }
@@ -178,13 +177,13 @@ int main(int argc, char *argv[])
 
   proc_bytes = (long *) malloc(P*sizeof(long));
   if (proc_bytes == NULL) {
-          fprintf(stderr,"Could not malloc memory for proc_bytes.\n");
-          exit(-1);
+	  fprintf(stderr,"Could not malloc memory for proc_bytes.\n");
+	  exit(-1);
   }
   last_malloc = (double **) G_MALLOC(P*sizeof(double *));
   if (last_malloc == NULL) {
-          fprintf(stderr,"Could not malloc memory for last_malloc.\n");
-          exit(-1);
+	  fprintf(stderr,"Could not malloc memory for last_malloc.\n");
+	  exit(-1);
   }
   for (i=0;i<P;i++) {
     proc_bytes[i] = 0;
@@ -208,7 +207,7 @@ int main(int argc, char *argv[])
     if (last_malloc[i] == NULL) {
       fprintf(stderr,"Could not malloc memory blocks for proc %ld\n",i);
       exit(-1);
-    }
+    } 
     last_malloc[i] = (double *) (((unsigned long) last_malloc[i]) + PAGE_SIZE -
                      ((unsigned long) last_malloc[i]) % PAGE_SIZE);
 
@@ -221,7 +220,7 @@ int main(int argc, char *argv[])
   if (a == NULL) {
     printerr("Could not malloc memory for a\n");
     exit(-1);
-  }
+  } 
   for (i=0;i<nblocks;i++) {
     for (j=0;j<nblocks;j++) {
       proc_num = BlockOwner(i,j);
@@ -241,7 +240,7 @@ int main(int argc, char *argv[])
   if (rhs == NULL) {
     printerr("Could not malloc memory for rhs\n");
     exit(-1);
-  }
+  } 
 
   Global = (struct GlobalMemory *) G_MALLOC(sizeof(struct GlobalMemory));
   Global->t_in_fac = (double *) G_MALLOC(P*sizeof(double));
@@ -286,8 +285,8 @@ int main(int argc, char *argv[])
          size = block_size*block_size;
        }
 
-       Place all addresses x such that
-       (&(a[i+j*nblocks][0]) <= x < &(a[i+j*nblocks][size-1]))
+       Place all addresses x such that 
+       (&(a[i+j*nblocks][0]) <= x < &(a[i+j*nblocks][size-1])) 
        on node proc_num
      }
    }
@@ -323,12 +322,12 @@ int main(int argc, char *argv[])
       avgt += Global->completion[i];
     }
     avgt = avgt / P;
-
+  
     min_fac = max_fac = avg_fac = Global->t_in_fac[0];
     min_solve = max_solve = avg_solve = Global->t_in_solve[0];
     min_mod = max_mod = avg_mod = Global->t_in_mod[0];
     min_bar = max_bar = avg_bar = Global->t_in_bar[0];
-
+  
     for (i=1; i<P; i++) {
       if (Global->t_in_fac[i] > max_fac) {
         max_fac = Global->t_in_fac[i];
@@ -375,8 +374,8 @@ int main(int argc, char *argv[])
     for (i=1; i<P; i++) {
       printf("  %3ld    %10.0f    %10.0f    %10.0f    %10.0f    %10.0f\n",
               i,Global->completion[i],Global->t_in_fac[i],
-              Global->t_in_solve[i],Global->t_in_mod[i],
-              Global->t_in_bar[i]);
+	      Global->t_in_solve[i],Global->t_in_mod[i],
+	      Global->t_in_bar[i]);
     }
     printf("  Avg    %10.0f    %10.0f    %10.0f    %10.0f    %10.0f\n",
            avgt,avg_fac,avg_solve,avg_mod,avg_bar);
@@ -423,8 +422,8 @@ void SlaveStart()
 
 void OneSolve(long n, long block_size, long MyNum, long dostats)
 {
-  unsigned long myrs;
-  unsigned long myrf;
+  unsigned long myrs; 
+  unsigned long myrf; 
   unsigned long mydone;
   struct LocalCopies *lc;
 
@@ -479,8 +478,8 @@ void OneSolve(long n, long block_size, long MyNum, long dostats)
 
 void lu0(double *a, long n, long stride)
 {
-  long j;
-  long k;
+  long j; 
+  long k; 
   long length;
   double alpha;
 
@@ -498,7 +497,7 @@ void lu0(double *a, long n, long stride)
 
 void bdiv(double *a, double *diag, long stride_a, long stride_diag, long dimi, long dimk)
 {
-  long j;
+  long j; 
   long k;
   double alpha;
 
@@ -513,8 +512,8 @@ void bdiv(double *a, double *diag, long stride_a, long stride_diag, long dimi, l
 
 void bmodd(double *a, double *c, long dimi, long dimj, long stride_a, long stride_c)
 {
-  long j;
-  long k;
+  long j; 
+  long k; 
   long length;
   double alpha;
 
@@ -531,13 +530,13 @@ void bmodd(double *a, double *c, long dimi, long dimj, long stride_a, long strid
 
 void bmod(double *a, double *b, double *c, long dimi, long dimj, long dimk, long stridea, long strideb, long stridec)
 {
-  long j;
+  long j; 
   long k;
   double alpha;
 
   for (k=0; k<dimk; k++) {
     for (j=0; j<dimj; j++) {
-      alpha = -b[k+j*strideb];
+      alpha = -b[k+j*strideb]; 
       daxpy(&c[j*stridec], &a[k*stridea], dimi, alpha);
     }
   }
@@ -556,18 +555,18 @@ void daxpy(double *a, double *b, long n, double alpha)
 
 long BlockOwner(long I, long J)
 {
-//	return((J%num_cols) + (I%num_rows)*num_cols);
-        return((I + J) % P);
+//	return((J%num_cols) + (I%num_rows)*num_cols); 
+	return((I + J) % P);
 }
 
 long BlockOwnerColumn(long I, long J)
 {
-        return(I % P);
+	return(I % P);
 }
 
 long BlockOwnerRow(long I, long J)
 {
-        return(((J % P) + (P / 2)) % P);
+	return(((J % P) + (P / 2)) % P);
 }
 
 void lu(long n, long bs, long MyNum, struct LocalCopies *lc, long dostats)
@@ -579,7 +578,7 @@ void lu(long n, long bs, long MyNum, struct LocalCopies *lc, long dostats)
   unsigned long t1, t2, t3, t4, t11, t22;
 
   for (k=0, K=0; k<n; k+=bs, K++) {
-    kl = k + bs;
+    kl = k + bs; 
     if (kl > n) {
       kl = n;
       strK = kl - k;
@@ -593,7 +592,7 @@ void lu(long n, long bs, long MyNum, struct LocalCopies *lc, long dostats)
 
     /* factor diagonal block */
     if (BlockOwner(K, K) == MyNum) {
-      A = a[K+K*nblocks];
+      A = a[K+K*nblocks]; 
       lu0(A, strK, strK);
     }
 
@@ -611,35 +610,35 @@ void lu(long n, long bs, long MyNum, struct LocalCopies *lc, long dostats)
     D = a[K+K*nblocks];
     for (i=kl, I=K+1; i<n; i+=bs, I++) {
       if (BlockOwnerColumn(I, K) == MyNum) {  /* parcel out blocks */
-        il = i + bs;
-        if (il > n) {
-          il = n;
+	il = i + bs; 
+	if (il > n) {
+	  il = n;
           strI = il - i;
         } else {
           strI = bs;
         }
-        A = a[I+K*nblocks];
-        bdiv(A, D, strI, strK, strI, strK);
+	A = a[I+K*nblocks]; 
+	bdiv(A, D, strI, strK, strI, strK);  
       }
     }
     /* modify row k by diagonal block */
     for (j=kl, J=K+1; j<n; j+=bs, J++) {
       if (BlockOwnerRow(K, J) == MyNum) {  /* parcel out blocks */
-        jl = j+bs;
-        if (jl > n) {
-          jl = n;
+	jl = j+bs; 
+	if (jl > n) {
+	  jl = n;
           strJ = jl - j;
         } else {
           strJ = bs;
         }
         A = a[K+J*nblocks];
-        bmodd(D, A, strK, strJ, strK, strK);
+	bmodd(D, A, strK, strJ, strK, strK);
       }
     }
 
     if ((MyNum == 0) || (dostats)) {
       CLOCK(t22);
-    }
+    }   
 
     BARRIER(Global->start, P);
 
@@ -649,27 +648,27 @@ void lu(long n, long bs, long MyNum, struct LocalCopies *lc, long dostats)
 
     /* modify subsequent block columns */
     for (i=kl, I=K+1; i<n; i+=bs, I++) {
-      il = i+bs;
+      il = i+bs; 
       if (il > n) {
-        il = n;
+	il = n;
         strI = il - i;
       } else {
         strI = bs;
       }
-      A = a[I+K*nblocks];
+      A = a[I+K*nblocks]; 
       for (j=kl, J=K+1; j<n; j+=bs, J++) {
-        jl = j + bs;
-        if (jl > n) {
-          jl = n;
+	jl = j + bs; 
+	if (jl > n) {
+	  jl = n;
           strJ= jl - j;
         } else {
           strJ = bs;
         }
-        if (BlockOwner(I, J) == MyNum) {  /* parcel out blocks */
-          B = a[K+J*nblocks];
-          C = a[I+J*nblocks];
-          bmod(A, B, C, strI, strJ, strK, strI, strK, strI);
-        }
+	if (BlockOwner(I, J) == MyNum) {  /* parcel out blocks */
+	  B = a[K+J*nblocks]; 
+	  C = a[I+J*nblocks];
+	  bmod(A, B, C, strI, strJ, strK, strI, strK, strI);
+	}
       }
     }
 
@@ -697,24 +696,24 @@ void InitA(double *rhs)
   for (j=0; j<n; j++) {
     for (i=0; i<n; i++) {
       if ((n - i) <= edge) {
-        ibs = edge;
-        ibs = n-edge;
-        skip = edge;
+	ibs = edge;
+	ibs = n-edge;
+	skip = edge;
       } else {
-        ibs = block_size;
-        skip = block_size;
+	ibs = block_size;
+	skip = block_size;
       }
       if ((n - j) <= edge) {
-        jbs = edge;
-        jbs = n-edge;
+	jbs = edge;
+	jbs = n-edge;
       } else {
-        jbs = block_size;
+	jbs = block_size;
       }
       ii = (i/block_size) + (j/block_size)*nblocks;
       jj = (i%ibs)+(j%jbs)*skip;
       a[ii][jj] = ((double) lrand48())/MAXRAND;
       if (i == j) {
-        a[ii][jj] *= 10;
+	a[ii][jj] *= 10;
       }
     }
   }
@@ -725,18 +724,18 @@ void InitA(double *rhs)
   for (j=0; j<n; j++) {
     for (i=0; i<n; i++) {
       if ((n - i) <= edge) {
-        ibs = edge;
-        ibs = n-edge;
-        skip = edge;
+	ibs = edge;
+	ibs = n-edge;
+	skip = edge;
       } else {
-        ibs = block_size;
-        skip = block_size;
+	ibs = block_size;
+	skip = block_size;
       }
       if ((n - j) <= edge) {
-        jbs = edge;
-        jbs = n-edge;
+	jbs = edge;
+	jbs = n-edge;
       } else {
-        jbs = block_size;
+	jbs = block_size;
       }
       ii = (i/block_size) + (j/block_size)*nblocks;
       jj = (i%ibs)+(j%jbs)*skip;
@@ -758,30 +757,30 @@ double TouchA(long bs, long MyNum)
   for (J=0; J<nblocks; J++) {
     for (I=0; I<nblocks; I++) {
       if (BlockOwner(I, J) == MyNum) {
-        if (J == nblocks-1) {
-          jbs = n%bs;
-          if (jbs == 0) {
-            jbs = bs;
+	if (J == nblocks-1) {
+	  jbs = n%bs;
+	  if (jbs == 0) {
+	    jbs = bs;
           }
-        } else {
-          jbs = bs;
-        }
-        if (I == nblocks-1) {
-          ibs = n%bs;
-          if (ibs == 0) {
-            ibs = bs;
+	} else {
+	  jbs = bs;
+	}
+	if (I == nblocks-1) {
+	  ibs = n%bs;
+	  if (ibs == 0) {
+	    ibs = bs;
           }
-        } else {
-          ibs = bs;
-        }
-        for (j=0; j<jbs; j++) {
-          for (i=0; i<ibs; i++) {
-            tot += a[I+J*nblocks][i+j*ibs];
+	} else {
+	  ibs = bs;
+	}
+	for (j=0; j<jbs; j++) {
+	  for (i=0; i<ibs; i++) {
+	    tot += a[I+J*nblocks][i+j*ibs];
           }
-        }
+	}
       }
     }
-  }
+  } 
   return(tot);
 }
 
@@ -797,22 +796,22 @@ void PrintA()
   for (i=0; i<n; i++) {
     for (j=0; j<n; j++) {
       if ((n - i) <= edge) {
-        ibs = edge;
-        ibs = n-edge;
+	ibs = edge;
+	ibs = n-edge;
         skip = edge;
       } else {
-        ibs = block_size;
+	ibs = block_size;
         skip = block_size;
       }
       if ((n - j) <= edge) {
-        jbs = edge;
-        jbs = n-edge;
+	jbs = edge;
+	jbs = n-edge;
       } else {
-        jbs = block_size;
+	jbs = block_size;
       }
       ii = (i/block_size) + (j/block_size)*nblocks;
       jj = (i%ibs)+(j%jbs)*skip;
-      printf("%8.1f ", a[ii][jj]);
+      printf("%8.1f ", a[ii][jj]);   
     }
     printf("\n");
   }
@@ -829,7 +828,7 @@ void CheckResult(long n, double **a, double *rhs)
   long ibs, jbs, skip;
 
   edge = n%block_size;
-  y = (double *) malloc(n*sizeof(double));
+  y = (double *) malloc(n*sizeof(double));  
   if (y == NULL) {
     printerr("Could not malloc memory for y\n");
     exit(-1);
@@ -869,18 +868,18 @@ void CheckResult(long n, double **a, double *rhs)
   for (j=n-1; j>=0; j--) {
     for (i=0; i<j; i++) {
       if ((n - i) <= edge) {
-        ibs = edge;
+	ibs = edge;
         ibs = n-edge;
         skip = edge;
       } else {
-        ibs = block_size;
+	ibs = block_size;
         skip = block_size;
       }
       if ((n - j) <= edge) {
-        jbs = edge;
+	jbs = edge;
         jbs = n-edge;
       } else {
-        jbs = block_size;
+	jbs = block_size;
       }
       ii = (i/block_size) + (j/block_size)*nblocks;
       jj = (i%ibs)+(j%jbs)*skip;

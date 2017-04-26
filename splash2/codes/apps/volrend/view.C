@@ -245,7 +245,7 @@ void Compute_Input_Unit_Vector()
 void Load_Transformation_Matrix(matrix)
   float matrix[4][4];
 {
-        Copy_Matrix(matrix,transformation_matrix);
+	Copy_Matrix(matrix,transformation_matrix);
 }
 
 
@@ -253,20 +253,20 @@ void Transform_Point(xold,yold,zold,xnew,ynew,znew)
   float xold,yold,zold;
   float *xnew,*ynew,*znew;
 {
-        *xnew =
-            xold * transformation_matrix[0][0] +
+	*xnew =
+	    xold * transformation_matrix[0][0] +
             yold * transformation_matrix[1][0] +
                 zold * transformation_matrix[2][0] +
                     transformation_matrix[3][0];
 
-        *ynew =
-            xold * transformation_matrix[0][1] +
+	*ynew =
+	    xold * transformation_matrix[0][1] +
             yold * transformation_matrix[1][1] +
                 zold * transformation_matrix[2][1] +
                     transformation_matrix[3][1];
 
-        *znew =
-            xold * transformation_matrix[0][2] +
+	*znew =
+	    xold * transformation_matrix[0][2] +
             yold * transformation_matrix[1][2] +
                 zold * transformation_matrix[2][2] +
                     transformation_matrix[3][2];
@@ -276,18 +276,18 @@ void Transform_Point(xold,yold,zold,xnew,ynew,znew)
 void Inverse_Concatenate_Translation(matrix,xoffset,yoffset,zoffset)
   float matrix[4][4],xoffset,yoffset,zoffset;
 {
-        float translation_matrix[4][4];
-        Load_Translation_Matrix(translation_matrix,xoffset,yoffset,zoffset);
-        Inverse_Concatenate_Transform(matrix,translation_matrix);
+	float translation_matrix[4][4];
+	Load_Translation_Matrix(translation_matrix,xoffset,yoffset,zoffset);
+	Inverse_Concatenate_Transform(matrix,translation_matrix);
 }
 
 
 void Inverse_Concatenate_Scaling(matrix,xscale,yscale,zscale)
   float matrix[4][4],xscale,yscale,zscale;
 {
-        float scaling_matrix[4][4];
-        Load_Scaling_Matrix(scaling_matrix,xscale,yscale,zscale);
-        Inverse_Concatenate_Transform(matrix,scaling_matrix);
+	float scaling_matrix[4][4];
+	Load_Scaling_Matrix(scaling_matrix,xscale,yscale,zscale);
+	Inverse_Concatenate_Transform(matrix,scaling_matrix);
 }
 
 
@@ -295,41 +295,41 @@ void Inverse_Concatenate_Rotation(matrix,axis,angle)
   float matrix[4][4],angle;
   long axis;
 {
-        float rotation_matrix[4][4];
-        Load_Rotation_Matrix(rotation_matrix,axis,angle);
-        Inverse_Concatenate_Transform(matrix,rotation_matrix);
+	float rotation_matrix[4][4];
+	Load_Rotation_Matrix(rotation_matrix,axis,angle);
+	Inverse_Concatenate_Transform(matrix,rotation_matrix);
 }
 
 
 void Load_Identity_Matrix(matrix)
   float matrix[4][4];
 {
-        long i,j;
-        for (i=0; i<4; i++) {
-                for (j=0; j<4; j++) {
-                        matrix[i][j] = 0;
-                }
-                matrix[i][i] = 1.0;
-        }
+	long i,j;
+	for (i=0; i<4; i++) {
+		for (j=0; j<4; j++) {
+			matrix[i][j] = 0;
+		}
+		matrix[i][i] = 1.0;
+	}
 }
 
 void Load_Translation_Matrix(matrix,xoffset,yoffset,zoffset)
   float matrix[4][4],xoffset,yoffset,zoffset;
 {
-        Load_Identity_Matrix(matrix);
-        matrix[3][0] = xoffset;
-        matrix[3][1] = yoffset;
-        matrix[3][2] = zoffset;
+	Load_Identity_Matrix(matrix);
+	matrix[3][0] = xoffset;
+	matrix[3][1] = yoffset;
+	matrix[3][2] = zoffset;
 }
 
 
 void Load_Scaling_Matrix(matrix,xscale,yscale,zscale)
   float matrix[4][4],xscale,yscale,zscale;
 {
-        Load_Identity_Matrix(matrix);
-        matrix[0][0] = xscale;
-        matrix[1][1] = yscale;
-        matrix[2][2] = zscale;
+	Load_Identity_Matrix(matrix);
+	matrix[0][0] = xscale;
+	matrix[1][1] = yscale;
+	matrix[2][2] = zscale;
 }
 
 
@@ -337,72 +337,72 @@ void Load_Rotation_Matrix(matrix,axis,angle)
   float matrix[4][4],angle;
   long axis;
 {
-        Load_Identity_Matrix(matrix);
-        if (axis == XAXIS) {
-                matrix[1][1] = cos(angle/180.0*PI);
-                matrix[1][2] = sin(angle/180.0*PI);
-                matrix[2][1] = -sin(angle/180.0*PI);
-                matrix[2][2] = cos(angle/180.0*PI);
-        }
-        else if (axis == YAXIS) {
-                matrix[0][0] = cos(angle/180.0*PI);
-                matrix[0][2] = -sin(angle/180.0*PI);
-                matrix[2][0] = sin(angle/180.0*PI);
-                matrix[2][2] = cos(angle/180.0*PI);
-        }
-        else if (axis == ZAXIS) {
-                matrix[0][0] = cos(angle/180.0*PI);
-                matrix[0][1] = sin(angle/180.0*PI);
-                matrix[1][0] = -sin(angle/180.0*PI);
-                matrix[1][1] = cos(angle/180.0*PI);
-        }
+	Load_Identity_Matrix(matrix);
+	if (axis == XAXIS) {
+		matrix[1][1] = cos(angle/180.0*PI);
+		matrix[1][2] = sin(angle/180.0*PI);
+		matrix[2][1] = -sin(angle/180.0*PI);
+		matrix[2][2] = cos(angle/180.0*PI);
+	}
+	else if (axis == YAXIS) {
+		matrix[0][0] = cos(angle/180.0*PI);
+		matrix[0][2] = -sin(angle/180.0*PI);
+		matrix[2][0] = sin(angle/180.0*PI);
+		matrix[2][2] = cos(angle/180.0*PI);
+	}
+	else if (axis == ZAXIS) {
+		matrix[0][0] = cos(angle/180.0*PI);
+		matrix[0][1] = sin(angle/180.0*PI);
+		matrix[1][0] = -sin(angle/180.0*PI);
+		matrix[1][1] = cos(angle/180.0*PI);
+	}
 }
 
 
 void Concatenate_Transform(composite_matrix,transformation_matrix)
   float composite_matrix[][4],transformation_matrix[][4];
 {
-        float temp_matrix[4][4];
-        Multiply_Matrices(composite_matrix,transformation_matrix,temp_matrix);
-        Copy_Matrix(temp_matrix,composite_matrix);
+	float temp_matrix[4][4];
+	Multiply_Matrices(composite_matrix,transformation_matrix,temp_matrix);
+	Copy_Matrix(temp_matrix,composite_matrix);
 }
 
 void Inverse_Concatenate_Transform(composite_matrix,transformation_matrix)
   float composite_matrix[][4],transformation_matrix[][4];
 {
-        float temp_matrix[4][4];
-        Multiply_Matrices(transformation_matrix,composite_matrix,temp_matrix);
-        Copy_Matrix(temp_matrix,composite_matrix);
+	float temp_matrix[4][4];
+	Multiply_Matrices(transformation_matrix,composite_matrix,temp_matrix);
+	Copy_Matrix(temp_matrix,composite_matrix);
 }
 
 
 void Multiply_Matrices(input_matrix1,input_matrix2,output_matrix)
   float input_matrix1[][4],input_matrix2[][4],output_matrix[][4];
 {
-        long i,j;
-        for (i=0; i<4; i++) {
-                for (j=0; j<4; j++) {
-                        output_matrix[i][j] =
-                            input_matrix1[i][0] *
-                            input_matrix2[0][j] +
-                            input_matrix1[i][1] *
-                            input_matrix2[1][j] +
-                            input_matrix1[i][2] *
-                            input_matrix2[2][j] +
-                            input_matrix1[i][3] *
-                            input_matrix2[3][j];
-                }
-        }
+	long i,j;
+	for (i=0; i<4; i++) {
+		for (j=0; j<4; j++) {
+			output_matrix[i][j] =
+			    input_matrix1[i][0] *
+			    input_matrix2[0][j] +
+			    input_matrix1[i][1] *
+			    input_matrix2[1][j] +
+			    input_matrix1[i][2] *
+			    input_matrix2[2][j] +
+			    input_matrix1[i][3] *
+			    input_matrix2[3][j];
+		}
+	}
 }
 
 
 void Copy_Matrix(input_matrix,output_matrix)
 float input_matrix[][4],output_matrix[][4];
 {
-        long i,j;
-        for (i=0; i<4; i++) {
-                for (j=0; j<4; j++) {
-                        output_matrix[i][j] = input_matrix[i][j];
-                }
-        }
+	long i,j;
+	for (i=0; i<4; i++) {
+		for (j=0; j<4; j++) {
+			output_matrix[i][j] = input_matrix[i][j];
+		}
+	}
 }

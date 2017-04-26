@@ -20,7 +20,7 @@
  *
  ***************************************************************/
 
-#include <cstdio>
+#include <stdio.h>
 
 EXTERN_ENV;
 
@@ -77,7 +77,7 @@ void print_statistics(FILE *fd, long process_id)
     total_match1 = 0 ;
     total_match0 = 0 ;
 
-    for ( i = 0 ; i < MAX_INTERACTION_PER_ELEMENT ; i++ )
+    for( i = 0 ; i < MAX_INTERACTION_PER_ELEMENT ; i++ )
         {
             elem_interaction[i].count = 0 ;
             elem_interaction[i].area = 0 ;
@@ -92,21 +92,21 @@ void print_statistics(FILE *fd, long process_id)
     fprintf( fd, "    Histogram of interactions/elem\n" ) ;
     fprintf( fd, "\t Interactions  Occurrence\n" ) ;
     fprintf( fd, "\t -------------------------------\n" ) ;
-    if ( many_interaction.count > 0 )
+    if( many_interaction.count > 0 )
         {
             fprintf( fd, "\t (Over %d)      %ld (%f)\n",
                     MAX_INTERACTION_PER_ELEMENT,
                     many_interaction.count,
                     many_interaction.area / many_interaction.count ) ;
         }
-    for ( i = MAX_INTERACTION_PER_ELEMENT ;
+    for( i = MAX_INTERACTION_PER_ELEMENT ;
         elem_interaction[i].count == 0 ; i-- ) ;
-    for ( ; i >= 0 ; i-- )
+    for( ; i >= 0 ; i-- )
         {
-            if ( elem_interaction[i].count == 0 )
+            if( elem_interaction[i].count == 0 )
                 continue ;
 
-            if ( elem_interaction[i].count == 0 )
+            if( elem_interaction[i].count == 0 )
                 fprintf( fd, "\t    %ld          %ld (---)\n",
                         i, elem_interaction[i].count ) ;
 
@@ -213,7 +213,7 @@ void print_per_process_info(FILE *fd, long process)
     fprintf( fd, "\t\tPatch cache hit ratio:     %.2f%%\n",
     ps->total_patch_cache_hit * 100 /
     (ps->total_patch_cache_check + 0.01) ) ;
-    for ( cache_line = 0 ; cache_line < PATCH_CACHE_SIZE ; cache_line++ )
+    for( cache_line = 0 ; cache_line < PATCH_CACHE_SIZE ; cache_line++ )
     fprintf( fd, "\t\t    (level %ld):             %.2f%%\n",
     cache_line,
     ps->patch_cache_hit[cache_line] * 100 /
@@ -221,7 +221,7 @@ void print_per_process_info(FILE *fd, long process)
 
     /* Per iteration info */
     fprintf( fd, "\t\tPer iteration info.\n" ) ;
-    for ( iteration = 0 ; iteration < global->iteration_count ; iteration++ )
+    for( iteration = 0 ; iteration < global->iteration_count ; iteration++ )
     {
         fprintf( fd, "\t\t     [%ld]  Interaction comp:   %ld\n",
         iteration, ps->per_iteration[iteration].visibility_comp ) ;
@@ -234,9 +234,9 @@ void print_per_process_info(FILE *fd, long process)
         fprintf( fd, "\t\t     Process_task wait count: %ld\n",
         ps->per_iteration[iteration].process_tasks_wait ) ;
         e = ps->per_iteration[iteration].last_pr_task ;
-        if ( e == 0 )
+        if( e == 0 )
         continue ;
-        if ( e->parent == 0 )
+        if( e->parent == 0 )
         {
             fprintf( fd, "\t\t          Last task: Patch level\n" ) ;
             fprintf( fd, "\t\t           (%ld root inter)\n",
@@ -289,7 +289,7 @@ void get_patch_stat(Patch *patch, long dummy, long process_id)
     total_invisible_interactions += n_invisible_interactions ;
 
 #if PATCH_ASSIGNMENT == PATCH_ASSIGNMENT_COSTBASED
-    if ( n_interactions_in_patch
+    if( n_interactions_in_patch
     != global->patch_cost[patch->seq_no].n_total_inter )
     {
         printf( "Error: patch(%d) Inter counted: %d (n_total_inter %d)\n",
@@ -310,7 +310,7 @@ void get_elem_stat(Element *elem, long dummy, long process_id)
 
     n_elements_in_patch++ ;
 
-    while ( elem->area < min_elem_area )
+    while( elem->area < min_elem_area )
     {
         min_elem_area *= 0.25 ;
         n_equiv_elem_in_patch *= 4 ;
@@ -318,21 +318,21 @@ void get_elem_stat(Element *elem, long dummy, long process_id)
 
     /* Classify visibility */
     n_interactions_in_patch += elem->n_interactions ;
-    for ( pi = elem->interactions ; pi ; pi = pi->next )
+    for( pi = elem->interactions ; pi ; pi = pi->next )
     {
-        if ( pi->visibility == 0.0 )
+        if( pi->visibility == 0.0 )
         i_visible++ ;
-        else if ( pi->visibility == 1.0 )
+        else if( pi->visibility == 1.0 )
         c_visible++ ;
         else
         p_visible++ ;
     }
-    if ( i_visible + c_visible + p_visible != elem->n_interactions )
+    if( i_visible + c_visible + p_visible != elem->n_interactions )
     printf( "Fatal: Interactions count miss match\n" ) ;
-    if ( elem->n_vis_undef_inter != 0 )
+    if( elem->n_vis_undef_inter != 0 )
     printf( "Fatal: Visibility undef list count non zero(%ld)\n",
     elem->n_vis_undef_inter ) ;
-    if ( elem->vis_undef_inter != 0 )
+    if( elem->vis_undef_inter != 0 )
     printf( "Fatal: Visibility undef list not empty\n" ) ;
 
     n_comp_visible_interactions += c_visible ;
@@ -340,7 +340,7 @@ void get_elem_stat(Element *elem, long dummy, long process_id)
 
 
     /* Count interactions / element */
-    if ( elem->n_interactions > MAX_INTERACTION_PER_ELEMENT )
+    if( elem->n_interactions > MAX_INTERACTION_PER_ELEMENT )
     {
         many_interaction.count++ ;
         many_interaction.area += elem->area ;
@@ -352,7 +352,7 @@ void get_elem_stat(Element *elem, long dummy, long process_id)
     }
 
     /* Analyze object coherence */
-    if ( ! LEAF_ELEMENT( elem ) )
+    if( ! LEAF_ELEMENT( elem ) )
     {
         match0 = match1 = match2 = match3 = 0 ;
 
@@ -379,7 +379,7 @@ void count_interaction(Element *es, Element *e1, Element *e2, Element *e3, long 
     Interaction *pi ;
     long occurrence ;
 
-    for ( pi = es->interactions ; pi ; pi = pi->next )
+    for( pi = es->interactions ; pi ; pi = pi->next )
     {
         occurrence  = search_intearction( e1->interactions, pi, process_id ) ;
         occurrence += search_intearction( e2->interactions, pi, process_id ) ;
@@ -396,9 +396,9 @@ void count_interaction(Element *es, Element *e1, Element *e2, Element *e3, long 
 
 long search_intearction(Interaction *int_list, Interaction *inter, long process_id)
 {
-    while ( int_list )
+    while( int_list )
     {
-        if ( int_list->destination == inter->destination )
+        if( int_list->destination == inter->destination )
         return( 1 ) ;
 
         int_list = int_list->next ;
@@ -419,9 +419,9 @@ void print_running_time(long process_id)
 
     time_diff = time_rad_end - time_rad_start ;
     time_diff1 = time_rad_end - timing[0]->rad_start;
-    if ( time_diff < 0 )
+    if( time_diff < 0 )
     time_diff += CLOCK_MAX_VAL ;
-    if ( time_diff1 < 0 )
+    if( time_diff1 < 0 )
     time_diff1 += CLOCK_MAX_VAL ;
 
     printf( "\tOverall start time\t%20lu\n", time_rad_start);
@@ -441,11 +441,11 @@ void print_fork_time(long process_id)
 {
     long pid ;
 
-    if ( n_processors <= 1 )
+    if( n_processors <= 1 )
     return ;
 
     printf( "\tProcess fork overhead\n" ) ;
-    for ( pid = 0 ; pid < n_processors-1 ; pid++ )
+    for( pid = 0 ; pid < n_processors-1 ; pid++ )
     {
         printf( "\t Process %ld  %.2f mS\n",
         pid,
@@ -469,7 +469,7 @@ void init_stat_info(long process_id)
     long i ;
     StatisticalInfo *ps ;
 
-    for ( pid = 0 ; pid < MAX_PROCESSORS ; pid++ )
+    for( pid = 0 ; pid < MAX_PROCESSORS ; pid++ )
     {
         ps = &global->stat_info[ pid ] ;
         ps->total_modeling_tasks    = 0 ;
@@ -484,10 +484,10 @@ void init_stat_info(long process_id)
         ps->total_patch_cache_check = 0 ;
         ps->total_patch_cache_hit   = 0 ;
 
-        for ( i = 0 ; i < PATCH_CACHE_SIZE ; i++ )
+        for( i = 0 ; i < PATCH_CACHE_SIZE ; i++ )
         ps->patch_cache_hit[i]   = 0 ;
 
-        for ( i = 0 ; i < MAX_ITERATION_INFO ; i++ )
+        for( i = 0 ; i < MAX_ITERATION_INFO ; i++ )
         {
             ps->per_iteration[ i ].visibility_comp    = 0 ;
             ps->per_iteration[ i ].ray_intersect_test = 0 ;

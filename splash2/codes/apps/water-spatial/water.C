@@ -45,22 +45,22 @@ MAIN_ENV
     (and not have fewer boxes than processors).
     */
 
-#include <cmath>
-#include <cstdio>
-#include <cstring>
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
 
 /*  include files for declarations  */
 #include "cnst.h"
 #include "fileio.h"
 #include "frcnst.h"
-#include "global.h"
-#include "mddata.h"
 #include "mdvar.h"
 #include "parameters.h"
 #include "randno.h"
 #include "split.h"
 #include "water.h"
 #include "wwpot.h"
+#include "mddata.h"
+#include "global.h"
 
 long NATOMS;
 long I2;
@@ -380,7 +380,7 @@ void WorkStart() /* routine that each created process starts at;
 
     LocalXTT = MDMAIN(NSTEP,NPRINT,NSAVE,NORD1,ProcID);
     if (ProcID == 0) {
-            XTT = LocalXTT;
+	    XTT = LocalXTT;
     }
 }
 

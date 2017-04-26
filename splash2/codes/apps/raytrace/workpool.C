@@ -30,10 +30,11 @@
  */
 
 
-#include <cmath>
-#include <cstdio>
-
+#include <stdio.h>
+#include <math.h>
 #include "rt.h"
+
+
 
 /*
  * NAME
@@ -64,65 +65,65 @@
  */
 
 VOID	PutJob(INT xs, INT ys, INT xe, INT ye, INT xbe, INT ybe, INT pid)
-        {
-        INT	i, j;
-        INT	xb_addr, yb_addr;		/* Bundle pixel address.     */
-        INT	xb_end,  yb_end;		/* End bundle pixels.	     */
-        INT	xb_size, yb_size;		/* Bundle size. 	     */
-        WPJOB	*wpentry;			/* New work pool entry.      */
+	{
+	INT	i, j;
+	INT	xb_addr, yb_addr;		/* Bundle pixel address.     */
+	INT	xb_end,  yb_end;		/* End bundle pixels.	     */
+	INT	xb_size, yb_size;		/* Bundle size. 	     */
+	WPJOB	*wpentry;			/* New work pool entry.      */
 
-        /* Starting block pixel address (upper left pixel). */
+	/* Starting block pixel address (upper left pixel). */
 
-        xb_addr = xs;
-        yb_addr = ys;
+	xb_addr = xs;
+	yb_addr = ys;
 
-        /* Ending block pixel address (lower right pixel). */
+	/* Ending block pixel address (lower right pixel). */
 
-        xb_end = xb_addr + xe - 1;
-        yb_end = yb_addr + ye - 1;
+	xb_end = xb_addr + xe - 1;
+	yb_end = yb_addr + ye - 1;
 
-        for (i = 0; i < ye; i += ybe)
-                {
-                for (j = 0; j < xe; j += xbe)
-                        {
-                        /* Determine bundle size. */
+	for (i = 0; i < ye; i += ybe)
+		{
+		for (j = 0; j < xe; j += xbe)
+			{
+			/* Determine bundle size. */
 
-                        if ((xb_addr + xbe - 1) <= xb_end)
-                                xb_size = xbe;
-                        else
-                                xb_size = xb_end - xb_addr + 1;
+			if ((xb_addr + xbe - 1) <= xb_end)
+				xb_size = xbe;
+			else
+				xb_size = xb_end - xb_addr + 1;
 
-                        if ((yb_addr + ybe - 1) <= yb_end)
-                                yb_size = ybe;
-                        else
-                                yb_size = yb_end - yb_addr + 1;
-
-
-                        /* Initialize work pool entry. */
-
-                        wpentry = GlobalMalloc(sizeof(WPJOB), "workpool.c");
-
-                        wpentry->xpix = xb_addr;
-                        wpentry->ypix = yb_addr;
-                        wpentry->xdim = xb_size;
-                        wpentry->ydim = yb_size;
+			if ((yb_addr + ybe - 1) <= yb_end)
+				yb_size = ybe;
+			else
+				yb_size = yb_end - yb_addr + 1;
 
 
-                        /* Add to top of work pool stack. */
+			/* Initialize work pool entry. */
 
-                        if (!gm->workpool[pid][0])
-                                wpentry->next = NULL;
-                        else
-                                wpentry->next = gm->workpool[pid][0];
+			wpentry = GlobalMalloc(sizeof(WPJOB), "workpool.c");
 
-                        gm->workpool[pid][0] = wpentry;
-                        xb_addr += xbe;
-                        }
+			wpentry->xpix = xb_addr;
+			wpentry->ypix = yb_addr;
+			wpentry->xdim = xb_size;
+			wpentry->ydim = yb_size;
 
-                xb_addr  = xs;
-                yb_addr += ybe;
-                }
-        }
+
+			/* Add to top of work pool stack. */
+
+			if (!gm->workpool[pid][0])
+				wpentry->next = NULL;
+			else
+				wpentry->next = gm->workpool[pid][0];
+
+			gm->workpool[pid][0] = wpentry;
+			xb_addr += xbe;
+			}
+
+		xb_addr  = xs;
+		yb_addr += ybe;
+		}
+	}
 
 
 
@@ -145,34 +146,34 @@ VOID	PutJob(INT xs, INT ys, INT xe, INT ye, INT xbe, INT ybe, INT pid)
  */
 
 INT	GetJob(RAYJOB *job, INT pid)
-        {
-        WPJOB	*wpentry;			/* Work pool entry.	     */
+	{
+	WPJOB	*wpentry;			/* Work pool entry.	     */
 
-        ALOCK(gm->wplock, pid)
-        wpentry = gm->workpool[pid][0];
+	ALOCK(gm->wplock, pid)
+	wpentry = gm->workpool[pid][0];
 
-        if (!wpentry)
-                {
-                gm->wpstat[pid][0] = WPS_EMPTY;
-                AULOCK(gm->wplock, pid)
-                return (WPS_EMPTY);
-                }
+	if (!wpentry)
+		{
+		gm->wpstat[pid][0] = WPS_EMPTY;
+		AULOCK(gm->wplock, pid)
+		return (WPS_EMPTY);
+		}
 
-        gm->workpool[pid][0] = wpentry->next;
-        AULOCK(gm->wplock, pid)
+	gm->workpool[pid][0] = wpentry->next;
+	AULOCK(gm->wplock, pid)
 
-        /* Set up ray job information. */
+	/* Set up ray job information. */
 
-        job->x	   = wpentry->xpix;
-        job->y	   = wpentry->ypix;
-        job->xcurr = wpentry->xpix;
-        job->ycurr = wpentry->ypix;
-        job->xlen  = wpentry->xdim;
-        job->ylen  = wpentry->ydim;
+	job->x	   = wpentry->xpix;
+	job->y	   = wpentry->ypix;
+	job->xcurr = wpentry->xpix;
+	job->ycurr = wpentry->ypix;
+	job->xlen  = wpentry->xdim;
+	job->ylen  = wpentry->ydim;
 
-        GlobalFree(wpentry);
-        return (WPS_VALID);
-        }
+	GlobalFree(wpentry);
+	return (WPS_VALID);
+	}
 
 
 
@@ -192,40 +193,40 @@ INT	GetJob(RAYJOB *job, INT pid)
  */
 
 INT	GetJobs(RAYJOB *job, INT pid)
-        {
-        INT	i;
+	{
+	INT	i;
 
-        i = pid;
+	i = pid;
 
-        /* First, try to get job from pid's own pool (or pool 0). */
+	/* First, try to get job from pid's own pool (or pool 0). */
 
-        if (gm->wpstat[i][0] == WPS_VALID)
-                 if (GetJob(job, i) == WPS_VALID)
-                        {
-                        return (WPS_VALID);
-                        }
+	if (gm->wpstat[i][0] == WPS_VALID)
+		 if (GetJob(job, i) == WPS_VALID)
+			{
+			return (WPS_VALID);
+			}
 
 
-        /*
-         *	If that failed, try to get job from another pid's work
-         *	pool.
-         */
+	/*
+	 *	If that failed, try to get job from another pid's work
+	 *	pool.
+	 */
 
-                i = (pid + 1) % gm->nprocs;
+		i = (pid + 1) % gm->nprocs;
 
-                while (i != pid)
-                        {
-                        if (gm->wpstat[i][0] == WPS_VALID)
-                                if (GetJob(job, i) == WPS_VALID)
-                                        {
-                                        return (WPS_VALID);
-                                        }
+		while (i != pid)
+			{
+			if (gm->wpstat[i][0] == WPS_VALID)
+				if (GetJob(job, i) == WPS_VALID)
+					{
+					return (WPS_VALID);
+					}
 
-                        i = (i + 1) % gm->nprocs;
-                        }
+			i = (i + 1) % gm->nprocs;
+			}
 
-        return (WPS_EMPTY);
-        }
+	return (WPS_EMPTY);
+	}
 
 
 
@@ -242,17 +243,17 @@ INT	GetJobs(RAYJOB *job, INT pid)
  */
 
 VOID	PrintWorkPool(INT pid)
-        {
-        WPJOB	*j;
+	{
+	WPJOB	*j;
 
-        j = gm->workpool[pid][0];
+	j = gm->workpool[pid][0];
 
-        while (j)
-                {
-                printf("Workpool entry:    pid=%3ld    xs=%3ld    ys=%3ld    xe=%3ld    ye=%3ld\n", pid, j->xpix, j->ypix, j->xdim, j->ydim);
-                j = j->next;
-                }
-        }
+	while (j)
+		{
+		printf("Workpool entry:    pid=%3ld    xs=%3ld    ys=%3ld    xe=%3ld    ye=%3ld\n", pid, j->xpix, j->ypix, j->xdim, j->ydim);
+		j = j->next;
+		}
+	}
 
 
 
@@ -269,39 +270,39 @@ VOID	PrintWorkPool(INT pid)
  */
 
 VOID	InitWorkPool(INT pid)
-        {
-        INT	i;
-        INT	x, y;
-        INT	xe, ye;
-        INT	xsize, ysize;
+	{
+	INT	i;
+	INT	x, y;
+	INT	xe, ye;
+	INT	xsize, ysize;
 
-        gm->wpstat[pid][0]   = WPS_VALID;
-        gm->workpool[pid][0] = NULL;
+	gm->wpstat[pid][0]   = WPS_VALID;
+	gm->workpool[pid][0] = NULL;
 
-        i      = 0;
-        xsize  = Display.xres/blockx;
-        ysize  = Display.yres/blocky;
+	i      = 0;
+	xsize  = Display.xres/blockx;
+	ysize  = Display.yres/blocky;
 
-        for (y = 0; y < Display.yres; y += ysize)
-                {
-                if (y + ysize > Display.yres)
-                        ye = Display.yres - y;
-                else
-                        ye = ysize;
+	for (y = 0; y < Display.yres; y += ysize)
+		{
+		if (y + ysize > Display.yres)
+			ye = Display.yres - y;
+		else
+			ye = ysize;
 
-                for (x = 0; x < Display.xres; x += xsize)
-                        {
-                        if (x + xsize > Display.xres)
-                                xe = Display.xres - x;
-                        else
-                                xe = xsize;
+		for (x = 0; x < Display.xres; x += xsize)
+			{
+			if (x + xsize > Display.xres)
+				xe = Display.xres - x;
+			else
+				xe = xsize;
 
-                        if (i == pid)
-                                PutJob(x, y, xe, ye, bundlex, bundley, pid);
+			if (i == pid)
+				PutJob(x, y, xe, ye, bundlex, bundley, pid);
 
-                        i = (i + 1)%gm->nprocs;
-                        }
-                }
+			i = (i + 1)%gm->nprocs;
+			}
+		}
 
-        }
+	}
 

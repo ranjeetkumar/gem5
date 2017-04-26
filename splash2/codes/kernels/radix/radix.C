@@ -36,16 +36,15 @@
 /*                                                                       */
 /*************************************************************************/
 
+#include <stdio.h>
+#include <math.h>
 #include <unistd.h>
-
-#include <cmath>
-#include <cstdio>
 
 #define DEFAULT_P                    1
 #define DEFAULT_N               262144
-#define DEFAULT_R                 1024
+#define DEFAULT_R                 1024 
 #define DEFAULT_M               524288
-#define MAX_PROCESSORS              64
+#define MAX_PROCESSORS              64    
 #define RADIX_S                8388608.0e0
 #define RADIX           70368744177664.0e0
 #define SEED                 314159265.0e0
@@ -119,7 +118,7 @@ int main(int argc, char *argv[])
    long p;
    long quotient;
    long remainder;
-   long sum_i;
+   long sum_i; 
    long sum_f;
    long size;
    long **temp;
@@ -142,9 +141,9 @@ int main(int argc, char *argv[])
                   exit(-1);
                 }
                 if (number_of_processors > MAX_PROCESSORS) {
-                  printerr("Maximum processors (MAX_PROCESSORS) exceeded\n");
-                  exit(-1);
-                }
+                  printerr("Maximum processors (MAX_PROCESSORS) exceeded\n"); 
+		  exit(-1);
+		}
                 break;
       case 'r': radix = atoi(optarg);
                 if (radix < 1) {
@@ -187,18 +186,18 @@ int main(int argc, char *argv[])
                 printf("   -h  : Print out command line options.\n\n");
                 printf("Default: RADIX -p%1d -n%1d -r%1d -m%1d\n",
                         DEFAULT_P,DEFAULT_N,DEFAULT_R,DEFAULT_M);
-                exit(0);
+		exit(0);
      }
    }
 
    MAIN_INITENV(,80000000)
 
-   log2_radix = log_2(radix);
+   log2_radix = log_2(radix); 
    log2_keys = log_2(num_keys);
    global = (struct global_memory *) G_MALLOC(sizeof(struct global_memory));
    if (global == NULL) {
-           fprintf(stderr,"ERROR: Cannot malloc enough memory for global\n");
-           exit(-1);
+	   fprintf(stderr,"ERROR: Cannot malloc enough memory for global\n");
+	   exit(-1);
    }
    key[0] = (long *) G_MALLOC(num_keys*sizeof(long));
    key[1] = (long *) G_MALLOC(num_keys*sizeof(long));
@@ -209,10 +208,10 @@ int main(int argc, char *argv[])
    global->totaltime = (double *) G_MALLOC(number_of_processors*sizeof(double));
    size = number_of_processors*(radix*sizeof(long)+sizeof(long *));
    rank_me = (long **) G_MALLOC(size);
-   if ((key[0] == NULL) || (key[1] == NULL) || (key_partition == NULL) || (rank_partition == NULL) ||
+   if ((key[0] == NULL) || (key[1] == NULL) || (key_partition == NULL) || (rank_partition == NULL) || 
        (global->ranktime == NULL) || (global->sorttime == NULL) || (global->totaltime == NULL) || (rank_me == NULL)) {
      fprintf(stderr,"ERROR: Cannot malloc enough memory\n");
-     exit(-1);
+     exit(-1); 
    }
 
    temp = rank_me;
@@ -231,7 +230,7 @@ int main(int argc, char *argv[])
 /*   ALOCKINIT(global->section_lock,MAX_PROCESSORS)*/
    BARINIT(global->barrier_rank, number_of_processors)
    BARINIT(global->barrier_key, number_of_processors)
-
+   
    for (i=0; i<2*number_of_processors; i++) {
      PAUSEINIT(global->prefix_tree[i].done);
    }
@@ -277,11 +276,11 @@ int main(int argc, char *argv[])
    rank_partition[p] = radix;
 
 /* POSSIBLE ENHANCEMENT:  Here is where one might distribute the key,
-   rank_me, rank, and gp data structures across physically
-   distributed memories as desired.
-
-   One way to place data is as follows:
-
+   rank_me, rank, and gp data structures across physically 
+   distributed memories as desired. 
+   
+   One way to place data is as follows:  
+      
    for (i=0;i<number_of_processors;i++) {
      Place all addresses x such that:
        &(key[0][key_partition[i]]) <= x < &(key[0][key_partition[i+1]])
@@ -303,15 +302,15 @@ int main(int argc, char *argv[])
        offset >>= 1;
        index = base + offset;
        Place all addresses x such that:
-         &(global->prefix_tree[index]) <= x <
+         &(global->prefix_tree[index]) <= x < 
               &(global->prefix_tree[index + 1]) on node toffset
        base += level;
        level >>= 1;
-     }
+     }  
    }  */
 
    /* Fill the random-number array. */
-
+   
    CREATE(slave_sort, number_of_processors);
    WAIT_FOR_END(number_of_processors);
 
@@ -382,9 +381,9 @@ int main(int argc, char *argv[])
      printout();
    }
    if (test_result) {
-     test_sort(global->final);
+     test_sort(global->final);  
    }
-
+  
    MAIN_END;
 }
 
@@ -455,12 +454,12 @@ void slave_sort()
 
    init(key_start,key_stop,from);
 
-   BARRIER(global->barrier_key, number_of_processors)
+   BARRIER(global->barrier_key, number_of_processors) 
 
 /* POSSIBLE ENHANCEMENT:  Here is where one might reset the
    statistics that one is measuring about the parallel execution */
 
-   BARRIER(global->barrier_key, number_of_processors)
+   BARRIER(global->barrier_key, number_of_processors) 
 
    if ((MyNum == 0) || (stats)) {
      CLOCK(time1)
@@ -482,20 +481,20 @@ void slave_sort()
 
      for (i = 0; i < radix; i++) {
        rank_me_mynum[i] = 0;
-     }
+     }  
      key_from = (long *) key[from];
      key_to = (long *) key[to];
      for (i=key_start;i<key_stop;i++) {
        my_key = key_from[i] & bb;
-       my_key = my_key >> shiftnum;
+       my_key = my_key >> shiftnum;  
        rank_me_mynum[my_key]++;
      }
-     key_density[0] = rank_me_mynum[0];
+     key_density[0] = rank_me_mynum[0]; 
      for (i=1;i<radix;i++) {
-       key_density[i] = key_density[i-1] + rank_me_mynum[i];
+       key_density[i] = key_density[i-1] + rank_me_mynum[i];  
      }
 
-     BARRIER(global->barrier_rank, number_of_processors)
+     BARRIER(global->barrier_rank, number_of_processors)  
 
      n = &(global->prefix_tree[MyNum]);
      for (i = 0; i < radix; i++) {
@@ -573,7 +572,7 @@ void slave_sort()
      offset = MyNum;
      level = number_of_processors;
      base = 0;
-     for (i = 0; i < radix; i++) {
+     for(i = 0; i < radix; i++) {
        rank_ff_mynum[i] = 0;
      }
      while (offset != 0) {
@@ -604,13 +603,13 @@ void slave_sort()
 
      /* put it in order according to this digit */
 
-     for (i = key_start; i < key_stop; i++) {
+     for (i = key_start; i < key_stop; i++) {  
        this_key = key_from[i] & bb;
-       this_key = this_key >> shiftnum;
+       this_key = this_key >> shiftnum;  
        tmp = rank_ff_mynum[this_key];
        key_to[tmp] = key_from[i];
        rank_ff_mynum[this_key]++;
-     }   /*  i */
+     }   /*  i */  
 
      if ((MyNum == 0) || (stats)) {
        CLOCK(time5);
@@ -653,7 +652,7 @@ double product_mod_46(double t1, double t2)
    double b1;
    double a2;
    double b2;
-
+			
    a1 = (double)((long)(t1 / RADIX_S));    /* Decompose the arguments.  */
    a2 = t1 - a1 * RADIX_S;
    b1 = (double)((long)(t2 / RADIX_S));
@@ -674,8 +673,8 @@ double ran_num_init(unsigned long k, double b, double t)
 {
    unsigned long j;
 
-   while (k != 0) {             /* while () is executed m times
-                                   such that 2^m > k.  */
+   while (k != 0) {             /* while() is executed m times
+				   such that 2^m > k.  */
       j = k >> 1;
       if ((j << 1) != k) {
          b = product_mod_46(b, t);

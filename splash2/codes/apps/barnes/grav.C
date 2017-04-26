@@ -69,7 +69,7 @@ void gravsub(register nodeptr p, long ProcessId)
     mor3 = phii / Local[ProcessId].drsq;
     MULVS(ai, Local[ProcessId].dr, mor3);
     ADDV(Local[ProcessId].acc0, Local[ProcessId].acc0, ai);
-    if (Type(p) != BODY) {                  /* a body-cell/leaf interaction? */
+    if(Type(p) != BODY) {                  /* a body-cell/leaf interaction? */
        Local[ProcessId].mynbcterm++;
 #ifdef QUADPOLE
        dr5inv = 1.0/(Local[ProcessId].drsq * Local[ProcessId].drsq * drabs);
@@ -111,23 +111,23 @@ void walksub(nodeptr n, real dsq, long ProcessId)
 
    if (subdivp(n, dsq, ProcessId)) {
       if (Type(n) == CELL) {
-         for (nn = Subp(n); nn < Subp(n) + NSUB; nn++) {
-            if (*nn != NULL) {
-               walksub(*nn, dsq / 4.0, ProcessId);
-            }
-         }
+	 for (nn = Subp(n); nn < Subp(n) + NSUB; nn++) {
+	    if (*nn != NULL) {
+	       walksub(*nn, dsq / 4.0, ProcessId);
+	    }
+	 }
       }
       else {
-         l = (leafptr) n;
-         for (i = 0; i < l->num_bodies; i++) {
-            p = Bodyp(l)[i];
-            if (p != Local[ProcessId].pskip) {
-               gravsub(p, ProcessId);
-            }
-            else {
-               Local[ProcessId].skipself = TRUE;
-            }
-         }
+	 l = (leafptr) n;
+	 for (i = 0; i < l->num_bodies; i++) {
+	    p = Bodyp(l)[i];
+	    if (p != Local[ProcessId].pskip) {
+	       gravsub(p, ProcessId);
+	    }
+	    else {
+	       Local[ProcessId].skipself = TRUE;
+	    }
+	 }
       }
    }
    else {

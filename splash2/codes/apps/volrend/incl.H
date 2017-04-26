@@ -21,15 +21,13 @@
 *************************************************************************/
 
 
-#include <sys/types.h>
-
-#include <climits>
-#include <cmath>               /* Definitions for mathematical library      */
-#include <cstdio>		/* Definitions for standard I/O library      */
-
-#include "address.h"            /* Map address macros                        */
+#include "user_options.h"       /* User options defined at compile time      */
 #include "const.h"              /* Constant definitions                      */
+#include "my_types.h"           /* User defined type                         */
 #include "global.h"             /* Global variables                          */
 #include "macros.h"		/* Definition of general C macros            */
-#include "my_types.h"           /* User defined type                         */
-#include "user_options.h"       /* User options defined at compile time      */
+#include "address.h"            /* Map address macros                        */
+#include <stdio.h>		/* Definitions for standard I/O library      */
+#include <math.h>               /* Definitions for mathematical library      */
+#include <limits.h>
+#include <sys/types.h>

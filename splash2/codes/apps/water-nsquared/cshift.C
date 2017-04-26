@@ -15,8 +15,7 @@
 /*************************************************************************/
 
 EXTERN_ENV
-#include <cmath>
-
+#include <math.h>
 #include "global.h"
 
 /* return the value of a with the same sign as b */

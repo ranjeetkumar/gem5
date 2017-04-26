@@ -17,7 +17,6 @@
 /********** storing/loading of large arrays to/from files **********/
 
 #include <fcntl.h>
-
 #include "incl.h"
 
 #define	PMODE	0644		/* RW for owner, R for group, R for others */
@@ -53,7 +52,7 @@ void Write_Bytes(int fd, unsigned char array[], long length)
   if (n_written != -1) {
     while (n_written < length) {
       more_written = write(fd,&array[n_written],
-                           MIN(length-n_written,32766));
+			   MIN(length-n_written,32766));
       if (more_written == -1) break;
       n_written += more_written;
     }
@@ -80,7 +79,7 @@ void Write_Shorts(int fd, unsigned char array[], long length)
   if (n_written != -1) {
     while (n_written < length) {
       more_written = write(fd,&array[n_written],
-                           MIN(length-n_written,32766));
+			   MIN(length-n_written,32766));
       if (more_written == -1) break;
       n_written += more_written;
     }
@@ -117,7 +116,7 @@ void Write_Longs(int fd, unsigned char array[], long length)
   if (n_written != -1) {
     while (n_written < length) {
       more_written = write(fd,&array[n_written],
-                           MIN(length-n_written,32766));
+			   MIN(length-n_written,32766));
       if (more_written == -1) break;
       n_written += more_written;
     }
@@ -147,7 +146,7 @@ void Read_Bytes(int fd, unsigned char array[], long length)
   if (n_read != -1 && n_read != 0) {
     while (n_read < length) {
       more_read = read(fd,&array[n_read],
-                       MIN(length-n_read,32766));
+		       MIN(length-n_read,32766));
       if (more_read == -1 || more_read == 0) break;
       n_read += more_read;
     }
@@ -167,7 +166,7 @@ void Read_Shorts(int fd, unsigned char array[], long length)
   if (n_read != -1 && n_read != 0) {
     while (n_read < length) {
       more_read = read(fd,&array[n_read],
-                       MIN(length-n_read,32766));
+		       MIN(length-n_read,32766));
       if (more_read == -1 || more_read == 0) break;
       n_read += more_read;
     }
@@ -194,7 +193,7 @@ void Read_Longs(int fd, unsigned char array[], long length)
   if (n_read != -1 && n_read != 0) {
     while (n_read < length) {
       more_read = read(fd,&array[n_read],
-                       MIN(length-n_read,32766));
+		       MIN(length-n_read,32766));
       if (more_read == -1 || more_read == 0) break;
       n_read += more_read;
     }

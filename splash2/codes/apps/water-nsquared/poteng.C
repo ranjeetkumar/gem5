@@ -15,15 +15,15 @@
 /*************************************************************************/
 
 EXTERN_ENV
-#include "frcnst.h"
-#include "global.h"
-#include "math.h"
-#include "mddata.h"
 #include "mdvar.h"
-#include "parameters.h"
-#include "split.h"
+#include "frcnst.h"
 #include "water.h"
 #include "wwpot.h"
+#include "math.h"
+#include "parameters.h"
+#include "mddata.h"
+#include "split.h"
+#include "global.h"
 
 void POTENG(double *POTA, double *POTR, double *PTRF, long ProcID)
 {

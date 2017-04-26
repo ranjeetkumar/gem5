@@ -16,13 +16,12 @@
 
 EXTERN_ENV
 
-#include <cstdio>
-
-#include "global.h"
-#include "mddata.h"
+#include <stdio.h>
 #include "mdvar.h"
 #include "parameters.h"
+#include "mddata.h"
 #include "split.h"
+#include "global.h"
 
 void BNDRY(long ProcID)     /* this routine puts the molecules back inside the box if they are out */
 {

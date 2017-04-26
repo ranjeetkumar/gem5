@@ -21,7 +21,7 @@
 ******************************************************************************/
 
 
-                                /* Definition of user-defined types:         */
+				/* Definition of user-defined types:         */
 typedef unsigned char DENSITY;		/*   density                         */
 typedef unsigned char BYTE;		/*   general purpose byte            */
 typedef signed short NORMAL;            /*   density normal                  */

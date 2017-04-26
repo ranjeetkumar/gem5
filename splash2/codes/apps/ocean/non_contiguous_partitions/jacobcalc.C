@@ -17,10 +17,9 @@
 /* does the arakawa jacobian calculation (of the x and y matrices,
    putting the results in the z matrix) for a subblock. */
 
-#include <cmath>
-#include <cstdio>
-#include <ctime>
-
+#include <stdio.h>
+#include <math.h>
+#include <time.h>
 #include "decs.h"
 
 void jacobcalc(double x[IMAX][JMAX], double y[IMAX][JMAX], double z[IMAX][JMAX], long pid, long firstrow, long lastrow, long firstcol, long lastcol, long numrows, long numcols)

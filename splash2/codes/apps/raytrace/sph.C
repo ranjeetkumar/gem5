@@ -25,10 +25,11 @@
  */
 
 
-#include <cmath>
-#include <cstdio>
-
+#include <stdio.h>
+#include <math.h>
 #include "rt.h"
+
+
 
 /*
  * NAME
@@ -42,9 +43,9 @@
  */
 
 CHAR	*SphName()
-        {
-        return ("sphere");
-        }
+	{
+	return ("sphere");
+	}
 
 
 
@@ -61,22 +62,22 @@ CHAR	*SphName()
  */
 
 VOID	SphPrint(OBJECT *po)
-        {
-        INT	i;
-        SPHERE	*ps;			/* Ptr to sphere data.		     */
-        ELEMENT *pe;			/* Ptr to sphere element.	     */
+	{
+	INT	i;
+	SPHERE	*ps;			/* Ptr to sphere data.		     */
+	ELEMENT *pe;			/* Ptr to sphere element.	     */
 
-        pe = po->pelem;
-        fprintf(stderr,"\tSphere object\n");
+	pe = po->pelem;
+	fprintf(stderr,"\tSphere object\n");
 
-        for (i = 0; i < po->numelements; i++)
-                {
-                ps = (SPHERE *)(pe->data);
-                fprintf(stderr,"\t\tcenter  %f %f %f\n", ps->center[0], ps->center[1], ps->center[2]);
-                fprintf(stderr,"\t\t        radius %f %f\n\n", ps->rad, ps->rad2);
-                pe++;
-                }
-        }
+	for (i = 0; i < po->numelements; i++)
+		{
+		ps = (SPHERE *)(pe->data);
+		fprintf(stderr,"\t\tcenter  %f %f %f\n", ps->center[0], ps->center[1], ps->center[2]);
+		fprintf(stderr,"\t\t        radius %f %f\n\n", ps->rad, ps->rad2);
+		pe++;
+		}
+	}
 
 
 
@@ -94,19 +95,19 @@ VOID	SphPrint(OBJECT *po)
  */
 
 VOID	SphElementBoundBox(ELEMENT *pe, SPHERE *ps)
-        {
-        BBOX	*pbb;			/* Ptr to bounding box. 	     */
+	{
+	BBOX	*pbb;			/* Ptr to bounding box. 	     */
 
-        pbb = &(pe->bv);
+	pbb = &(pe->bv);
 
-        pbb->dnear[0] = ps->center[0] - ps->rad;
-        pbb->dnear[1] = ps->center[1] - ps->rad;
-        pbb->dnear[2] = ps->center[2] - ps->rad;
+	pbb->dnear[0] = ps->center[0] - ps->rad;
+	pbb->dnear[1] = ps->center[1] - ps->rad;
+	pbb->dnear[2] = ps->center[2] - ps->rad;
 
-        pbb->dfar[0]  = ps->center[0] + ps->rad;
-        pbb->dfar[1]  = ps->center[1] + ps->rad;
-        pbb->dfar[2]  = ps->center[2] + ps->rad;
-        }
+	pbb->dfar[0]  = ps->center[0] + ps->rad;
+	pbb->dfar[1]  = ps->center[1] + ps->rad;
+	pbb->dfar[2]  = ps->center[2] + ps->rad;
+	}
 
 
 
@@ -123,45 +124,45 @@ VOID	SphElementBoundBox(ELEMENT *pe, SPHERE *ps)
  */
 
 VOID	SphBoundBox(OBJECT *po)
-        {
-        INT	i;
-        SPHERE	*ps;			/* Ptr to sphere data.		     */
-        ELEMENT *pe;			/* Ptr to sphere element.	     */
-        BBOX	*pbb;			/* Ptr to bounding box. 	     */
-        REAL	minx, maxx;
-        REAL	miny, maxy;
-        REAL	minz, maxz;
+	{
+	INT	i;
+	SPHERE	*ps;			/* Ptr to sphere data.		     */
+	ELEMENT *pe;			/* Ptr to sphere element.	     */
+	BBOX	*pbb;			/* Ptr to bounding box. 	     */
+	REAL	minx, maxx;
+	REAL	miny, maxy;
+	REAL	minz, maxz;
 
-        pe   = po->pelem;
-        pbb  = &(po->bv);
+	pe   = po->pelem;
+	pbb  = &(po->bv);
 
-        minx = miny = minz =  HUGE_REAL;
-        maxx = maxy = maxz = -HUGE_REAL;
+	minx = miny = minz =  HUGE_REAL;
+	maxx = maxy = maxz = -HUGE_REAL;
 
-        for (i = 0; i < po->numelements; i++)
-                {
-                ps = (SPHERE *)(pe->data);
-                SphElementBoundBox(pe, ps);
+	for (i = 0; i < po->numelements; i++)
+		{
+		ps = (SPHERE *)(pe->data);
+		SphElementBoundBox(pe, ps);
 
-                minx = Min(minx, pe->bv.dnear[0]);
-                miny = Min(miny, pe->bv.dnear[1]);
-                minz = Min(minz, pe->bv.dnear[2]);
+		minx = Min(minx, pe->bv.dnear[0]);
+		miny = Min(miny, pe->bv.dnear[1]);
+		minz = Min(minz, pe->bv.dnear[2]);
 
-                maxx = Max(maxx, pe->bv.dfar[0]);
-                maxy = Max(maxy, pe->bv.dfar[1]);
-                maxz = Max(maxz, pe->bv.dfar[2]);
+		maxx = Max(maxx, pe->bv.dfar[0]);
+		maxy = Max(maxy, pe->bv.dfar[1]);
+		maxz = Max(maxz, pe->bv.dfar[2]);
 
-                pe++;
-                }
+		pe++;
+		}
 
-        pbb->dnear[0] = minx;
-        pbb->dnear[1] = miny;
-        pbb->dnear[2] = minz;
+	pbb->dnear[0] = minx;
+	pbb->dnear[1] = miny;
+	pbb->dnear[2] = minz;
 
-        pbb->dfar[0]  = maxx;
-        pbb->dfar[1]  = maxy;
-        pbb->dfar[2]  = maxz;
-        }
+	pbb->dfar[0]  = maxx;
+	pbb->dfar[1]  = maxy;
+	pbb->dfar[2]  = maxz;
+	}
 
 
 
@@ -184,20 +185,20 @@ VOID	SphBoundBox(OBJECT *po)
  */
 
 VOID	SphNormal(IRECORD *hit, POINT Pi, POINT Ni)
-        {
-        ELEMENT *pe;
-        SPHERE	*ps;			/* Ptr to sphere data.		     */
+	{
+	ELEMENT *pe;
+	SPHERE	*ps;			/* Ptr to sphere data.		     */
 
-        /*  Compute normal and make it a unit vector. */
+	/*  Compute normal and make it a unit vector. */
 
-        pe = hit->pelem;
-        ps = (SPHERE *)pe->data;
-        VecSub(Ni, Pi, ps->center);
+	pe = hit->pelem;
+	ps = (SPHERE *)pe->data;
+	VecSub(Ni, Pi, ps->center);
 
-        Ni[0] /= ps->rad;
-        Ni[1] /= ps->rad;
-        Ni[2] /= ps->rad;
-        }
+	Ni[0] /= ps->rad;
+	Ni[1] /= ps->rad;
+	Ni[2] /= ps->rad;
+	}
 
 
 
@@ -215,52 +216,52 @@ VOID	SphNormal(IRECORD *hit, POINT Pi, POINT Ni)
  */
 
 VOID	SphDataNormalize(OBJECT *po, MATRIX normMat)
-        {
-        INT	i;
-        SPHERE	*ps;			/* Ptr to sphere data.		     */
-        ELEMENT *pe;			/* Ptr to sphere element.	     */
-        POINT	surf_point;		/* Point on surface.		     */
-        POINT	center_point;		/* Center point.		     */
-        POINT	rad_vector;		/* Radius vector.		     */
+	{
+	INT	i;
+	SPHERE	*ps;			/* Ptr to sphere data.		     */
+	ELEMENT *pe;			/* Ptr to sphere element.	     */
+	POINT	surf_point;		/* Point on surface.		     */
+	POINT	center_point;		/* Center point.		     */
+	POINT	rad_vector;		/* Radius vector.		     */
 
-        NormalizeBoundBox(&po->bv, normMat);
+	NormalizeBoundBox(&po->bv, normMat);
 
-        pe = po->pelem;
+	pe = po->pelem;
 
-        for (i = 0; i < po->numelements; i++)
-                {
-                ps = (SPHERE *)pe->data;
+	for (i = 0; i < po->numelements; i++)
+		{
+		ps = (SPHERE *)pe->data;
 
-                NormalizeBoundBox(&pe->bv, normMat);
+		NormalizeBoundBox(&pe->bv, normMat);
 
-                surf_point[0]	= ps->center[0] + ps->rad;
-                surf_point[1]	= ps->center[1];
-                surf_point[2]	= ps->center[2];
-                surf_point[3]	= 1.0;
+		surf_point[0]	= ps->center[0] + ps->rad;
+		surf_point[1]	= ps->center[1];
+		surf_point[2]	= ps->center[2];
+		surf_point[3]	= 1.0;
 
-                center_point[0] = ps->center[0];
-                center_point[1] = ps->center[1];
-                center_point[2] = ps->center[2];
-                center_point[3] = 1.0;
-
-
-                /* Transform center point. */
-
-                VecMatMult(center_point, normMat, center_point);
-                VecMatMult(surf_point, normMat, surf_point);
+		center_point[0] = ps->center[0];
+		center_point[1] = ps->center[1];
+		center_point[2] = ps->center[2];
+		center_point[3] = 1.0;
 
 
-                /* Find new radius. */
+		/* Transform center point. */
 
-                VecSub(rad_vector, surf_point, center_point);
-                VecCopy(ps->center, center_point);
+		VecMatMult(center_point, normMat, center_point);
+		VecMatMult(surf_point, normMat, surf_point);
 
-                ps->rad  = VecLen(rad_vector);
-                ps->rad2 = ps->rad * ps->rad;
 
-                pe++;
-                }
-        }
+		/* Find new radius. */
+
+		VecSub(rad_vector, surf_point, center_point);
+		VecCopy(ps->center, center_point);
+
+		ps->rad  = VecLen(rad_vector);
+		ps->rad2 = ps->rad * ps->rad;
+
+		pe++;
+		}
+	}
 
 
 
@@ -286,47 +287,47 @@ VOID	SphDataNormalize(OBJECT *po, MATRIX normMat)
  */
 
 INT	SphPeIntersect(RAY *pr, ELEMENT *pe, IRECORD *hit)
-        {
-        INT	nhits;				/* Number of hits.	     */
-        REAL	b, disc, t1, t2, vsq;		/* Formula variables.	     */
-        SPHERE	*ps;				/* Ptr to sphere data.	     */
-        POINT	V;				/* C - P		     */
-        IRECORD *sphhit;
+	{
+	INT	nhits;				/* Number of hits.	     */
+	REAL	b, disc, t1, t2, vsq;		/* Formula variables.	     */
+	SPHERE	*ps;				/* Ptr to sphere data.	     */
+	POINT	V;				/* C - P		     */
+	IRECORD *sphhit;
 
-        ps  = (SPHERE *)(pe->data);
-        sphhit = hit;
+	ps  = (SPHERE *)(pe->data);
+	sphhit = hit;
 
-        VecSub(V, ps->center, pr->P);		/* Ray from origin to center.*/
-        vsq = VecDot(V, V);			/* Length sq of V.	     */
-        b   = VecDot(V, pr->D); 		/* Perpendicular scale of V. */
+	VecSub(V, ps->center, pr->P);		/* Ray from origin to center.*/
+	vsq = VecDot(V, V);			/* Length sq of V.	     */
+	b   = VecDot(V, pr->D); 		/* Perpendicular scale of V. */
 
-        if (vsq > ps->rad2  &&	b < RAYEPS)	/* Behind ray origin.	     */
-                return (0);
+	if (vsq > ps->rad2  &&	b < RAYEPS)	/* Behind ray origin.	     */
+		return (0);
 
-        disc = b*b - vsq + ps->rad2;		/* Discriminate.	     */
-        if (disc < 0.0) 			/* Misses ray.		     */
-                return (0);
+	disc = b*b - vsq + ps->rad2;		/* Discriminate.	     */
+	if (disc < 0.0) 			/* Misses ray.		     */
+		return (0);
 
-        disc = sqrt(disc);			/* Find intersection param.  */
-        t2   = b + disc;
-        t1   = b - disc;
+	disc = sqrt(disc);			/* Find intersection param.  */
+	t2   = b + disc;
+	t1   = b - disc;
 
-        if (t2 <= RAYEPS)			/* Behind ray origin.	     */
-                return (0);
+	if (t2 <= RAYEPS)			/* Behind ray origin.	     */
+		return (0);
 
-        nhits = 0;
-        if (t1 > RAYEPS)			/* Entering sphere.	     */
-                {
-                IsectAdd(sphhit, t1, pe);
-                sphhit++;
-                nhits++;
-                }
+	nhits = 0;
+	if (t1 > RAYEPS)			/* Entering sphere.	     */
+		{
+		IsectAdd(sphhit, t1, pe);
+		sphhit++;
+		nhits++;
+		}
 
-        IsectAdd(sphhit, t2, pe);		/* Exiting sphere	     */
-        nhits++;
+	IsectAdd(sphhit, t2, pe);		/* Exiting sphere	     */
+	nhits++;
 
-        return (nhits);
-        }
+	return (nhits);
+	}
 
 
 
@@ -345,32 +346,32 @@ INT	SphPeIntersect(RAY *pr, ELEMENT *pe, IRECORD *hit)
  */
 
 INT	SphIntersect(RAY *pr, OBJECT *po, IRECORD *hit)
-        {
-        INT	i;
-        INT	nhits;			/* # hits in sphere.		     */
-        ELEMENT *pe;			/* Ptr to sphere element.	     */
-        IRECORD newhit[2];		/* Hit list.			     */
+	{
+	INT	i;
+	INT	nhits;			/* # hits in sphere.		     */
+	ELEMENT *pe;			/* Ptr to sphere element.	     */
+	IRECORD newhit[2];		/* Hit list.			     */
 
-        /* Traverse sphere list to find intersections. */
+	/* Traverse sphere list to find intersections. */
 
-        nhits	 = 0;
-        pe	 = po->pelem;
-        hit[0].t = HUGE_REAL;
+	nhits	 = 0;
+	pe	 = po->pelem;
+	hit[0].t = HUGE_REAL;
 
-        for (i = 0; i < po->numelements; i++)
-                {
-                if (SphPeIntersect(pr, pe, newhit))
-                        if (newhit[0].t < hit[0].t)
-                                {
-                                nhits++;
-                                hit[0].t     = newhit[0].t;
-                                hit[0].pelem = newhit[0].pelem;
-                                }
-                pe++;
-                }
+	for (i = 0; i < po->numelements; i++)
+		{
+		if (SphPeIntersect(pr, pe, newhit))
+			if (newhit[0].t < hit[0].t)
+				{
+				nhits++;
+				hit[0].t     = newhit[0].t;
+				hit[0].pelem = newhit[0].pelem;
+				}
+		pe++;
+		}
 
-        return (nhits);
-        }
+	return (nhits);
+	}
 
 
 
@@ -389,56 +390,56 @@ INT	SphIntersect(RAY *pr, OBJECT *po, IRECORD *hit)
  */
 
 VOID	SphTransform(OBJECT *po, MATRIX xtrans, MATRIX xinvT)
-        {
-        INT	i;
-        INT	numelems;		/* Number of object elements.	  */
-        REAL	new_rad;
-        SPHERE	*ps;			/* Ptr to sphere data.		     */
-        ELEMENT *pe;			/* Ptr to sphere element.	     */
-        POINT	surf_point;		/* Point on surface.		     */
-        POINT	center_point;		/* Center_point.		     */
-        POINT	rad_vector;		/* Radius vector.		     */
+	{
+	INT	i;
+	INT	numelems;		/* Number of object elements.	  */
+	REAL	new_rad;
+	SPHERE	*ps;			/* Ptr to sphere data.		     */
+	ELEMENT *pe;			/* Ptr to sphere element.	     */
+	POINT	surf_point;		/* Point on surface.		     */
+	POINT	center_point;		/* Center_point.		     */
+	POINT	rad_vector;		/* Radius vector.		     */
 
-        pe	 = po->pelem;
-        numelems = po->numelements;
+	pe	 = po->pelem;
+	numelems = po->numelements;
 
-        for (i = 0; i < numelems; i++)
-                {
-                ps = (SPHERE *)pe->data;
+	for (i = 0; i < numelems; i++)
+		{
+		ps = (SPHERE *)pe->data;
 
-                /* See if radius has changed with a scale. */
+		/* See if radius has changed with a scale. */
 
-                surf_point[0]	= ps->center[0] + ps->rad;
-                surf_point[1]	= ps->center[1];
-                surf_point[2]	= ps->center[2];
-                surf_point[3]	= 1.0;
+		surf_point[0]	= ps->center[0] + ps->rad;
+		surf_point[1]	= ps->center[1];
+		surf_point[2]	= ps->center[2];
+		surf_point[3]	= 1.0;
 
-                center_point[0] = ps->center[0];
-                center_point[1] = ps->center[1];
-                center_point[2] = ps->center[2];
-                center_point[3] = 1.0;
+		center_point[0] = ps->center[0];
+		center_point[1] = ps->center[1];
+		center_point[2] = ps->center[2];
+		center_point[3] = 1.0;
 
-                /* Transform center point. */
+		/* Transform center point. */
 
-                VecMatMult(center_point, xtrans, center_point);
-                VecMatMult(surf_point, xtrans, surf_point);
+		VecMatMult(center_point, xtrans, center_point);
+		VecMatMult(surf_point, xtrans, surf_point);
 
-                /* Find radius. */
+		/* Find radius. */
 
-                VecSub(rad_vector, surf_point, center_point);
-                VecCopy(ps->center, center_point);
+		VecSub(rad_vector, surf_point, center_point);
+		VecCopy(ps->center, center_point);
 
-                new_rad = VecLen(rad_vector);
+		new_rad = VecLen(rad_vector);
 
-                if (new_rad != ps->rad)
-                        {
-                        ps->rad  = new_rad;
-                        ps->rad2 = ps->rad * ps->rad;
-                        }
+		if (new_rad != ps->rad)
+			{
+			ps->rad  = new_rad;
+			ps->rad2 = ps->rad * ps->rad;
+			}
 
-                pe++;
-                }
-        }
+		pe++;
+		}
+	}
 
 
 
@@ -456,35 +457,35 @@ VOID	SphTransform(OBJECT *po, MATRIX xtrans, MATRIX xinvT)
  */
 
 VOID	SphRead(OBJECT *po, FILE *pf)
-        {
-        INT	i;
-        INT	instat; 		/* Input counter		     */
-        SPHERE	*ps;			/* Ptr to sphere data.		     */
-        ELEMENT *pe;			/* Ptr to sphere element.	     */
+	{
+	INT	i;
+	INT	instat; 		/* Input counter		     */
+	SPHERE	*ps;			/* Ptr to sphere data.		     */
+	ELEMENT *pe;			/* Ptr to sphere element.	     */
 
-        pe = po->pelem;
-        ps = GlobalMalloc(sizeof(SPHERE)*po->numelements, "sph.c");
+	pe = po->pelem;
+	ps = GlobalMalloc(sizeof(SPHERE)*po->numelements, "sph.c");
 
-        for (i = 0; i < po->numelements; i++)
-                {
-                instat = fscanf(pf,"%lf %lf %lf %lf", &(ps->center[0]), &(ps->center[1]), &(ps->center[2]), &(ps->rad));
+	for (i = 0; i < po->numelements; i++)
+		{
+		instat = fscanf(pf,"%lf %lf %lf %lf", &(ps->center[0]), &(ps->center[1]), &(ps->center[2]), &(ps->rad));
 
-                if (instat != 4)
-                        {
-                        printf("Error in SphRead: sphere %ld.\n", i);
-                        exit(1);
-                        }
+		if (instat != 4)
+			{
+			printf("Error in SphRead: sphere %ld.\n", i);
+			exit(1);
+			}
 
-                ps->center[3]  = 1.0;			/* w initialization. */
-                ps->rad2       = ps->rad*ps->rad;
+		ps->center[3]  = 1.0;			/* w initialization. */
+		ps->rad2       = ps->rad*ps->rad;
 
-                pe->data       = (CHAR *)ps;
-                pe->parent     = po;
+		pe->data       = (CHAR *)ps;
+		pe->parent     = po;
 
-                SphElementBoundBox(pe, ps);
+		SphElementBoundBox(pe, ps);
 
-                ps++;
-                pe++;
-                }
-        }
+		ps++;
+		pe++;
+		}
+	}
 

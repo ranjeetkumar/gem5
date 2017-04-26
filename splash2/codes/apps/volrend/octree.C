@@ -20,19 +20,18 @@
 *                                                                             *
 ******************************************************************************/
 
-#include <cstring>
-
+#include <string.h>
 #include "incl.h"
 
 #define WRITE_PYR(IBIT,ILEVEL,IZ,IY,IX)\
-                                (PYR_ADDRESS(ILEVEL,IZ,IY,IX),\
-                                 *pyr_address2|=(IBIT)<<pyr_offset2)
+				(PYR_ADDRESS(ILEVEL,IZ,IY,IX),\
+				 *pyr_address2|=(IBIT)<<pyr_offset2)
 
 /* The following declarations show the layout of the .pyr file.              */
 /* If changed, the version number must be incremented and code               */
 /* written to handle loading of both old and current versions.               */
 
-                                /* Version for new .pyr files:               */
+				/* Version for new .pyr files:               */
 #define	PYR_CUR_VERSION	1	/*   Initial release                         */
 short pyr_version;		/* Version of this .pyr file                 */
 
@@ -42,26 +41,26 @@ short pyr_len[MAX_PYRLEVEL+1][NM];	/* Number of voxels on each level    */
 short pyr_voxlen[MAX_PYRLEVEL+1][NM];	/* Size of voxels on each level      */
 
 int pyr_length[MAX_PYRLEVEL+1];/* Total number of bytes on this level       */
-                                /*   (= (long)((product of lens+7)/8))        */
+				/*   (= (long)((product of lens+7)/8))        */
 BYTE *pyr_address[MAX_PYRLEVEL+1];/* Pointer to binary pyramid               */
-                                /*   (only pyr_levels sets of lens, lengths, */
-                                /*    and 3-D arrays are written to file)    */
+				/*   (only pyr_levels sets of lens, lengths, */
+				/*    and 3-D arrays are written to file)    */
 
 /* End of layout of .pyr file.                                               */
 
-                                /* Subscripted access to binary pyramid      */
-                                /*   (PYR_ADDRESS only computes temporaries, */
-                                /*    most others invoke PYR_ADDRESS, then:  */
-                                /*      PYR returns char with bit in low bit,*/
-                                /*      CLEAR_PYR clears bit to 0,           */
-                                /*      SET_PYR sets bit to 1,               */
-                                /*      WRITE_PYR ORs BOOLEAN IBIT into bit, */
-                                /*      OVERWRITE_PYR clears, then ORs IBIT, */
-                                /*    CURRENT_PYR returns at current address)*/
-                                /* Warning:  do not invoke any of these      */
-                                /*   macros more than once per statement,    */
-                                /*   or values of temporaries may conflict,  */
-                                /*   depending on optimization by compiler.  */
+				/* Subscripted access to binary pyramid      */
+				/*   (PYR_ADDRESS only computes temporaries, */
+				/*    most others invoke PYR_ADDRESS, then:  */
+				/*      PYR returns char with bit in low bit,*/
+				/*      CLEAR_PYR clears bit to 0,           */
+				/*      SET_PYR sets bit to 1,               */
+				/*      WRITE_PYR ORs BOOLEAN IBIT into bit, */
+				/*      OVERWRITE_PYR clears, then ORs IBIT, */
+				/*    CURRENT_PYR returns at current address)*/
+				/* Warning:  do not invoke any of these      */
+				/*   macros more than once per statement,    */
+				/*   or values of temporaries may conflict,  */
+				/*   depending on optimization by compiler.  */
 long pyr_offset1,		/* Bit offset of desired bit within pyramid  */
      pyr_offset2;		/* Bit offset of bit within byte             */
 BYTE *pyr_address2;		/* Pointer to byte containing bit            */
@@ -82,7 +81,7 @@ void Compute_Octree()
   while ((1<<(pyr_levels-1)) < max_len)
     pyr_levels++;
   printf("    Computing binary pyramid of %d levels...\n",
-         pyr_levels);
+	 pyr_levels);
 
   for (i=0; i<NM; i++) {
     pyr_len[0][i] = opc_len[i];
@@ -123,20 +122,20 @@ on all processors, don't do this create.
   for (level=1; level<pyr_levels; level++) {
     for (i=0; i<NM; i++) {
       if (pyr_len[level-1][i] > 1) {
-        pyr_len[level][i] =
-          (pyr_len[level-1][i]+1)>>1;
-        pyr_voxlen[level][i] =
-          pyr_voxlen[level-1][i]<<1;
+	pyr_len[level][i] =
+	  (pyr_len[level-1][i]+1)>>1;
+	pyr_voxlen[level][i] =
+	  pyr_voxlen[level-1][i]<<1;
       }
       else {
-        pyr_len[level][i] =
-          pyr_len[level-1][i];
-        pyr_voxlen[level][i] =
-          pyr_voxlen[level-1][i];
+	pyr_len[level][i] =
+	  pyr_len[level-1][i];
+	pyr_voxlen[level][i] =
+	  pyr_voxlen[level-1][i];
       }
     }
     pyr_length[level] = (pyr_len[level][X]*
-                         pyr_len[level][Y]*pyr_len[level][Z]+7)/8;
+			 pyr_len[level][Y]*pyr_len[level][Z]+7)/8;
     Allocate_Pyramid_Level(&pyr_address[level], pyr_length[level]);
     Compute_Pyramid_Level(level);
   }
@@ -187,10 +186,10 @@ on all processors, then execute what's in the SERIAL_PREPROC ifdef below.
   for (outz=zstart; outz<zstop; outz++) {
     for (outy=ystart; outy<ystop; outy++) {
       for (outx=xstart; outx<xstop; outx++) {
-        if (OPC(outz,outy,outx) == 0)     /* mask bit is one unless opacity */
-          WRITE_PYR(0,0,outz,outy,outx);  /* value is zero.                 */
-        else
-          WRITE_PYR(1,0,outz,outy,outx);
+	if (OPC(outz,outy,outx) == 0)     /* mask bit is one unless opacity */
+	  WRITE_PYR(0,0,outz,outy,outx);  /* value is zero.                 */
+	else
+	  WRITE_PYR(1,0,outz,outy,outx);
       }
     }
   }
@@ -243,18 +242,18 @@ on all processors, then you should execute what's in the SERIAL_PREPROC
     for (outy=0; outy<pyr_len[0][Y]; outy++) {
       outy_plus_one = MIN(outy+1,pyr_len[0][Y]-1);
       for (outx=0; outx<pyr_len[0][X]; outx++) {
-        outx_plus_one = MIN(outx+1,pyr_len[0][X]-1);
+	outx_plus_one = MIN(outx+1,pyr_len[0][X]-1);
 
-        bit = PYR(0,outz,outy,outx);
-        bit |= PYR(0,outz,outy,outx_plus_one);
-        bit |= PYR(0,outz,outy_plus_one,outx);
-        bit |= PYR(0,outz,outy_plus_one,outx_plus_one);
-        bit |= PYR(0,outz_plus_one,outy,outx);
-        bit |= PYR(0,outz_plus_one,outy,outx_plus_one);
-        bit |= PYR(0,outz_plus_one,outy_plus_one,outx);
-        bit |= PYR(0,outz_plus_one,outy_plus_one,outx_plus_one);
+	bit = PYR(0,outz,outy,outx);
+	bit |= PYR(0,outz,outy,outx_plus_one);
+	bit |= PYR(0,outz,outy_plus_one,outx);
+	bit |= PYR(0,outz,outy_plus_one,outx_plus_one);
+	bit |= PYR(0,outz_plus_one,outy,outx);
+	bit |= PYR(0,outz_plus_one,outy,outx_plus_one);
+	bit |= PYR(0,outz_plus_one,outy_plus_one,outx);
+	bit |= PYR(0,outz_plus_one,outy_plus_one,outx_plus_one);
 
-        WRITE_PYR(bit,0,outz,outy,outx);
+	WRITE_PYR(bit,0,outz,outy,outx);
       }
     }
   }
@@ -277,7 +276,7 @@ void Allocate_Pyramid_Level(address, length)
   long i;
 
   printf("      Allocating pyramid level of %ld bytes...\n",
-         length*sizeof(BYTE));
+	 length*sizeof(BYTE));
 
 /*  POSSIBLE ENHANCEMENT:  If you want to replicate the octree
 on all processors, then replace the macro below with a regular malloc.
@@ -306,7 +305,7 @@ void Compute_Pyramid_Level(level)
   BOOLEAN bit;
 
   printf("      Computing pyramid level %ld from level %ld...\n",
-         level,level-1);
+	 level,level-1);
   for (outz=0; outz<pyr_len[level][Z]; outz++) {
     inz = outz<<1;
     inz_plus_one = MIN(inz+1,pyr_len[level-1][Z]-1);
@@ -314,19 +313,19 @@ void Compute_Pyramid_Level(level)
       iny = outy<<1;
       iny_plus_one = MIN(iny+1,pyr_len[level-1][Y]-1);
       for (outx=0; outx<pyr_len[level][X]; outx++) {
-        inx = outx<<1;
-        inx_plus_one = MIN(inx+1,pyr_len[level-1][X]-1);
+	inx = outx<<1;
+	inx_plus_one = MIN(inx+1,pyr_len[level-1][X]-1);
 
-        bit = PYR(level-1,inz,iny,inx);
-        bit |= PYR(level-1,inz,iny,inx_plus_one);
-        bit |= PYR(level-1,inz,iny_plus_one,inx);
-        bit |= PYR(level-1,inz,iny_plus_one,inx_plus_one);
-        bit |= PYR(level-1,inz_plus_one,iny,inx);
-        bit |= PYR(level-1,inz_plus_one,iny,inx_plus_one);
-        bit |= PYR(level-1,inz_plus_one,iny_plus_one,inx);
-        bit |= PYR(level-1,inz_plus_one,iny_plus_one,inx_plus_one);
+	bit = PYR(level-1,inz,iny,inx);
+	bit |= PYR(level-1,inz,iny,inx_plus_one);
+	bit |= PYR(level-1,inz,iny_plus_one,inx);
+	bit |= PYR(level-1,inz,iny_plus_one,inx_plus_one);
+	bit |= PYR(level-1,inz_plus_one,iny,inx);
+	bit |= PYR(level-1,inz_plus_one,iny,inx_plus_one);
+	bit |= PYR(level-1,inz_plus_one,iny_plus_one,inx);
+	bit |= PYR(level-1,inz_plus_one,iny_plus_one,inx_plus_one);
 
-        WRITE_PYR(bit,level,outz,outy,outx);
+	WRITE_PYR(bit,level,outz,outy,outx);
       }
     }
   }

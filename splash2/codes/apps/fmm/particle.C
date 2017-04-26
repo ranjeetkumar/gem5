@@ -14,11 +14,9 @@
 /*                                                                       */
 /*************************************************************************/
 
+#include <stdio.h>
 #include <unistd.h>
-
-#include <cstdio>
-#include <cstdlib>
-
+#include <stdlib.h>
 #include "defs.h"
 #include "memory.h"
 #include "particle.h"
@@ -85,26 +83,26 @@ CreateDistribution (cluster_type cluster, model_type model)
       end_limit = Total_Particles;
       switch (model) {
        case UNIFORM:
-         printf("Creating a one cluster, uniform distribution for %ld ", Total_Particles);
-         printf("particles\n");
-         break;
+	 printf("Creating a one cluster, uniform distribution for %ld ", Total_Particles);
+	 printf("particles\n");
+	 break;
        case PLUMMER:
-         printf("Creating a one cluster, non uniform distribution for %ld ", Total_Particles);
-         printf("particles\n");
-         break;
+	 printf("Creating a one cluster, non uniform distribution for %ld ", Total_Particles);
+	 printf("particles\n");
+	 break;
       }
       break;
     case TWO_CLUSTER:
       end_limit = (Total_Particles / 2) + (Total_Particles & 0x1);
       switch (model) {
        case UNIFORM:
-         printf("Creating a two cluster, uniform distribution for %ld ", Total_Particles);
-         printf("particles\n");
-         break;
+	 printf("Creating a two cluster, uniform distribution for %ld ", Total_Particles);
+	 printf("particles\n");
+	 break;
        case PLUMMER:
-         printf("Creating a two cluster, non uniform distribution for %ld ", Total_Particles);
-         printf("particles\n");
-         break;
+	 printf("Creating a two cluster, non uniform distribution for %ld ", Total_Particles);
+	 printf("particles\n");
+	 break;
       }
       break;
    }
@@ -116,27 +114,27 @@ CreateDistribution (cluster_type cluster, model_type model)
       new_particle = InitParticle(charge, charge);
       switch (model) {
        case UNIFORM:
-         do {
-            new_particle->pos.x = XRand(-1.0, 1.0);
-            new_particle->pos.y = XRand(-1.0, 1.0);
-            temp_r = DOT_PRODUCT((new_particle->pos), (new_particle->pos));
-         }
-         while (temp_r > (real) 1.0);
-         radius = sqrt(temp_r);
-         break;
+	 do {
+	    new_particle->pos.x = XRand(-1.0, 1.0);
+	    new_particle->pos.y = XRand(-1.0, 1.0);
+	    temp_r = DOT_PRODUCT((new_particle->pos), (new_particle->pos));
+	 }
+	 while (temp_r > (real) 1.0);
+	 radius = sqrt(temp_r);
+	 break;
        case PLUMMER:
-         do
-            radius = (real) 1.0 / (real) sqrt(pow(XRand(0.0, MAX_FRAC),
-                                                  -2.0/3.0) - 1);
-         while (radius > 9.0);
-         PickShell(&(new_particle->pos), r_scale * radius);
-         break;
+	 do
+	    radius = (real) 1.0 / (real) sqrt(pow(XRand(0.0, MAX_FRAC),
+						  -2.0/3.0) - 1);
+	 while (radius > 9.0);
+	 PickShell(&(new_particle->pos), r_scale * radius);
+	 break;
       }
       VECTOR_ADD(r_sum, r_sum, (new_particle->pos));
 
       do {
-         x_vel = XRand(0.0, 1.0);
-         y_vel = XRand(0.0, 0.1);
+	 x_vel = XRand(0.0, 1.0);
+	 y_vel = XRand(0.0, 0.1);
       }
       while (y_vel > x_vel * x_vel * (real) pow(1.0 - (x_vel * x_vel), 3.5));
       vel = (real) sqrt(2.0) * x_vel / pow(1.0 + (radius * radius), 0.25);
@@ -147,21 +145,21 @@ CreateDistribution (cluster_type cluster, model_type model)
    if (cluster == TWO_CLUSTER) {
       switch (model) {
        case UNIFORM:
-         offset = 1.5;
-         break;
+	 offset = 1.5;
+	 break;
        case PLUMMER:
-         offset = 2.0;
-         break;
+	 offset = 2.0;
+	 break;
       }
       for (i = end_limit; i < Total_Particles; i++) {
-         new_particle = InitParticle(charge, charge);
-         twin_particle = Particle_List[i - end_limit];
-         new_particle->pos.x = twin_particle->pos.x + offset;
-         new_particle->pos.y = twin_particle->pos.y + offset;
-         VECTOR_ADD(r_sum, r_sum, (new_particle->pos));
-         new_particle->vel.x = twin_particle->vel.x;
-         new_particle->vel.y = twin_particle->vel.y;
-         VECTOR_ADD(v_sum, v_sum, (new_particle->vel));
+	 new_particle = InitParticle(charge, charge);
+	 twin_particle = Particle_List[i - end_limit];
+	 new_particle->pos.x = twin_particle->pos.x + offset;
+	 new_particle->pos.y = twin_particle->pos.y + offset;
+	 VECTOR_ADD(r_sum, r_sum, (new_particle->pos));
+	 new_particle->vel.x = twin_particle->vel.x;
+	 new_particle->vel.y = twin_particle->vel.y;
+	 VECTOR_ADD(v_sum, v_sum, (new_particle->vel));
       }
    }
 
@@ -180,7 +178,7 @@ CreateParticleList (long my_id, long length)
 {
    LOCK(G_Memory->mal_lock);
    Local[my_id].Particles = (particle **) G_MALLOC(length
-                                                   * sizeof(particle *));
+						   * sizeof(particle *));
 
 /* POSSIBLE ENHANCEMENT:  Here is where one might distribute the
    Particles data across physically distributed memories as desired.
@@ -192,7 +190,7 @@ CreateParticleList (long my_id, long length)
 
    starting_address = (char *) Local[my_id].Particles;
    ending_address = (((char *) Local[my_id].Particles)
-                     + (length * sizeof(particle *)) - 1);
+		     + (length * sizeof(particle *)) - 1);
 
    Place all addresses x such that (starting_address <= x < ending_address)
    on node my_id
@@ -263,12 +261,12 @@ PrintParticleArrayIds (particle **p_array, long num_particles)
       printf("NONE\n");
    else {
       for (i = 0; i < num_particles; i++) {
-         if (tab_count == 0) {
-            tab_count = PARTICLES_PER_LINE;
-            printf("\n");
-         }
-         printf("\tP%ld", p_array[i]->id);
-         tab_count -= 1;
+	 if (tab_count == 0) {
+	    tab_count = PARTICLES_PER_LINE;
+	    printf("\n");
+	 }
+	 printf("\tP%ld", p_array[i]->id);
+	 tab_count -= 1;
       }
       printf("\n");
    }

@@ -33,8 +33,7 @@
 
 MAIN_ENV
 
-#include <cmath>
-
+#include <math.h>
 #include "matrix.h"
 
 #define SH_MEM_AMT   100000000
@@ -100,11 +99,11 @@ int main(int argc, char *argv[])
 
   while ((c = getopt(argc, argv, "B:C:p:D:sth")) != -1) {
     switch(c) {
-    case 'B': postpass_partition_size = atoi(optarg); break;
-    case 'C': CacheSize = (double) atoi(optarg); break;
-    case 'p': P = atol(optarg); break;
-    case 's': do_stats = 1; break;
-    case 't': do_test = 1; break;
+    case 'B': postpass_partition_size = atoi(optarg); break;  
+    case 'C': CacheSize = (double) atoi(optarg); break;  
+    case 'p': P = atol(optarg); break;  
+    case 's': do_stats = 1; break;  
+    case 't': do_test = 1; break;  
     case 'h': printf("Usage: CHOLESKY <options> file\n\n");
               printf("options:\n");
               printf("  -Bb : Use a postpass partition size of b.\n");
@@ -134,7 +133,7 @@ int main(int argc, char *argv[])
   LOCKINIT(Global->waitLock)
   LOCKINIT(Global->memLock)
 
-  MallocInit(P);
+  MallocInit(P);  
 
   i = 0;
   while (++i < argc && argv[i][0] == '-')
@@ -157,7 +156,7 @@ int main(int argc, char *argv[])
   printf("Fan-out, ");
   printf("no block copy-across\n");
 
-  printf("LB domain, ");
+  printf("LB domain, "); 
   printf("embedded ");
   printf("distribution\n");
 
@@ -215,11 +214,11 @@ int main(int argc, char *argv[])
     if (domain[i])
       num_domain += nz[i];
   }
-
+  
   ComputeTargetBlockSize(M, P);
 
   printf("Target partition size %ld, postpass size %ld\n",
-         target_partition_size, postpass_partition_size);
+	 target_partition_size, postpass_partition_size);
 
   NoSegments(M);
 
@@ -235,7 +234,7 @@ int main(int argc, char *argv[])
   ps = postpass_partition_size;
   num_alloc = num_domain + (num_nz-num_domain)*10/ps/ps;
   CreateBlockedMatrix2(M, num_alloc, T, firstchild, child, PERM, INVP,
-                       domain, partition);
+		       domain, partition);
 
   FillInStructure(M, firstchild, child, PERM, INVP);
 
@@ -326,7 +325,7 @@ void Go()
    processors to avoid migration */
 
   lc =(struct LocalCopies *) G_MALLOC(sizeof(struct LocalCopies)+2*PAGE_SIZE,
-                                       MyNum)
+              			       MyNum)
   lc->freeUpdate = NULL;
   lc->freeTask = NULL;
   lc->runtime = 0;
@@ -368,7 +367,7 @@ void Go()
   if (MyNum == 0) {
     gp->initdone = lc->rs;
     gp->finish = lc->rf;
-  }
+  } 
 
   BARRIER(Global->start, P);
 
@@ -390,15 +389,15 @@ void PlaceDomains(long P)
       range_start = (char *) &LB.row[LB.col[first]];
       range_end = (char *) &LB.row[LB.col[LB.domains[d]+1]];
       MigrateMem(&LB.row[LB.col[first]],
-                 (LB.col[LB.domains[d]+1]-LB.col[first])*sizeof(long),
-                 p);
+		 (LB.col[LB.domains[d]+1]-LB.col[first])*sizeof(long),
+		 p);
 
       /* place non-zeroes */
       range_start = (char *) &BLOCK(LB.col[first]);
       range_end = (char *) &BLOCK(LB.col[LB.domains[d]+1]);
       MigrateMem(&BLOCK(LB.col[first]),
-                 (LB.col[LB.domains[d]+1]-LB.col[first])*sizeof(double),
-                 p);
+		 (LB.col[LB.domains[d]+1]-LB.col[first])*sizeof(double),
+		 p);
     }
 }
 

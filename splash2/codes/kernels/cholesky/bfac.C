@@ -16,9 +16,8 @@
 
 EXTERN_ENV
 
-#include <cmath>
-
 #include "matrix.h"
+#include <math.h>
 
 long vMiss=0, wMiss=0, xMiss=0, yMiss=0; /* Local but don't care */
 extern long BS;
@@ -56,7 +55,7 @@ void BFac(long diag, struct LocalCopies *lc)
       for (ks=jl; ks<is; ks+=BS) {
         kl = ks+BS; if (kl > n) kl = n;
 
-        OneMatmat(lc->blktmp, &A[ks+n*js], &A[is+n*ks], kl-ks, jl-js, il-is, n, n);
+	OneMatmat(lc->blktmp, &A[ks+n*js], &A[is+n*ks], kl-ks, jl-js, il-is, n, n);
 
       }
 
@@ -76,7 +75,7 @@ void OneFac(double *A, long n1, long n2)
   for (j=0; j<n1; j++) {
     for (k=0; k<j; k++)
       for (i=j; i<n1; i++)
-        A[i+n2*j] -= A[j+n2*k]*A[i+n2*k];
+	A[i+n2*j] -= A[j+n2*k]*A[i+n2*k];
     A[k+n2*k] = sqrt(A[k+n2*k]);
     for (i=j+1; i<n1; i++)
       A[i+n2*k] /= A[k+n2*k];
@@ -113,7 +112,7 @@ void BDiv(long n1, long n3, double *diag_nz, double *below_nz, struct LocalCopie
         for (ks=jl; ks<n1; ks+=BS) {
           kl = ks+BS; if (kl > n1) kl = n1;
           OneMatmat(lc->blktmp, &A[ks+js*n1], &B[is+ks*n3], kl-ks, jl-js, il-is,
-                n3, n1);
+		n3, n1);
         }
       }
     }
@@ -147,20 +146,20 @@ void OneDiv(double *A, double *B, long n1, long n3, long n4)
       b0 = &B[n3*k]; b1 = b0+n3; b2 = b1+n3; b3 = b2+n3;
 
       while (dest0 != last) {
-        t0 = *dest0; t1 = *dest1;
-        tmp0 = *b0++; t0 -= a_j0k0*tmp0; t1 -= a_j1k0*tmp0;
-        tmp1 = *b1++; t0 -= a_j0k1*tmp1; t1 -= a_j1k1*tmp1;
-        tmp0 = *b2++; t0 -= a_j0k2*tmp0; t1 -= a_j1k2*tmp0;
-        tmp1 = *b3++; t0 -= a_j0k3*tmp1; t1 -= a_j1k3*tmp1;
-        *dest0++ = t0; *dest1++ = t1;
+	t0 = *dest0; t1 = *dest1;
+	tmp0 = *b0++; t0 -= a_j0k0*tmp0; t1 -= a_j1k0*tmp0;
+	tmp1 = *b1++; t0 -= a_j0k1*tmp1; t1 -= a_j1k1*tmp1;
+	tmp0 = *b2++; t0 -= a_j0k2*tmp0; t1 -= a_j1k2*tmp0;
+	tmp1 = *b3++; t0 -= a_j0k3*tmp1; t1 -= a_j1k3*tmp1;
+	*dest0++ = t0; *dest1++ = t1;
       }
     }
     for (; k<j; k++) {
       a_j0k0 = A[j+n4*k];
       a_j1k0 = A[j+1+n4*k];
       for (i=0; i<n3; i++) {
-        B[i+n3*(j+0)] -= a_j0k0*B[i+n3*k];
-        B[i+n3*(j+1)] -= a_j1k0*B[i+n3*k];
+	B[i+n3*(j+0)] -= a_j0k0*B[i+n3*k];
+	B[i+n3*(j+1)] -= a_j1k0*B[i+n3*k];
       }
     }
     tmp0 = 1.0/A[j+n4*j];
@@ -178,7 +177,7 @@ void OneDiv(double *A, double *B, long n1, long n3, long n4)
     for (k=0; k<j; k++) {
       a_j0k0 = A[j+n4*k];
       for (i=0; i<n3; i++)
-        B[i+n3*j] -= a_j0k0*B[i+n3*k];
+	B[i+n3*j] -= a_j0k0*B[i+n3*k];
     }
     for (i=0; i<n3; i++)
       B[i+n3*j] /= A[j+n4*j];
@@ -281,16 +280,16 @@ void OneMatmat(double *B, double *A, double *C, long n1, long n2, long n3, long 
       b4 = b3+n3; b5 = b4+n3; b6 = b5+n3; b7 = b6+n3;
 
       while (dest0 != last) {
-        t0 = *dest0; t1 = *dest1;
-        tmp0 = *b0++; t0 -= a_j0k0*tmp0; t1 -= a_j1k0*tmp0;
-        tmp1 = *b1++; t0 -= a_j0k1*tmp1; t1 -= a_j1k1*tmp1;
-        tmp0 = *b2++; t0 -= a_j0k2*tmp0; t1 -= a_j1k2*tmp0;
-        tmp1 = *b3++; t0 -= a_j0k3*tmp1; t1 -= a_j1k3*tmp1;
-        tmp0 = *b4++; t0 -= a_j0k4*tmp0; t1 -= a_j1k4*tmp0;
-        tmp1 = *b5++; t0 -= a_j0k5*tmp1; t1 -= a_j1k5*tmp1;
-        tmp0 = *b6++; t0 -= a_j0k6*tmp0; t1 -= a_j1k6*tmp0;
-        tmp1 = *b7++; t0 -= a_j0k7*tmp1; t1 -= a_j1k7*tmp1;
-        *dest0++ = t0; *dest1++ = t1;
+	t0 = *dest0; t1 = *dest1;
+	tmp0 = *b0++; t0 -= a_j0k0*tmp0; t1 -= a_j1k0*tmp0;
+	tmp1 = *b1++; t0 -= a_j0k1*tmp1; t1 -= a_j1k1*tmp1;
+	tmp0 = *b2++; t0 -= a_j0k2*tmp0; t1 -= a_j1k2*tmp0;
+	tmp1 = *b3++; t0 -= a_j0k3*tmp1; t1 -= a_j1k3*tmp1;
+	tmp0 = *b4++; t0 -= a_j0k4*tmp0; t1 -= a_j1k4*tmp0;
+	tmp1 = *b5++; t0 -= a_j0k5*tmp1; t1 -= a_j1k5*tmp1;
+	tmp0 = *b6++; t0 -= a_j0k6*tmp0; t1 -= a_j1k6*tmp0;
+	tmp1 = *b7++; t0 -= a_j0k7*tmp1; t1 -= a_j1k7*tmp1;
+	*dest0++ = t0; *dest1++ = t1;
       }
     }
     for (; k<n2-3; k+=4) {
@@ -306,21 +305,21 @@ void OneMatmat(double *B, double *A, double *C, long n1, long n2, long n3, long 
       b0 = &B[n3*k]; b1 = b0+n3; b2 = b1+n3; b3 = b2+n3;
 
       while (dest0 != last) {
-        t0 = *dest0; t1 = *dest1;
-        tmp0 = *b0++; t0 -= a_j0k0*tmp0; t1 -= a_j1k0*tmp0;
-        tmp1 = *b1++; t0 -= a_j0k1*tmp1; t1 -= a_j1k1*tmp1;
-        tmp0 = *b2++; t0 -= a_j0k2*tmp0; t1 -= a_j1k2*tmp0;
-        tmp1 = *b3++; t0 -= a_j0k3*tmp1; t1 -= a_j1k3*tmp1;
-        *dest0++ = t0; *dest1++ = t1;
+	t0 = *dest0; t1 = *dest1;
+	tmp0 = *b0++; t0 -= a_j0k0*tmp0; t1 -= a_j1k0*tmp0;
+	tmp1 = *b1++; t0 -= a_j0k1*tmp1; t1 -= a_j1k1*tmp1;
+	tmp0 = *b2++; t0 -= a_j0k2*tmp0; t1 -= a_j1k2*tmp0;
+	tmp1 = *b3++; t0 -= a_j0k3*tmp1; t1 -= a_j1k3*tmp1;
+	*dest0++ = t0; *dest1++ = t1;
       }
     }
     for (; k<n2; k++) {
       a_j0k0 = A[j+n5*k];
       a_j1k0 = A[j+1+n5*k];
       for (i=0; i<n3; i++) {
-        t0 = B[i+n3*k];
-        C[i+n4*j]     -= a_j0k0*t0;
-        C[i+n4*(j+1)] -= a_j1k0*t0;
+	t0 = B[i+n3*k];
+	C[i+n4*j]     -= a_j0k0*t0;
+	C[i+n4*(j+1)] -= a_j1k0*t0;
       }
     }
   }
@@ -336,18 +335,18 @@ void OneMatmat(double *B, double *A, double *C, long n1, long n2, long n3, long 
       dest0 = &C[n4*j]; last = dest0 + n3;
 
       while (dest0 != last) {
-        t0 = *dest0;
-        t0 -= a_j0k0*(*b0++);
-        t0 -= a_j0k1*(*b1++);
-        t0 -= a_j0k2*(*b2++);
-        t0 -= a_j0k3*(*b3++);
-        *dest0++ = t0;
+	t0 = *dest0;
+	t0 -= a_j0k0*(*b0++);
+	t0 -= a_j0k1*(*b1++);
+	t0 -= a_j0k2*(*b2++);
+	t0 -= a_j0k3*(*b3++);
+	*dest0++ = t0;
       }
     }
     for (; k<n2; k++) {
       a_j0k0 = A[j+n5*k];
       for (i=0; i<n3; i++)
-        C[i+n4*j] -= a_j0k0*B[i+n3*k];
+	C[i+n4*j] -= a_j0k0*B[i+n3*k];
     }
   }
 
@@ -375,7 +374,7 @@ void BLMod(long n1, long n2, double *left_nz, double *dest_nz, struct LocalCopie
         kl = ks+BS; if (kl > n2) kl = n2;
         CopyBlock(A, lc->blktmp, n1, is, ks, il, kl);
         OneMatmat(lc->blktmp, &A[ks*n1], &C[is], is, kl-ks, il-is, n1, n1);
-        OneLower(lc->blktmp, &C[is+is*n1], il-is, kl-ks, n1);
+	OneLower(lc->blktmp, &C[is+is*n1], il-is, kl-ks, n1);
       }
     }
   }
@@ -411,12 +410,12 @@ void OneLower(double *A, double *C, long n1, long n2, long n3)
       *dest0++ -= a_j0k0**b0++ + a_j0k1**b1++ + a_j0k2**b2++ + a_j0k3**b3++;
       dest1 = dest0 + n3;
       while (dest0 != last) {
-        t0 = *dest0; t1 = *dest1;
-        tmp0 = *b0++; t0 -= a_j0k0*tmp0; t1 -= a_j1k0*tmp0;
-        tmp1 = *b1++; t0 -= a_j0k1*tmp1; t1 -= a_j1k1*tmp1;
-        tmp0 = *b2++; t0 -= a_j0k2*tmp0; t1 -= a_j1k2*tmp0;
-        tmp1 = *b3++; t0 -= a_j0k3*tmp1; t1 -= a_j1k3*tmp1;
-        *dest0++ = t0; *dest1++ = t1;
+	t0 = *dest0; t1 = *dest1;
+	tmp0 = *b0++; t0 -= a_j0k0*tmp0; t1 -= a_j1k0*tmp0;
+	tmp1 = *b1++; t0 -= a_j0k1*tmp1; t1 -= a_j1k1*tmp1;
+	tmp0 = *b2++; t0 -= a_j0k2*tmp0; t1 -= a_j1k2*tmp0;
+	tmp1 = *b3++; t0 -= a_j0k3*tmp1; t1 -= a_j1k3*tmp1;
+	*dest0++ = t0; *dest1++ = t1;
       }
     }
     for (; k<n2; k++) {
@@ -424,8 +423,8 @@ void OneLower(double *A, double *C, long n1, long n2, long n3)
       a_j1k0 = A[j+1+n1*k];
       C[j+n3*j] -= a_j0k0*A[j+n1*k];
       for (i=j+1; i<n1; i++) {
-        C[i+n3*j]     -= a_j0k0*A[i+n1*k];
-        C[i+n3*(j+1)] -= a_j1k0*A[i+n1*k];
+	C[i+n3*j]     -= a_j0k0*A[i+n1*k];
+	C[i+n3*(j+1)] -= a_j1k0*A[i+n1*k];
       }
     }
   }
@@ -433,7 +432,7 @@ void OneLower(double *A, double *C, long n1, long n2, long n3)
     for (k=0; k<n2; k++) {
       a_j0k0 = A[j+n1*k];
       for (i=j; i<n1; i++)
-        C[i+n3*j] -= a_j0k0*A[i+n1*k];
+	C[i+n3*j] -= a_j0k0*A[i+n1*k];
     }
 
 }

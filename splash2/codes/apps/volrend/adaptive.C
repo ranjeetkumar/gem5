@@ -23,10 +23,10 @@
 #include "incl.h"
 
 float invjacobian[NM][NM];	/* Jacobian matrix showing object space      */
-                                /*   d{x,y,z} per image space d{x,y,z}       */
-                                /*   [0][0] is dx(object)/dx(image)          */
-                                /*   [0][2] is dz(object)/dx(image)          */
-                                /*   [2][0] is dx(object)/dz(image)          */
+				/*   d{x,y,z} per image space d{x,y,z}       */
+				/*   [0][0] is dx(object)/dx(image)          */
+				/*   [0][2] is dz(object)/dx(image)          */
+				/*   [2][0] is dx(object)/dz(image)          */
 float invinvjacobian[NM][NM];	/*   [i][j] = 1.0 / invjacobian[i][j]        */
                                 /* For gathering statistics:                 */
 long num_rays_traced;            /*   number of calls to Trace_Ray            */
@@ -75,7 +75,7 @@ void Ray_Trace(long my_node)
   for (i=0; i<NM; i++) {
     for (j=0; j<NM; j++) {
       if (ABS(invjacobian[i][j]) > SMALL)
-        invinvjacobian[i][j] = 1.0 / invjacobian[i][j];
+	invinvjacobian[i][j] = 1.0 / invjacobian[i][j];
     }
   }
 
@@ -149,8 +149,8 @@ void Ray_Trace(long my_node)
 
     LOCK(Global->CountLock);
     printf("%3ld\t%3ld\t%6ld\t%6ld\t%6ld\t%6ld\t%8ld\n",my_node,frame,exectime,
-           exectime1,num_rays_traced,num_traced_rays_hit_volume,
-           num_samples_trilirped);
+	   exectime1,num_rays_traced,num_traced_rays_hit_volume,
+	   num_samples_trilirped);
 
     UNLOCK(Global->CountLock);
 
@@ -192,14 +192,14 @@ void Ray_Trace_Adaptively(long my_node)
       xindex = xstart + (work%lnum_xblocks)*block_xlen;
       yindex = ystart + (work/lnum_xblocks)*block_ylen;
       for (outy=yindex; outy<yindex+block_ylen && outy<ystop;
-           outy+=highest_sampling_boxlen) {
-        for (outx=xindex; outx<xindex+block_xlen && outx<xstop;
-             outx+=highest_sampling_boxlen) {
+	   outy+=highest_sampling_boxlen) {
+	for (outx=xindex; outx<xindex+block_xlen && outx<xstop;
+	     outx+=highest_sampling_boxlen) {
 
-          /* Trace rays within square box of highest sampling size     */
-          /* whose lower-left corner is current image space location.  */
-          Ray_Trace_Adaptive_Box(outx,outy,highest_sampling_boxlen);
-        }
+	  /* Trace rays within square box of highest sampling size     */
+	  /* whose lower-left corner is current image space location.  */
+	  Ray_Trace_Adaptive_Box(outx,outy,highest_sampling_boxlen);
+	}
       }
       ALOCK(Global->QLock,local_node);
       work = Global->Queue[local_node][0];
@@ -213,7 +213,7 @@ void Ray_Trace_Adaptively(long my_node)
     }
     local_node = (local_node+1)%num_nodes;
     while (Global->Queue[local_node][0] >= lnum_blocks &&
-           Global->Queue[num_nodes][0] > 0)
+	   Global->Queue[num_nodes][0] > 0)
       local_node = (local_node+1)%num_nodes;
   }
 
@@ -264,21 +264,21 @@ void Ray_Trace_Adaptive_Box(long outx, long outy, long boxlen)
 
 /*reschedule processes here if rescheduling only at synch points on simulator*/
 
-        MASK_IMAGE(outy+i,outx+j) = START_RAY;
+	MASK_IMAGE(outy+i,outx+j) = START_RAY;
 
 /*reschedule processes here if rescheduling only at synch points on simulator*/
 
-        foutx = (float)(outx+j);
-        fouty = (float)(outy+i);
-        pixel_address = IMAGE_ADDRESS(outy+i,outx+j);
+	foutx = (float)(outx+j);
+	fouty = (float)(outy+i);
+	pixel_address = IMAGE_ADDRESS(outy+i,outx+j);
 
 /*reschedule processes here if rescheduling only at synch points on simulator*/
 
-        Trace_Ray(foutx,fouty,pixel_address);
+	Trace_Ray(foutx,fouty,pixel_address);
 
 /*reschedule processes here if rescheduling only at synch points on simulator*/
 
-        MASK_IMAGE(outy+i,outx+j) = RAY_TRACED;
+	MASK_IMAGE(outy+i,outx+j) = RAY_TRACED;
       }
     }
   }
@@ -292,7 +292,7 @@ void Ray_Trace_Adaptive_Box(long outx, long outy, long boxlen)
 
 /*reschedule processes here if rescheduling only at synch points on simulator*/
 
-        imask = MASK_IMAGE(outy+i,outx+j);
+	imask = MASK_IMAGE(outy+i,outx+j);
 
 /*reschedule processes here if rescheduling only at synch points on simulator*/
 
@@ -318,7 +318,7 @@ void Ray_Trace_Adaptive_Box(long outx, long outy, long boxlen)
     half_boxlen = boxlen >> 1;
     for (i=0; i<boxlen && outy+i<image_len[Y]; i+=half_boxlen) {
       for (j=0; j<boxlen && outx+j<image_len[X]; j+=half_boxlen) {
-        Ray_Trace_Adaptive_Box(outx+j,outy+i,half_boxlen);
+	Ray_Trace_Adaptive_Box(outx+j,outy+i,half_boxlen);
       }
     }
   }
@@ -354,15 +354,15 @@ void Ray_Trace_Non_Adaptively(long my_node)
       xindex = xstart + (work%lnum_xblocks)*block_xlen;
       yindex = ystart + (work/lnum_xblocks)*block_ylen;
       for (outy=yindex; outy<yindex+block_ylen && outy<ystop; outy++) {
-        for (outx=xindex; outx<xindex+block_xlen && outx<xstop; outx++) {
+	for (outx=xindex; outx<xindex+block_xlen && outx<xstop; outx++) {
 
-          /* Trace ray from specified image space location into map.   */
-          /* Stochastic sampling is as described in adaptive code.     */
-          foutx = (float)(outx);
-          fouty = (float)(outy);
-          pixel_address = IMAGE_ADDRESS(outy,outx);
-          Trace_Ray(foutx,fouty,pixel_address);
-        }
+	  /* Trace ray from specified image space location into map.   */
+	  /* Stochastic sampling is as described in adaptive code.     */
+	  foutx = (float)(outx);
+	  fouty = (float)(outy);
+	  pixel_address = IMAGE_ADDRESS(outy,outx);
+	  Trace_Ray(foutx,fouty,pixel_address);
+	}
       }
       ALOCK(Global->QLock,local_node);
       work = Global->Queue[local_node][0]++;
@@ -375,7 +375,7 @@ void Ray_Trace_Non_Adaptively(long my_node)
     }
     local_node = (local_node+1)%num_nodes;
     while (Global->Queue[local_node][0] >= lnum_blocks &&
-           Global->Queue[num_nodes][0] > 0)
+	   Global->Queue[num_nodes][0] > 0)
       local_node = (local_node+1)%num_nodes;
   }
 }
@@ -396,14 +396,14 @@ void Ray_Trace_Fast_Non_Adaptively(long my_node)
       for (outx=xindex; outx<xindex+block_xlen &&
            outx<image_len[X]; outx+=lowest_volume_boxlen) {
 
-        /* Trace ray from specified image space location into map.   */
-        /* Stochastic sampling is as described in adaptive code.     */
-        MASK_IMAGE(outy,outx) += RAY_TRACED;
-        foutx = (float)(outx);
-        fouty = (float)(outy);
-        pixel_address = IMAGE_ADDRESS(outy,outx);
-        Trace_Ray(foutx,fouty,pixel_address);
-        num_rays_traced++;
+	/* Trace ray from specified image space location into map.   */
+	/* Stochastic sampling is as described in adaptive code.     */
+	MASK_IMAGE(outy,outx) += RAY_TRACED;
+	foutx = (float)(outx);
+	fouty = (float)(outy);
+	pixel_address = IMAGE_ADDRESS(outy,outx);
+	Trace_Ray(foutx,fouty,pixel_address);
+	num_rays_traced++;
       }
     }
   }
@@ -423,9 +423,9 @@ void Interpolate_Recursively(long my_node)
       for (outx=xindex; outx<xindex+block_xlen &&
            outx<image_len[X]; outx+=highest_sampling_boxlen) {
 
-        /* Fill in image within square box of highest sampling size  */
-        /* whose lower-left corner is current image space location.  */
-        Interpolate_Recursive_Box(outx,outy,highest_sampling_boxlen);
+	/* Fill in image within square box of highest sampling size  */
+	/* whose lower-left corner is current image space location.  */
+	Interpolate_Recursive_Box(outx,outy,highest_sampling_boxlen);
       }
     }
   }
@@ -472,12 +472,12 @@ void Interpolate_Recursive_Box(long outx, long outy, long boxlen)
       xalpha = (float)j * one_over_boxlen;
       one_minus_xalpha = 1.0 - xalpha;
       if (MASK_IMAGE(outy+i,outx+j) == 0) {
-        color = corner_color[0][0]*one_minus_xalpha*one_minus_yalpha+
-          corner_color[0][1]*xalpha*one_minus_yalpha+
-            corner_color[1][0]*one_minus_xalpha*yalpha+
-              corner_color[1][1]*xalpha*yalpha;
-        IMAGE(outy+i,outx+j) = color;
-        MASK_IMAGE(outy+i,outx+j) += INTERPOLATED;
+	color = corner_color[0][0]*one_minus_xalpha*one_minus_yalpha+
+	  corner_color[0][1]*xalpha*one_minus_yalpha+
+	    corner_color[1][0]*one_minus_xalpha*yalpha+
+	      corner_color[1][1]*xalpha*yalpha;
+	IMAGE(outy+i,outx+j) = color;
+	MASK_IMAGE(outy+i,outx+j) += INTERPOLATED;
       }
     }
   }
@@ -490,7 +490,7 @@ void Interpolate_Recursive_Box(long outx, long outy, long boxlen)
   if (half_boxlen > 1) {
     for (i=0; i<boxlen && outy+i<image_len[Y]; i+=half_boxlen) {
       for (j=0; j<boxlen && outx+j<image_len[X]; j+=half_boxlen) {
-        Interpolate_Recursive_Box(outx+j,outy+i,half_boxlen);
+	Interpolate_Recursive_Box(outx+j,outy+i,half_boxlen);
       }
     }
   }

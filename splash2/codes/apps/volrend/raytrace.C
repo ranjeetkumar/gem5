@@ -27,8 +27,8 @@ extern long num_samples_trilirped;
 extern long traversal_time,trilirp_time,init_time,composite_time;
 
 #define VXEL(X,SIGN)		((SIGN) > 0 ? \
-                                 (long)((X)+SMALL) : \
-                                 (long)((X)-SMALL))
+				 (long)((X)+SMALL) : \
+				 (long)((X)-SMALL))
 
 #define SBIT_ADDRESS(TA)        (sbit_address+(TA))
 #define SHD_ADDRESS(TA)         (shd_address+(TA))
@@ -96,7 +96,7 @@ void Trace_Ray(foutx, fouty, pixel_address)
   for (i=0; i<NM; i++) {
     ray[0][i] = out_invvertex[0][0][0][i] +
       invjacobian[X][i]*foutx +
-        invjacobian[Y][i]*fouty;
+	invjacobian[Y][i]*fouty;
     ray[1][i] = ray[0][i] + invjacobian[Z][i]*image_zlen;
   }
 
@@ -114,12 +114,12 @@ void Trace_Ray(foutx, fouty, pixel_address)
   for (i=0; i<NM; i++) {
     if (ABS(ray[1][i] - ray[0][i]) < SMALL) {
       if ((ray[0][i] < 0.0 &&
-           ray[1][i] < 0.0) ||
-          (ray[0][i] > (float)(opc_len[i]-1) &&
-           ray[1][i] > (float)(opc_len[i]-1)))
-        return;
+	   ray[1][i] < 0.0) ||
+	  (ray[0][i] > (float)(opc_len[i]-1) &&
+	   ray[1][i] > (float)(opc_len[i]-1)))
+	return;
       else
-        continue;
+	continue;
     }
     rmin = (0.0 - ray[0][i]) / (ray[1][i] - ray[0][i]);
     rmax = ((float)(opc_len[i]-1) - ray[0][i]) / (ray[1][i] - ray[0][i]);
@@ -178,8 +178,8 @@ void Trace_Ray(foutx, fouty, pixel_address)
     /* but use of un-OR'ed pyramid and trilirp is invalid.       */
 
     bit = PYR(level,ivoxel[Z]>>level,
-              ivoxel[Y]>>level,
-              ivoxel[X]>>level);
+	      ivoxel[Y]>>level,
+	      ivoxel[X]>>level);
     if (bit && level > pyr_lowest_level) {
 
       /* This pyramid box contains something interesting,  */
@@ -199,38 +199,38 @@ void Trace_Ray(foutx, fouty, pixel_address)
     min_jump = BIG;
     if (invjacobian[Z][X] > SMALL) {
       jump[X] = invinvjacobian[Z][X] *
-        (((ROUNDDOWN(voxel[X])>>level)+1)*
-         pyr_voxlen[level][X]-voxel[X]);
+	(((ROUNDDOWN(voxel[X])>>level)+1)*
+	 pyr_voxlen[level][X]-voxel[X]);
       min_jump = MIN(min_jump,jump[X]);
     }
     else if (invjacobian[Z][X] < -SMALL) {
       jump[X] = invinvjacobian[Z][X] *
-        ((STEPDOWN(voxel[X])>>level)*
-         pyr_voxlen[level][X]-voxel[X]);
+	((STEPDOWN(voxel[X])>>level)*
+	 pyr_voxlen[level][X]-voxel[X]);
       min_jump = MIN(min_jump,jump[X]);
       }
     if (invjacobian[Z][Y] > SMALL) {
       jump[Y] = invinvjacobian[Z][Y] *
-        (((ROUNDDOWN(voxel[Y])>>level)+1)*
-         pyr_voxlen[level][Y]-voxel[Y]);
+	(((ROUNDDOWN(voxel[Y])>>level)+1)*
+	 pyr_voxlen[level][Y]-voxel[Y]);
       min_jump = MIN(min_jump,jump[Y]);
     }
     else if (invjacobian[Z][Y] < -SMALL) {
       jump[Y] = invinvjacobian[Z][Y] *
-        ((STEPDOWN(voxel[Y])>>level)*
-         pyr_voxlen[level][Y]-voxel[Y]);
+	((STEPDOWN(voxel[Y])>>level)*
+	 pyr_voxlen[level][Y]-voxel[Y]);
       min_jump = MIN(min_jump,jump[Y]);
     }
     if (invjacobian[Z][Z] > SMALL) {
       jump[Z] = invinvjacobian[Z][Z] *
-        (((ROUNDDOWN(voxel[Z])>>level)+1)*
-         pyr_voxlen[level][Z]-voxel[Z]);
+	(((ROUNDDOWN(voxel[Z])>>level)+1)*
+	 pyr_voxlen[level][Z]-voxel[Z]);
       min_jump = MIN(min_jump,jump[Z]);
     }
     else if (invjacobian[Z][Z] < -SMALL) {
       jump[Z] = invinvjacobian[Z][Z] *
-        ((STEPDOWN(voxel[Z])>>level)*
-         pyr_voxlen[level][Z]-voxel[Z]);
+	((STEPDOWN(voxel[Z])>>level)*
+	 pyr_voxlen[level][Z]-voxel[Z]);
       min_jump = MIN(min_jump,jump[Z]);
     }
     box_zmax = box_zmin + min_jump;
@@ -268,16 +268,16 @@ void Trace_Ray(foutx, fouty, pixel_address)
     /* Popping can be repeated until parent boxes match          */
     /* or until next box is at starting level.                   */
     while (level < starting_level) {
-      if (next_ivoxel[X]>>(level+1) !=
-         ivoxel[X]>>(level+1) ||
-         next_ivoxel[Y]>>(level+1) !=
-         ivoxel[Y]>>(level+1) ||
-         next_ivoxel[Z]>>(level+1) !=
-         ivoxel[Z]>>(level+1)) {
-        level++;
+      if(next_ivoxel[X]>>(level+1) !=
+	 ivoxel[X]>>(level+1) ||
+	 next_ivoxel[Y]>>(level+1) !=
+	 ivoxel[Y]>>(level+1) ||
+	 next_ivoxel[Z]>>(level+1) !=
+	 ivoxel[Z]>>(level+1)) {
+	level++;
       }
       else
-        break;
+	break;
     }
 
     /* Advance voxel coordinates to near boundary of next box    */
@@ -509,37 +509,37 @@ of the frame.
       normal[Y] = (float)ynorm * NORM_RSHIFT;
       mag = 1.0 - normal[Z] * normal[Z] - normal[Y] * normal[Y];
       if (mag > error) {
-        mag = MAX(mag,0.0);
-        normal[X] = sqrt(mag);
-        xnorm = (long)normal[X];
-        dpartial_product1 = normal[Z] * obslight[Z] + normal[Y] * obslight[Y];
-        dpartial_product2 = normal[X] * obslight[X];
-        spartial_product1 = normal[Z] * obshighlight[Z] +
-          normal[Y] * obshighlight[Y];
-        spartial_product2 = normal[X] * obshighlight[X];
-        table_addr = LOOKUP_HSIZE+(znorm*LOOKUP_PREC+ynorm)*2;
-        dot_product = dpartial_product1 + dpartial_product2;
-        diffuse = MAX(dot_product,0.0);
-        dot_product = spartial_product1 + spartial_product2;
-        specular = MAX(dot_product,0.0);
-        specular = pow(specular,specular_exponent);
-        color = ambient_color + diffuse*diffuse_color +
-          specular*specular_color;
-        color = NINT(MIN(color,MAX_PIXEL));
-        temp = (long) color;
-        SHD(table_addr+1) = (unsigned char) temp;
-        if (normal[X] > 0.0) {
-          dot_product = dpartial_product1 - dpartial_product2;
-          diffuse = MAX(dot_product,0.0);
-          dot_product = spartial_product1 - spartial_product2;
-          specular = MAX(dot_product,0.0);
-          specular = pow(specular,specular_exponent);
-          color = ambient_color + diffuse*diffuse_color +
-            specular*specular_color;
-          color = NINT(MIN(color,MAX_PIXEL));
-        }
-        temp = (long) color;
-        SHD(table_addr) = (unsigned char) temp;
+	mag = MAX(mag,0.0);
+	normal[X] = sqrt(mag);
+	xnorm = (long)normal[X];
+	dpartial_product1 = normal[Z] * obslight[Z] + normal[Y] * obslight[Y];
+	dpartial_product2 = normal[X] * obslight[X];
+	spartial_product1 = normal[Z] * obshighlight[Z] +
+	  normal[Y] * obshighlight[Y];
+	spartial_product2 = normal[X] * obshighlight[X];
+	table_addr = LOOKUP_HSIZE+(znorm*LOOKUP_PREC+ynorm)*2;
+	dot_product = dpartial_product1 + dpartial_product2;
+	diffuse = MAX(dot_product,0.0);
+	dot_product = spartial_product1 + spartial_product2;
+	specular = MAX(dot_product,0.0);
+	specular = pow(specular,specular_exponent);
+	color = ambient_color + diffuse*diffuse_color +
+	  specular*specular_color;
+	color = NINT(MIN(color,MAX_PIXEL));
+	temp = (long) color;
+	SHD(table_addr+1) = (unsigned char) temp;
+	if (normal[X] > 0.0) {
+	  dot_product = dpartial_product1 - dpartial_product2;
+	  diffuse = MAX(dot_product,0.0);
+	  dot_product = spartial_product1 - spartial_product2;
+	  specular = MAX(dot_product,0.0);
+	  specular = pow(specular,specular_exponent);
+	  color = ambient_color + diffuse*diffuse_color +
+	    specular*specular_color;
+	  color = NINT(MIN(color,MAX_PIXEL));
+	}
+	temp = (long) color;
+	SHD(table_addr) = (unsigned char) temp;
       }
     }
   }

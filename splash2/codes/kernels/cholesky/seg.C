@@ -16,9 +16,8 @@
 
 EXTERN_ENV
 
-#include <cmath>
-
 #include "matrix.h"
+#include <math.h>
 
 double max_block_size;
 extern long *node;
@@ -40,7 +39,7 @@ void ComputeTargetBlockSize(SMatrix M, long P)
   max_block_size = sqrt(total_ops/(3*max_ht)/P);
 
   printf("%ld max height, %.0f ops, %.2f conc, %.2f bl for %ld P\n",
-         max_ht, total_ops, total_ops/(3*max_ht), max_block_size, P);
+	 max_ht, total_ops, total_ops/(3*max_ht), max_block_size, P);
 
 }
 

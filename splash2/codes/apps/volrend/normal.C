@@ -21,22 +21,21 @@
 *                                                                             *
 ******************************************************************************/
 
-#include <cstring>
-
+#include <string.h>
 #include "incl.h"
 
 /* The following declarations show the layout of the .norm file.             */
 /* If changed, the version number must be incremented and code               */
 /* written to handle loading of both old and current versions.               */
 
-                                /* Version for new .norm files:              */
+				/* Version for new .norm files:              */
 #define	NORM_CUR_VERSION   1	/*   Initial release                         */
 short norm_version;		/* Version of this .norm file                */
 
 short norm_len[NM];		/* Size of this normal map                   */
 
 int norm_length;		/* Total number of normals in map            */
-                                /*   (= NM * product of lens)                */
+				/*   (= NM * product of lens)                */
 NORMAL *norm_address;		/* Pointer to normal map                     */
 
 /* End of layout of .norm file.                                              */
@@ -78,7 +77,7 @@ void Allocate_Normal(address, length)
   long i;
 
   printf("    Allocating normal map of %ld bytes...\n",
-         length*sizeof(NORMAL));
+	 length*sizeof(NORMAL));
 
   *address = (NORMAL *)NU_MALLOC(length*sizeof(NORMAL),0);
 
@@ -144,32 +143,32 @@ void Normal_Compute()
     for (outy=ystart; outy<ystop; outy++) {
       for (outx=xstart; outx<xstop; outx++) {
 
-        inx = INSET + outx;
-        iny = INSET + outy;
-        inz = INSET + outz;
+	inx = INSET + outx;
+	iny = INSET + outy;
+	inz = INSET + outz;
 
-        /* Compute voxel gradient assuming gradient operator is 1x3     */
-        grd_x = (double)((long)MAP(inz,iny,inx+1) - (long)MAP(inz,iny,inx-1));
-        grd_y = (double)((long)MAP(inz,iny+1,inx) - (long)MAP(inz,iny-1,inx));
-        grd_z = (double)((long)MAP(inz+1,iny,inx) - (long)MAP(inz-1,iny,inx));
+	/* Compute voxel gradient assuming gradient operator is 1x3     */
+	grd_x = (double)((long)MAP(inz,iny,inx+1) - (long)MAP(inz,iny,inx-1));
+	grd_y = (double)((long)MAP(inz,iny+1,inx) - (long)MAP(inz,iny-1,inx));
+	grd_z = (double)((long)MAP(inz+1,iny,inx) - (long)MAP(inz-1,iny,inx));
 
-        /* Compute (magnitude*grd_divisor)**2 of gradient               */
-        /* Reduce (magnitude*grd_divisor)**2 to magnitude*grd_divisor   */
-        /* Reduce magnitude*grd_divisor to magnitude                    */
-        magnitude = grd_x*grd_x+grd_y*grd_y+grd_z*grd_z;
+	/* Compute (magnitude*grd_divisor)**2 of gradient               */
+	/* Reduce (magnitude*grd_divisor)**2 to magnitude*grd_divisor   */
+	/* Reduce magnitude*grd_divisor to magnitude                    */
+	magnitude = grd_x*grd_x+grd_y*grd_y+grd_z*grd_z;
 
-        local_norm_address = NORM_ADDRESS(outz,outy,outx,X);
-        if (magnitude > SMALL) {
-          inv_mag_shift = norm_lshift/sqrt(magnitude);
-          if (grd_x*inv_mag_shift > 0.0) xnorm = 1;
-          else xnorm = 0;
-          ynorm = (long)(grd_y*inv_mag_shift);
-          znorm = (long)(grd_z*inv_mag_shift);
-          *local_norm_address = TADDR(znorm,ynorm,xnorm);
-        }
-        else {
-          *local_norm_address = TADDR(norm0,2,1);
-        }
+	local_norm_address = NORM_ADDRESS(outz,outy,outx,X);
+	if (magnitude > SMALL) {
+	  inv_mag_shift = norm_lshift/sqrt(magnitude);
+	  if (grd_x*inv_mag_shift > 0.0) xnorm = 1;
+	  else xnorm = 0;
+	  ynorm = (long)(grd_y*inv_mag_shift);
+	  znorm = (long)(grd_z*inv_mag_shift);
+	  *local_norm_address = TADDR(znorm,ynorm,xnorm);
+	}
+	else {
+	  *local_norm_address = TADDR(norm0,2,1);
+	}
       }
     }
   }

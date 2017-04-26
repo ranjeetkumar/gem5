@@ -44,13 +44,13 @@
 #define YES             1
 #define NO              0
 
-                                /* Definition of object space coordinates:   */
+				/* Definition of object space coordinates:   */
 #define	NM		3	/*   number of coordinates                   */
 #define	X		0	/*   x-coordinate                            */
 #define	Y		1	/*   y-coordinate                            */
 #define	Z		2	/*   z-coordinate                            */
 
-                                /* Definition of pixel image coordinates:    */
+				/* Definition of pixel image coordinates:    */
 #define	NI		2	/*   number of coordinates                   */
 
                                 /* NORMAL constant using 16-bit signed short */
@@ -71,11 +71,11 @@
 #define NULL_PIXEL      0       /*   initialization value for pixel          */
 #define PIX_CUR_VERSION 1       /*   version of .pix file used               */
 
-                                /* Definition of string sizes:               */
+				/* Definition of string sizes:               */
 #define	FILENAME_SIZE		80			/* max user filename */
 #define FILENAME_STRING_SIZE	(FILENAME_SIZE+1)	/* + 1 for null char */
 
-                                /* Definition of minimum and maximum values: */
+				/* Definition of minimum and maximum values: */
 #define	MIN_DENSITY	0	/*   density                                 */
 #define	MAX_DENSITY	255	/*   density                                 */
 #define	MIN_MAGNITUDE	0	/*   magnitude of density gradient           */
@@ -99,5 +99,5 @@
                                         /*   operator not 5x5                */
 
 #define MAX_PYRLEVEL	9	/* Maximum level in binary pyramid           */
-                                /*   (allows 1x1x1..512x512x512 voxels)      */
+				/*   (allows 1x1x1..512x512x512 voxels)      */
 

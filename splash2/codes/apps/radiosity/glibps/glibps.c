@@ -8,9 +8,8 @@
 *
 ***************************************************************/
 
-#include <math.h>
 #include <stdio.h>
-
+#include <math.h>
 #include "pslib.h"
 
 #define SCREEN_WIDTH   (6.0*72)
@@ -70,10 +69,10 @@ static double cdet(Matrix *m, long r0, long r1, long r2, long c0, long c1, long 
 
 long ps_open(char *file)
 {
-      if ( (ps_fd = fopen( file, "w" )) == 0 )
+      if( (ps_fd = fopen( file, "w" )) == 0 )
       {
-            perror( file ) ;
-            return( 0 ) ;
+	    perror( file ) ;
+	    return( 0 ) ;
       }
 
       /* Print out preamble */
@@ -97,8 +96,8 @@ long ps_open(char *file)
 
 void ps_close()
 {
-      if ( ps_fd == 0 )
-            return ;
+      if( ps_fd == 0 )
+	    return ;
 
 
       fprintf( ps_fd, "showpage\n" ) ;
@@ -118,8 +117,8 @@ void ps_close()
 
 void ps_linewidth(float w)
 {
-      if ( ps_fd == 0 )
-            return ;
+      if( ps_fd == 0 )
+	    return ;
 
       fprintf( ps_fd, "%f setlinewidth\n", w ) ;
 }
@@ -137,8 +136,8 @@ void ps_line(Vertex *p1, Vertex *p2)
       Vertex2  v1, v2 ;
       float x1, y1, x2, y2 ;
 
-      if ( ps_fd == 0 )
-            return ;
+      if( ps_fd == 0 )
+	    return ;
 
       v1.v[0] = p1->x ;  v1.v[1] = p1->y ;  v1.v[2] = p1->z ;  v1.v[3] = 1.0 ;
       v2.v[0] = p2->x ;  v2.v[1] = p2->y ;  v2.v[2] = p2->z ;  v2.v[3] = 1.0 ;
@@ -167,8 +166,8 @@ void ps_polygonedge(long n, Vertex *p_list)
       Vertex2 v ;
       long i ;
 
-      if ( ps_fd == 0 )
-            return ;
+      if( ps_fd == 0 )
+	    return ;
 
       /* Transform */
       v.v[0] = p_list[0].x ;
@@ -180,18 +179,18 @@ void ps_polygonedge(long n, Vertex *p_list)
       dcy = v.v[1] / v.v[3] ;
       fprintf( ps_fd, "newpath\n%f %f moveto\n", dcx, dcy ) ;
 
-      for ( i = 1 ; i < n ; i++ )
+      for( i = 1 ; i < n ; i++ )
       {
-            /* Transform */
-            v.v[0] = p_list[i].x ;
-            v.v[1] = p_list[i].y ;
-            v.v[2] = p_list[i].z ;
-            v.v[3] = 1.0 ;
-            gtransform( &v, &v, &trans_mtx ) ;
-            dcx = v.v[0] / v.v[3] ;
-            dcy = v.v[1] / v.v[3] ;
+	    /* Transform */
+	    v.v[0] = p_list[i].x ;
+	    v.v[1] = p_list[i].y ;
+	    v.v[2] = p_list[i].z ;
+	    v.v[3] = 1.0 ;
+	    gtransform( &v, &v, &trans_mtx ) ;
+	    dcx = v.v[0] / v.v[3] ;
+	    dcy = v.v[1] / v.v[3] ;
 
-            fprintf( ps_fd, "%f %f lineto\n", dcx, dcy ) ;
+	    fprintf( ps_fd, "%f %f lineto\n", dcx, dcy ) ;
       }
 
       fprintf( ps_fd, "closepath stroke\n" ) ;
@@ -210,8 +209,8 @@ void ps_polygon(long n, Vertex *p_list)
       Vertex2 v ;
       long i ;
 
-      if ( ps_fd == 0 )
-            return ;
+      if( ps_fd == 0 )
+	    return ;
 
       /* Transform */
       v.v[0] = p_list[0].x ;
@@ -223,18 +222,18 @@ void ps_polygon(long n, Vertex *p_list)
       dcy = v.v[1] / v.v[3] ;
       fprintf( ps_fd, "newpath\n%f %f moveto\n", dcx, dcy ) ;
 
-      for ( i = 1 ; i < n ; i++ )
+      for( i = 1 ; i < n ; i++ )
       {
-            /* Transform */
-            v.v[0] = p_list[i].x ;
-            v.v[1] = p_list[i].y ;
-            v.v[2] = p_list[i].z ;
-            v.v[3] = 1.0 ;
-            gtransform( &v, &v, &trans_mtx ) ;
-            dcx = v.v[0] / v.v[3] ;
-            dcy = v.v[1] / v.v[3] ;
+	    /* Transform */
+	    v.v[0] = p_list[i].x ;
+	    v.v[1] = p_list[i].y ;
+	    v.v[2] = p_list[i].z ;
+	    v.v[3] = 1.0 ;
+	    gtransform( &v, &v, &trans_mtx ) ;
+	    dcx = v.v[0] / v.v[3] ;
+	    dcy = v.v[1] / v.v[3] ;
 
-            fprintf( ps_fd, "%f %f lineto\n", dcx, dcy ) ;
+	    fprintf( ps_fd, "%f %f lineto\n", dcx, dcy ) ;
       }
 
       fprintf( ps_fd, "closepath fill\n" ) ;
@@ -254,8 +253,8 @@ void ps_spolygon(long n, Vertex *p_list, Rgb *c_list)
       long i ;
       float gray_scale ;
 
-      if ( ps_fd == 0 )
-            return ;
+      if( ps_fd == 0 )
+	    return ;
 
       /* Transform */
       v.v[0] = p_list[0].x ;
@@ -267,25 +266,25 @@ void ps_spolygon(long n, Vertex *p_list, Rgb *c_list)
       dcy = v.v[1] / v.v[3] ;
       fprintf( ps_fd, "newpath\n%f %f moveto\n", dcx, dcy ) ;
 
-      for ( i = 1 ; i < n ; i++ )
+      for( i = 1 ; i < n ; i++ )
       {
-            /* Transform */
-            v.v[0] = p_list[i].x ;
-            v.v[1] = p_list[i].y ;
-            v.v[2] = p_list[i].z ;
-            v.v[3] = 1.0 ;
-            gtransform( &v, &v, &trans_mtx ) ;
-            dcx = v.v[0] / v.v[3] ;
-            dcy = v.v[1] / v.v[3] ;
+	    /* Transform */
+	    v.v[0] = p_list[i].x ;
+	    v.v[1] = p_list[i].y ;
+	    v.v[2] = p_list[i].z ;
+	    v.v[3] = 1.0 ;
+	    gtransform( &v, &v, &trans_mtx ) ;
+	    dcx = v.v[0] / v.v[3] ;
+	    dcy = v.v[1] / v.v[3] ;
 
-            fprintf( ps_fd, "%f %f lineto\n", dcx, dcy ) ;
+	    fprintf( ps_fd, "%f %f lineto\n", dcx, dcy ) ;
       }
 
       gray_scale = c_list[0].g ;
-      if ( gray_scale > 1.0 )
-            gray_scale = 1.0 ;
-      else if ( gray_scale < 0.0 )
-            gray_scale = 0.0 ;
+      if( gray_scale > 1.0 )
+	    gray_scale = 1.0 ;
+      else if( gray_scale < 0.0 )
+	    gray_scale = 0.0 ;
 
       fprintf( ps_fd, "closepath %f setgray fill\n", gray_scale ) ;
 }
@@ -356,17 +355,17 @@ static void setup_transformation()
 
       /* Window-Viewport */
       gscale_matrix( POST_CAT, &trans_mtx,
-                   (float)SCREEN_WIDTH  / (clip_right - clip_left),
-                   (float)SCREEN_HEIGHT / (clip_top - clip_bottom),
-                   (float)SCREEN_DEPTH  / (cf_z - cb_z) ) ;
+		   (float)SCREEN_WIDTH  / (clip_right - clip_left),
+		   (float)SCREEN_HEIGHT / (clip_top - clip_bottom),
+		   (float)SCREEN_DEPTH  / (cf_z - cb_z) ) ;
 
       gtranslate_matrix( POST_CAT, &trans_mtx,
-              -(float)SCREEN_WIDTH * clip_left / (clip_right - clip_left),
-              -(float)SCREEN_HEIGHT* clip_top  / (clip_bottom - clip_top),
-              -(float)SCREEN_DEPTH * cb_z / (cf_z - cb_z) ) ;
+	      -(float)SCREEN_WIDTH * clip_left / (clip_right - clip_left),
+	      -(float)SCREEN_HEIGHT* clip_top  / (clip_bottom - clip_top),
+	      -(float)SCREEN_DEPTH * cb_z / (cf_z - cb_z) ) ;
 
       gtranslate_matrix( POST_CAT, &trans_mtx,
-                        (float)(1.0*72), (float)(0.5*72), 0 ) ;
+			(float)(1.0*72), (float)(0.5*72), 0 ) ;
 }
 
 
@@ -414,13 +413,13 @@ static void  gset_unit_matrix(Matrix *mtx)
       long  row, col ;
 
       /* Clear the matrix */
-      for ( row = 0 ; row < 4 ; row++ )
-            for ( col = 0 ; col < 4 ; col++ )
-                  mtx->m[row][col] = 0.0 ;
+      for( row = 0 ; row < 4 ; row++ )
+	    for( col = 0 ; col < 4 ; col++ )
+		  mtx->m[row][col] = 0.0 ;
 
       /* Set 1.0s along diagonal line */
-      for ( row = 0 ; row < 4 ; row++ )
-            mtx->m[row][row] = 1.0 ;
+      for( row = 0 ; row < 4 ; row++ )
+	    mtx->m[row][row] = 1.0 ;
 }
 
 
@@ -444,21 +443,21 @@ static void  gconcatenate_matrix(long precat, Matrix *m1, Matrix *m2)
 
       /* Swap pointer according to the concatenation mode */
       dest = m1 ;
-      if ( precat == 1 )
+      if( precat == 1 )
       {
-            m1 = m2 ;
-            m2 = dest ;
+	    m1 = m2 ;
+	    m2 = dest ;
       }
 
       /* concatenate it */
-      for ( row = 0 ; row < 4 ; row++ )
-            for ( col = 0 ; col < 4 ; col++ )
-            {
-                  temp.m[row][col] = 0.0 ;
-                  for ( scan = 0 ; scan < 4 ; scan++ )
-                        temp.m[row][col] +=
-                              m1->m[row][scan] * m2->m[scan][col];
-            }
+      for( row = 0 ; row < 4 ; row++ )
+	    for( col = 0 ; col < 4 ; col++ )
+	    {
+		  temp.m[row][col] = 0.0 ;
+		  for( scan = 0 ; scan < 4 ; scan++ )
+			temp.m[row][col] +=
+			      m1->m[row][scan] * m2->m[scan][col];
+	    }
 
       *dest = temp ;
 }
@@ -660,14 +659,14 @@ static double det(Matrix *m)
 
       /* Expand with respect to column 4 */
       det_sum = 0.0 ;
-      if ( m->m[0][3] != 0.0 )
-            det_sum -= m->m[0][3] * cdet( m, 1, 2, 3,  0, 1, 2 ) ;
-      if ( m->m[1][3] != 0.0 )
-            det_sum += m->m[1][3] * cdet( m, 0, 2, 3,  0, 1, 2 ) ;
-      if ( m->m[2][3] != 0.0 )
-            det_sum -= m->m[2][3] * cdet( m, 0, 1, 3,  0, 1, 2 ) ;
-      if ( m->m[3][3] != 0.0 )
-            det_sum += m->m[3][3] * cdet( m, 0, 1, 2,  0, 1, 2 ) ;
+      if( m->m[0][3] != 0.0 )
+	    det_sum -= m->m[0][3] * cdet( m, 1, 2, 3,  0, 1, 2 ) ;
+      if( m->m[1][3] != 0.0 )
+	    det_sum += m->m[1][3] * cdet( m, 0, 2, 3,  0, 1, 2 ) ;
+      if( m->m[2][3] != 0.0 )
+	    det_sum -= m->m[2][3] * cdet( m, 0, 1, 3,  0, 1, 2 ) ;
+      if( m->m[3][3] != 0.0 )
+	    det_sum += m->m[3][3] * cdet( m, 0, 1, 2,  0, 1, 2 ) ;
 
       return( det_sum ) ;
 }

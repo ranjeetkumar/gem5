@@ -26,10 +26,11 @@
  */
 
 
-#include <cmath>
-#include <cstdio>
-
+#include <stdio.h>
+#include <math.h>
 #include "rt.h"
+
+
 
 /*
  * NAME
@@ -43,13 +44,13 @@
  */
 
 VOID	Huniform_defaults()
-        {
-        hu_max_prims_cell   = 2;
-        hu_gridsize	    = 5;
-        hu_numbuckets	    = 23;
-        hu_max_subdiv_level = 1;
-        hu_lazy 	    = 0;
-        }
+	{
+	hu_max_prims_cell   = 2;
+	hu_gridsize	    = 5;
+	hu_numbuckets	    = 23;
+	hu_max_subdiv_level = 1;
+	hu_lazy 	    = 0;
+	}
 
 
 
@@ -66,27 +67,27 @@ VOID	Huniform_defaults()
  */
 
 VOID	BuildHierarchy_Uniform()
-        {
-        INT	num_pe;
-        GRID	*g;
-        GRID	*ng;
-        VOXEL	*v;
-        ELEMENT **pepa;
+	{
+	INT	num_pe;
+	GRID	*g;
+	GRID	*ng;
+	VOXEL	*v;
+	ELEMENT **pepa;
 
-        init_masks();
+	init_masks();
 
 
-        pepa = MakeElementArray(&num_pe);
+	pepa = MakeElementArray(&num_pe);
 
-        v = init_world_voxel(pepa,num_pe);
+	v = init_world_voxel(pepa,num_pe);
 
-        gm->world_level_grid = init_world_grid(v, pepa, num_pe);
-        g = gm->world_level_grid;
+	gm->world_level_grid = init_world_grid(v, pepa, num_pe);
+	g = gm->world_level_grid;
 
-        ng = create_grid(v, g, num_pe);
+	ng = create_grid(v, g, num_pe);
 
-        fprintf(stderr, "Uniform Hierarchy built.\n");
-        }
+	fprintf(stderr, "Uniform Hierarchy built.\n");
+	}
 
 
 
@@ -108,34 +109,34 @@ VOID	BuildHierarchy_Uniform()
  */
 
 VOID	IntersectHuniformPrimlist(INT *intersectPrim, IRECORD *hit, VOXEL *v, RAY *r, INT pid)
-        {
-        ELEMENT **pptr; 		/* Primitive element list ptr.	     */
-        OBJECT	*peParent;		/* Ptr to parent object.	     */
-        ELEMENT *pe;			/* Primitive element ptr.	     */
-        IRECORD newhit[ISECT_MAX];	/* Hit recorder.		     */
-        INT	hitcode,i;
-        REAL	t_out;
+	{
+	ELEMENT **pptr; 		/* Primitive element list ptr.	     */
+	OBJECT	*peParent;		/* Ptr to parent object.	     */
+	ELEMENT *pe;			/* Primitive element ptr.	     */
+	IRECORD newhit[ISECT_MAX];	/* Hit recorder.		     */
+	INT	hitcode,i;
+	REAL	t_out;
 
-        t_out = r->ri->t_out;
-        hit[0].t = HUGE_REAL;
-        pptr = (ELEMENT**)v->cell;
+	t_out = r->ri->t_out;
+	hit[0].t = HUGE_REAL;
+	pptr = (ELEMENT**)v->cell;
 
-        for (i = 0; i < v->numelements; i++)
-                {
-                pe	 = pptr[i];
-                peParent = pe->parent;
-                hitcode  = (*peParent->procs->pe_intersect)(r, pe, newhit);
+	for (i = 0; i < v->numelements; i++)
+		{
+		pe	 = pptr[i];
+		peParent = pe->parent;
+		hitcode  = (*peParent->procs->pe_intersect)(r, pe, newhit);
 
-                if (hitcode)
-                        if (newhit[0].t < hit[0].t && newhit[0].t < t_out)
-                                hit[0] = newhit[0];
-                }
+		if (hitcode)
+			if (newhit[0].t < hit[0].t && newhit[0].t < t_out)
+				hit[0] = newhit[0];
+		}
 
-        if (hit[0].t < HUGE_REAL)
-                *intersectPrim = TRUE;
-        else
-                *intersectPrim = FALSE;
-        }
+	if (hit[0].t < HUGE_REAL)
+		*intersectPrim = TRUE;
+	else
+		*intersectPrim = FALSE;
+	}
 
 
 
@@ -156,56 +157,56 @@ VOID	IntersectHuniformPrimlist(INT *intersectPrim, IRECORD *hit, VOXEL *v, RAY *
  */
 
 REAL	HuniformShadowIntersect(RAY *r, REAL lightlength, ELEMENT *pe, INT pid)
-        {
-        INT	status;
-        INT	hitcode,i;
-        REAL	trans;			/* Transparency factor. 	     */
-        OBJECT	*peParent;		/* Ptr to parent object.	     */
-        ELEMENT **pptr; 		/* Primitive element list ptr.	     */
-        ELEMENT *pe2;			/* Ptr to element.		     */
-        IRECORD newhit[ISECT_MAX];	/* Hit record.			     */
-        VOXEL	*v;
+	{
+	INT	status;
+	INT	hitcode,i;
+	REAL	trans;			/* Transparency factor. 	     */
+	OBJECT	*peParent;		/* Ptr to parent object.	     */
+	ELEMENT **pptr; 		/* Primitive element list ptr.	     */
+	ELEMENT *pe2;			/* Ptr to element.		     */
+	IRECORD newhit[ISECT_MAX];	/* Hit record.			     */
+	VOXEL	*v;
 
-        trans = 1.0;
+	trans = 1.0;
 
-        /* Now try uniform hierarchy. */
+	/* Now try uniform hierarchy. */
 
-        r->ri = NULL;
-        v = init_ray(r, gm->world_level_grid);
+	r->ri = NULL;
+	v = init_ray(r, gm->world_level_grid);
 
-        if (v == NULL)
-                {
-                reset_rayinfo(r);
-                return(trans);
-                }
+	if (v == NULL)
+		{
+		reset_rayinfo(r);
+		return(trans);
+		}
 
-        newhit[0].t = HUGE_REAL;
-        status	    = IN_WORLD;
+	newhit[0].t = HUGE_REAL;
+	status	    = IN_WORLD;
 
-        while (trans > 0.0 && status != EXITED_WORLD)
-                {
-                /* Intersect primitives in cell. */
+	while (trans > 0.0 && status != EXITED_WORLD)
+		{
+		/* Intersect primitives in cell. */
 
-                pptr = (ELEMENT**)v->cell;
+		pptr = (ELEMENT**)v->cell;
 
-                for (i = 0; (i < v->numelements) && (trans > 0.0); i++)
-                        {
-                        pe2	 = pptr[i];
-                        peParent = pe2->parent;
-                        hitcode  = (*peParent->procs->pe_intersect)(r, pe2, newhit);
+		for (i = 0; (i < v->numelements) && (trans > 0.0); i++)
+			{
+			pe2	 = pptr[i];
+			peParent = pe2->parent;
+			hitcode  = (*peParent->procs->pe_intersect)(r, pe2, newhit);
 
-                        if (hitcode && newhit[0].pelem != pe && newhit[0].t < lightlength)
-                                trans *= newhit[0].pelem->parent->surf->ktran;
+			if (hitcode && newhit[0].pelem != pe && newhit[0].t < lightlength)
+				trans *= newhit[0].pelem->parent->surf->ktran;
 
-                        }
+			}
 
-                if (trans > 0.0)
-                        v = next_nonempty_leaf(r, STEP, &status);
-                }
+		if (trans > 0.0)
+			v = next_nonempty_leaf(r, STEP, &status);
+		}
 
-        reset_rayinfo(r);
-        return (trans);
-        }
+	reset_rayinfo(r);
+	return (trans);
+	}
 
 
 
@@ -225,33 +226,33 @@ REAL	HuniformShadowIntersect(RAY *r, REAL lightlength, ELEMENT *pe, INT pid)
  */
 
 BOOL	TraverseHierarchyUniform(RAY *r, IRECORD *hit, INT pid)
-        {
-        INT	status;
-        INT	intersectPrim;
-        VOXEL	*v;
+	{
+	INT	status;
+	INT	intersectPrim;
+	VOXEL	*v;
 
-        r->ri = NULL;
-        v = init_ray(r, gm->world_level_grid);
+	r->ri = NULL;
+	v = init_ray(r, gm->world_level_grid);
 
-        if (v == NULL)
-                {
-                reset_rayinfo(r);
-                return (FALSE);
-                }
+	if (v == NULL)
+		{
+		reset_rayinfo(r);
+		return (FALSE);
+		}
 
-        intersectPrim = FALSE;
-        hit[0].t      = HUGE_REAL;
-        status	      = IN_WORLD;
+	intersectPrim = FALSE;
+	hit[0].t      = HUGE_REAL;
+	status	      = IN_WORLD;
 
-        while (!intersectPrim && status != EXITED_WORLD)
-                {
-                IntersectHuniformPrimlist(&intersectPrim, hit, v, r, pid);
+	while (!intersectPrim && status != EXITED_WORLD)
+		{
+		IntersectHuniformPrimlist(&intersectPrim, hit, v, r, pid);
 
-                if (!intersectPrim)
-                        v = next_nonempty_leaf(r, STEP, &status);
-                }
+		if (!intersectPrim)
+			v = next_nonempty_leaf(r, STEP, &status);
+		}
 
-        reset_rayinfo(r);
-        return (intersectPrim);
-        }
+	reset_rayinfo(r);
+	return (intersectPrim);
+	}
 

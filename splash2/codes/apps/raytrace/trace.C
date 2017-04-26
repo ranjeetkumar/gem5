@@ -25,9 +25,8 @@
  */
 
 
-#include <cmath>
-#include <cstdio>
-
+#include <stdio.h>
+#include <math.h>
 #include "rt.h"
 
 /*
@@ -43,14 +42,14 @@
  */
 
 REAL	frand()
-        {
-        REAL	r;
-        static	LONG	lLastRand = 0;
+	{
+	REAL	r;
+	static	LONG	lLastRand = 0;
 
-        lLastRand = lLastRand*214013L + 2531011L;
-        r  = (REAL)((lLastRand >> 16) & 0x7FFF)/32768.0;
-        return (r);
-        }
+	lLastRand = lLastRand*214013L + 2531011L;
+	r  = (REAL)((lLastRand >> 16) & 0x7FFF)/32768.0;
+	return (r);
+	}
 
 
 
@@ -77,22 +76,22 @@ REAL	frand()
  */
 
 BOOL	GetRayJobFromBundle(RAYJOB *job, INT *x, INT *y)
-        {
-        *x = job->xcurr;			/* Set pixel address first.  */
-        *y = job->ycurr;
+	{
+	*x = job->xcurr;			/* Set pixel address first.  */
+	*y = job->ycurr;
 
-        if ((job->y + job->ylen) == job->ycurr) /* All done?		     */
-                return (FALSE);
+	if ((job->y + job->ylen) == job->ycurr) /* All done?		     */
+		return (FALSE);
 
-        job->xcurr++;				/* Update to next pixel.     */
-        if ((job->x +job->xlen) == job->xcurr )
-                {
-                job->xcurr = job->x;		/* Go to new scanline.	     */
-                job->ycurr++;
-                }
+	job->xcurr++;				/* Update to next pixel.     */
+	if ((job->x +job->xlen) == job->xcurr )
+		{
+		job->xcurr = job->x;		/* Go to new scanline.	     */
+		job->ycurr++;
+		}
 
-        return (TRUE);
-        }
+	return (TRUE);
+	}
 
 
 
@@ -125,66 +124,66 @@ BOOL	GetRayJobFromBundle(RAYJOB *job, INT *x, INT *y)
  */
 
 VOID	ConvertPrimRayJobToRayMsg(RAY *ray, REAL x, REAL y)
-        {
-        VEC4	dir;
-        VEC4	origin;
+	{
+	VEC4	dir;
+	VEC4	origin;
 
-        if (View.projection == PT_PERSP)
-                {
-                dir[0] = -Display.scrHalfWidth	+ (x*Display.vWscale);
-                dir[1] =  Display.scrHalfHeight - (y*Display.vHscale);
-                dir[2] =  Display.scrDist;
-                dir[3] =  0.0;
+	if (View.projection == PT_PERSP)
+		{
+		dir[0] = -Display.scrHalfWidth	+ (x*Display.vWscale);
+		dir[1] =  Display.scrHalfHeight - (y*Display.vHscale);
+		dir[2] =  Display.scrDist;
+		dir[3] =  0.0;
 
-                /* Transform ray back to world. */
-                TransformViewRay(dir);
+		/* Transform ray back to world. */
+		TransformViewRay(dir);
 
-                VecNorm(dir);
-                VecCopy(ray->D, dir);
-                VecCopy(ray->P, View.eye);
-                }
-        else
-                {
-                /* Orthographic projection. */
+		VecNorm(dir);
+		VecCopy(ray->D, dir);
+		VecCopy(ray->P, View.eye);
+		}
+	else
+		{
+		/* Orthographic projection. */
 
-                dir[0] = 0.0;
-                dir[1] = 0.0;
-                dir[2] = 1.0;
-                dir[3] = 0.0;
+		dir[0] = 0.0;
+		dir[1] = 0.0;
+		dir[2] = 1.0;
+		dir[3] = 0.0;
 
-                /* Transform ray back to world. */
-                TransformViewRay(dir);
-                VecNorm(dir);
+		/* Transform ray back to world. */
+		TransformViewRay(dir);
+		VecNorm(dir);
 
-                VecCopy(ray->D, dir);
+		VecCopy(ray->D, dir);
 
-                /* Calculate origin. */
+		/* Calculate origin. */
 
-                origin[0] = -Display.scrHalfWidth  + (x*Display.vWscale);
-                origin[1] =  Display.scrHalfHeight - (y*Display.vHscale);
-                origin[2] =  0.0;
-                origin[3] =  1.0;
+		origin[0] = -Display.scrHalfWidth  + (x*Display.vWscale);
+		origin[1] =  Display.scrHalfHeight - (y*Display.vHscale);
+		origin[2] =  0.0;
+		origin[3] =  1.0;
 
-                /* Transform origin back to world. */
+		/* Transform origin back to world. */
 
-                TransformViewRay(origin);
-                VecCopy(ray->P, origin);
-                }
+		TransformViewRay(origin);
+		VecCopy(ray->P, origin);
+		}
 
 
-        /* Initialize other fields of ray message. */
+	/* Initialize other fields of ray message. */
 
-        ray->level  = 0;
-        ray->weight = 1.0/(REAL)NumSubRays;
+	ray->level  = 0;
+	ray->weight = 1.0/(REAL)NumSubRays;
 
-        LOCK(gm->ridlock);
-        ray->id = gm->rid++;
-        UNLOCK(gm->ridlock);
+	LOCK(gm->ridlock);
+	ray->id = gm->rid++;
+	UNLOCK(gm->ridlock);
 
-        ray->x = (INT)x;
-        ray->y = (INT)y;
+	ray->x = (INT)x;
+	ray->y = (INT)y;
 
-        }
+	}
 
 
 
@@ -218,97 +217,97 @@ VOID	ConvertPrimRayJobToRayMsg(RAY *ray, REAL x, REAL y)
  */
 
 VOID	RayTrace(INT pid)
-        {
-        INT	j;
-        INT	x, y;			/* Pixel address.		     */
-        REAL	xx, yy;
-        VEC3	N;			/* Normal at intersection.	     */
-        VEC3	Ipoint; 		/* Intersection point.		     */
-        COLOR	c;			/* Color for storing background.     */
-        RAY	*ray;			/* Ray pointer. 		     */
-        RAY	rmsg;			/* Ray message. 		     */
-        RAYJOB	job;			/* Ray job from work pool.	     */
-        OBJECT	*po;			/* Ptr to object.		     */
-        BOOL	hit;			/* An object hit?		     */
-        IRECORD hitrecord;		/* Intersection record. 	     */
+	{
+	INT	j;
+	INT	x, y;			/* Pixel address.		     */
+	REAL	xx, yy;
+	VEC3	N;			/* Normal at intersection.	     */
+	VEC3	Ipoint; 		/* Intersection point.		     */
+	COLOR	c;			/* Color for storing background.     */
+	RAY	*ray;			/* Ray pointer. 		     */
+	RAY	rmsg;			/* Ray message. 		     */
+	RAYJOB	job;			/* Ray job from work pool.	     */
+	OBJECT	*po;			/* Ptr to object.		     */
+	BOOL	hit;			/* An object hit?		     */
+	IRECORD hitrecord;		/* Intersection record. 	     */
 
-        ray = &rmsg;
+	ray = &rmsg;
 
-        while (GetJobs(&job, pid) != WPS_EMPTY)
-                {
-                while (GetRayJobFromBundle(&job, &x, &y))
-                        {
-                        /* Convert the ray job to the ray message format. */
+	while (GetJobs(&job, pid) != WPS_EMPTY)
+		{
+		while (GetRayJobFromBundle(&job, &x, &y))
+			{
+			/* Convert the ray job to the ray message format. */
 
-                        xx = (REAL)x;
-                        yy = (REAL)y;
+			xx = (REAL)x;
+			yy = (REAL)y;
 
-                        if (AntiAlias)
-                                for (j = 0; j < NumSubRays; j++)
-                                        {
-                                        ConvertPrimRayJobToRayMsg(ray, xx + frand(), yy + frand());
-                                        PushRayTreeStack(ray, pid);
-                                        }
-                        else
-                                {
-                                ConvertPrimRayJobToRayMsg(ray, xx, yy);
-                                PushRayTreeStack(ray, pid);
-                                }
+			if (AntiAlias)
+				for (j = 0; j < NumSubRays; j++)
+					{
+					ConvertPrimRayJobToRayMsg(ray, xx + frand(), yy + frand());
+					PushRayTreeStack(ray, pid);
+					}
+			else
+				{
+				ConvertPrimRayJobToRayMsg(ray, xx, yy);
+				PushRayTreeStack(ray, pid);
+				}
 
-                        while (PopRayTreeStack(ray, pid) != RTS_EMPTY)
-                                {
-                                /* Find which object is closest along the ray. */
+			while (PopRayTreeStack(ray, pid) != RTS_EMPTY)
+				{
+				/* Find which object is closest along the ray. */
 
-                                switch (TraversalType)
-                                        {
-                                        case TT_LIST:
-                                                hit = Intersect(ray, &hitrecord);
-                                                break;
+				switch (TraversalType)
+					{
+					case TT_LIST:
+						hit = Intersect(ray, &hitrecord);
+						break;
 
-                                        case TT_HUG:
-                                                hit = TraverseHierarchyUniform(ray, &hitrecord, pid);
-                                                break;
-                                        }
+					case TT_HUG:
+						hit = TraverseHierarchyUniform(ray, &hitrecord, pid);
+						break;
+					}
 
-                                /* Process the object ray hit. */
+				/* Process the object ray hit. */
 
-                                if (hit)
-                                        {
-                                        /*
-                                         *  Get parent object to be able to access
-                                         *  object operations.
-                                         */
+				if (hit)
+					{
+					/*
+					 *  Get parent object to be able to access
+					 *  object operations.
+					 */
 
-                                        po = hitrecord.pelem->parent;
+					po = hitrecord.pelem->parent;
 
-                                        /* Calculate intersection point. */
-                                        RayPoint(Ipoint, ray, hitrecord.t);
+					/* Calculate intersection point. */
+					RayPoint(Ipoint, ray, hitrecord.t);
 
-                                        /* Calculate normal at this point. */
-                                        (*po->procs->normal)(&hitrecord, Ipoint, N);
+					/* Calculate normal at this point. */
+					(*po->procs->normal)(&hitrecord, Ipoint, N);
 
-                                        /* Make sure normal is pointing toward ray origin. */
-                                        if ((VecDot(ray->D, N)) >  0.0)
-                                                VecNegate(N, N);
+					/* Make sure normal is pointing toward ray origin. */
+					if ((VecDot(ray->D, N)) >  0.0)
+						VecNegate(N, N);
 
-                                        /*
-                                         *  Compute shade at this point - will process
-                                         *  shadow rays and add secondary reflection
-                                         *  and refraction rays to ray tree stack
-                                         */
+					/*
+					 *  Compute shade at this point - will process
+					 *  shadow rays and add secondary reflection
+					 *  and refraction rays to ray tree stack
+					 */
 
-                                        Shade(Ipoint, N, ray, &hitrecord, pid);
-                                        }
-                                else
-                                        {
-                                        /* Add background as pixel contribution. */
+					Shade(Ipoint, N, ray, &hitrecord, pid);
+					}
+				else
+					{
+					/* Add background as pixel contribution. */
 
-                                        VecCopy(c, View.bkg);
-                                        VecScale(c, ray->weight, c);
-                                        AddPixelColor(c, ray->x, ray->y);
-                                        }
-                                }
-                        }
-                }
-        }
+					VecCopy(c, View.bkg);
+					VecScale(c, ray->weight, c);
+					AddPixelColor(c, ray->x, ray->y);
+					}
+				}
+			}
+		}
+	}
 

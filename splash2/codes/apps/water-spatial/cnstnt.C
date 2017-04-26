@@ -16,16 +16,15 @@
 
 EXTERN_ENV
 
-#include <cstdio>
-
-#include "cnst.h"
-#include "fileio.h"
-#include "frcnst.h"
-#include "global.h"
-#include "mddata.h"
-#include "parameters.h"
+#include <stdio.h>
 #include "water.h"
 #include "wwpot.h"
+#include "cnst.h"
+#include "frcnst.h"
+#include "fileio.h"
+#include "parameters.h"
+#include "mddata.h"
+#include "global.h"
 
 /* set up some constants; this routine is executed by
  * a single processor before others are created

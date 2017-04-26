@@ -24,7 +24,7 @@
  *
  *************************************************************************/
 
-#include <cstdio>
+#include <stdio.h>
 
 EXTERN_ENV;
 
@@ -60,18 +60,18 @@ void foreach_patch_in_bsp(void (*func)(), long  arg1, long process_id)
 
 static void _foreach_patch(Patch *node, void (*func)(), long   arg1, long process_id)
 {
-    if ( node == 0 )
+    if( node == 0 )
         return ;
 
     /* Process subtree(-) */
-    if ( node->bsp_negative )
+    if( node->bsp_negative )
         _foreach_patch( node->bsp_negative, func, arg1, process_id ) ;
 
     /* Apply function to this node */
     func( node, arg1, process_id ) ;
 
     /* Process subtree(+) */
-    if ( node->bsp_positive )
+    if( node->bsp_positive )
         _foreach_patch( node->bsp_positive, func, arg1, process_id ) ;
 }
 
@@ -99,38 +99,38 @@ static void _foreach_d_s_patch(Vertex *svec, Patch *node, void (*func)(), long a
 {
     float sign ;
 
-    if ( node == 0 )
+    if( node == 0 )
         return ;
 
     /* Compute inner product */
     sign = inner_product( svec, &node->plane_equ.n ) ;
 
-    if ( sign >= 0.0 )
+    if( sign >= 0.0 )
         {
             /* The vector is approaching from the negative side of the patch */
 
             /* Process subtree(-) */
-            if ( node->bsp_negative )
+            if( node->bsp_negative )
                 _foreach_d_s_patch( svec, node->bsp_negative, func, arg1, process_id ) ;
 
             /* Apply function to this node */
             func( node, arg1, process_id ) ;
 
             /* Process subtree(+) */
-            if ( node->bsp_positive )
+            if( node->bsp_positive )
                 _foreach_d_s_patch( svec, node->bsp_positive, func, arg1, process_id ) ;
         }
     else
         {
             /* Process subtree(+) */
-            if ( node->bsp_positive )
+            if( node->bsp_positive )
                 _foreach_d_s_patch( svec, node->bsp_positive, func, arg1, process_id ) ;
 
             /* Apply function to this node */
             func( node, arg1, process_id ) ;
 
             /* Process subtree(-) */
-            if ( node->bsp_negative )
+            if( node->bsp_negative )
                 _foreach_d_s_patch( svec, node->bsp_negative, func, arg1, process_id ) ;
         }
 }
@@ -155,9 +155,9 @@ void define_patch(Patch *patch, Patch *root, long process_id)
     LOCK(global->bsp_tree_lock);
 
     /* If this is the first patch, link directly */
-    if ( parent == 0 )
+    if( parent == 0 )
         {
-            if ( global->bsp_root == 0 )
+            if( global->bsp_root == 0 )
                 {
                     /* This is really the first patch */
                     global->bsp_root = patch ;
@@ -176,16 +176,16 @@ void define_patch(Patch *patch, Patch *root, long process_id)
         }
 
     /* Traverse the BSP tree and get to the leaf node */
-    while ( 1 )
+    while( 1 )
         {
             /* Check the sign */
             xing_code = patch_intersection( &parent->plane_equ, &patch->p1,
                                            &patch->p2, &patch->p3, process_id ) ;
 
             /* Traverse down the tree according to the sign */
-            if ( POSITIVE_SIDE( xing_code ) )
+            if( POSITIVE_SIDE( xing_code ) )
                 {
-                    if ( parent->bsp_positive == 0 )
+                    if( parent->bsp_positive == 0 )
                         {
                             /* Insert the patch */
                             parent->bsp_positive = patch ;
@@ -200,9 +200,9 @@ void define_patch(Patch *patch, Patch *root, long process_id)
                         /* Traverse down to the subtree(+) */
                         parent = parent->bsp_positive ;
                 }
-            else if ( NEGATIVE_SIDE( xing_code ) )
+            else if( NEGATIVE_SIDE( xing_code ) )
                 {
-                    if ( parent->bsp_negative == 0 )
+                    if( parent->bsp_negative == 0 )
                         {
                             /* Insert the patch */
                             parent->bsp_negative = patch ;
@@ -255,23 +255,23 @@ void split_patch(Patch *patch, Patch *node, long xing_code, long process_id)
     c3 = P3_CODE( xing_code ) ;
 
     /* Classify intersection type */
-    if ( c1 == c2 )
+    if( c1 == c2 )
         /* P3 is on the oposite side */
         split_into_3( patch, patch->ev3, patch->ev1, patch->ev2,
                      patch->e31, patch->e12, patch->e23, node, process_id) ;
-    else if ( c1 == c3 )
+    else if( c1 == c3 )
         /* P2 is on the oposite side */
         split_into_3( patch, patch->ev2, patch->ev3, patch->ev1,
                      patch->e23, patch->e31, patch->e12, node, process_id ) ;
-    else if ( c2 == c3 )
+    else if( c2 == c3 )
         /* P1 is on the oposite side */
         split_into_3( patch, patch->ev1, patch->ev2,  patch->ev3,
                      patch->e12, patch->e23, patch->e31, node, process_id ) ;
-    else if ( c1 == POINT_ON_PLANE )
+    else if( c1 == POINT_ON_PLANE )
         /* P1 is on the plane. P2 and P3 are on the oposite side */
         split_into_2( patch, patch->ev1, patch->ev2, patch->ev3,
                      patch->e12, patch->e23, patch->e31, node, process_id ) ;
-    else if ( c2 == POINT_ON_PLANE )
+    else if( c2 == POINT_ON_PLANE )
         /* P2 is on the plane. P3 and P1 are on the oposite side */
         split_into_2( patch, patch->ev2, patch->ev3, patch->ev1,
                      patch->e23, patch->e31, patch->e12, node, process_id ) ;
@@ -302,14 +302,14 @@ static void split_into_3(Patch *patch, ElemVertex *ev1, ElemVertex *ev2, ElemVer
     /* NOTE: Length of P1-P2 and P1-P3 are at least 2*F_COPLANAR.
        So, no check is necessary before division */
     u2 = h1 / (h1 - h2) ;
-    if ( (rev_e12 = EDGE_REVERSE( e12, ev1, ev2 )) )
+    if( (rev_e12 = EDGE_REVERSE( e12, ev1, ev2 )) )
         subdivide_edge( e12, u2, process_id ) ;
     else
         subdivide_edge( e12, (float)1.0 - u2, process_id ) ;
     ev_a = e12->ea->pb ;
 
     u3 = h1 / (h1 - h3) ;
-    if ( (rev_e31 = EDGE_REVERSE( e31, ev3, ev1 )) )
+    if( (rev_e31 = EDGE_REVERSE( e31, ev3, ev1 )) )
         subdivide_edge( e31, (float)1.0 - u3, process_id ) ;
     else
         subdivide_edge( e31, u3, process_id ) ;
@@ -391,7 +391,7 @@ static void split_into_2(Patch *patch, ElemVertex *ev1, ElemVertex *ev2, ElemVer
     /* NOTE: Length of P2-P3 is at least 2*F_COPLANAR.
        So, no check is necessary before division */
     u2 = h2 / (h2 - h3) ;
-    if ( (rev_e23 = EDGE_REVERSE( e23, ev2, ev3 )) )
+    if( (rev_e23 = EDGE_REVERSE( e23, ev2, ev3 )) )
         subdivide_edge( e23, u2, process_id ) ;
     else
         subdivide_edge( e23, (float)1.0 - u2, process_id ) ;
@@ -488,20 +488,20 @@ void refine_newpatch(Patch *patch, long newpatch, long process_id)
     Patch *new_patch = (Patch *)newpatch ;
 
     /* Check sequence number */
-    if ( patch->seq_no >= new_patch->seq_no )
+    if( patch->seq_no >= new_patch->seq_no )
         /* Racing condition due to multiprocessing */
         return ;
 
     /* Check visibility */
     cc = patch_intersection( &patch->plane_equ,
                             &new_patch->p1, &new_patch->p2, &new_patch->p3, process_id ) ;
-    if ( NEGATIVE_SIDE(cc) )
+    if( NEGATIVE_SIDE(cc) )
         /* If negative or on the plane, then do nothing */
         return ;
 
     cc = patch_intersection( &new_patch->plane_equ,
                             &patch->p1, &patch->p2, &patch->p3, process_id ) ;
-    if ( NEGATIVE_SIDE(cc) )
+    if( NEGATIVE_SIDE(cc) )
         /* If negative or on the plane, then do nothing */
         return ;
 
@@ -526,7 +526,7 @@ Patch *get_patch(long process_id)
     LOCK(global->free_patch_lock);
 
     /* Test pointer */
-    if ( global->free_patch == 0 )
+    if( global->free_patch == 0 )
         {
             printf( "Fatal: Ran out of patch buffer\n" ) ;
             UNLOCK(global->free_patch_lock);
@@ -566,7 +566,7 @@ void init_patchlist(long process_id)
     long i ;
 
     /* Initialize Patch free list */
-    for ( i = 0 ; i < MAX_PATCHES-1 ; i++ )
+    for( i = 0 ; i < MAX_PATCHES-1 ; i++ )
         {
             global->patch_buf[i].bsp_positive = &global->patch_buf[i+1] ;
             global->patch_buf[i].seq_no = i ;
@@ -581,7 +581,7 @@ void init_patchlist(long process_id)
 
 #if PATCH_ASSIGNMENT == PATCH_ASSIGNMENT_COSTBASED
     /* Initialize Patch_Cost structure */
-    for ( i = 0 ; i < MAX_PATCHES ; i++ )
+    for( i = 0 ; i < MAX_PATCHES ; i++ )
         {
             global->patch_cost[i].patch  = &global->patch_buf[i] ;
             global->patch_cost[i].cost_lock
@@ -710,9 +710,9 @@ long point_intersection(PlaneEqu *plane, Vertex *point, long process_id)
     long result_code = 0 ;
 
     /* Compare H(x,y,z) against allowance */
-    if ( (h = plane_equ( plane, point, process_id )) < -F_COPLANAR )
+    if( (h = plane_equ( plane, point, process_id )) < -F_COPLANAR )
         result_code |= POINT_NEGATIVE_SIDE ;
-    if ( h > F_COPLANAR )
+    if( h > F_COPLANAR )
         result_code |= POINT_POSITIVE_SIDE ;
 
     return( result_code ) ;

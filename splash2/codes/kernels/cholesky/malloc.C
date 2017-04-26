@@ -30,10 +30,10 @@ EXTERN_ENV
 #define NEXTFREE(block) (*((long **) block)) /* in free blocks */
 
 struct MemPool {
-        LOCKDEC(memoryLock)
-        long *volatile*freeBlock;
-        long tally, touched, maxm;
-        } *mem_pool;
+	LOCKDEC(memoryLock)
+	long *volatile*freeBlock;
+	long tally, touched, maxm;
+	} *mem_pool;
 
 long mallocP = 1, machineP = 1;
 
@@ -43,7 +43,7 @@ extern struct GlobalMemory *Global;
 void MallocInit(long P)
 {
   long p;
-
+  
   mallocP = P;
 
   mem_pool = (struct MemPool *)
@@ -70,7 +70,7 @@ void InitOneFreeList(long p)
     mem_pool[p].freeBlock = (long **)
       G_MALLOC((MAXFAST+1)*sizeof(long *), 0);
     MigrateMem(mem_pool[p].freeBlock, (MAXFAST+1)*sizeof(long *),
-               DISTRIBUTED);
+	       DISTRIBUTED);
   }
   for (j=0; j<=MAXFAST; j++)
     mem_pool[p].freeBlock[j] = NULL;
@@ -138,7 +138,7 @@ char *MyMalloc(long size, long home)
       LOCK(mem_pool[home].memoryLock)
       result = mem_pool[home].freeBlock[bucket];
       if (result)
-        mem_pool[home].freeBlock[bucket] = NEXTFREE(result);
+	mem_pool[home].freeBlock[bucket] = NEXTFREE(result);
       UNLOCK(mem_pool[home].memoryLock)
     }
   }
@@ -153,28 +153,28 @@ char *MyMalloc(long size, long home)
 
       if (block_size >= alloc_size) {  /* Found one! */
 
-        leftover = block_size - alloc_size - 2*sizeof(long);
+	leftover = block_size - alloc_size - 2*sizeof(long);
         result = d + (leftover/sizeof(long)) + 2;
-        SIZE(result) = alloc_size;
-        HOME(result) = home;
+	SIZE(result) = alloc_size;
+	HOME(result) = home;
 
-        if (leftover > MAXFASTBL) {
-          SIZE(d) = leftover;
-        }
-        else {
-          /* don't leave a block */
+	if (leftover > MAXFASTBL) {
+	  SIZE(d) = leftover;
+	}
+	else {
+	  /* don't leave a block */
 
-          /* unlink 'd' */
-          if (prev)
-            NEXTFREE(prev) = NEXTFREE(d);
-          else
-            mem_pool[home].freeBlock[MAXFAST] = NEXTFREE(d);
+	  /* unlink 'd' */
+	  if (prev)
+	    NEXTFREE(prev) = NEXTFREE(d);
+	  else
+	    mem_pool[home].freeBlock[MAXFAST] = NEXTFREE(d);
 
-          if (leftover > 0) {
-            SIZE(d) = leftover;
-            MyFreeNow(d);
-          }
-        }
+	  if (leftover > 0) {
+	    SIZE(d) = leftover;
+	    MyFreeNow(d);
+	  }
+	}
         break;
       }
 
@@ -208,7 +208,7 @@ char *MyMalloc(long size, long home)
     else {
       mem_pool[home].tally += SIZE(freespace);
       if (mem_pool[home].tally > mem_pool[home].maxm) {
-        mem_pool[home].maxm = mem_pool[home].tally;
+	mem_pool[home].maxm = mem_pool[home].tally;
       }
       MyFree(freespace);
       result = (long *) MyMalloc(alloc_size, home);
@@ -257,10 +257,10 @@ void MigrateMem(long *start, long length, long home)
    } else {
      Place all addresses x such that
        (currpage <= x < endpage) on node home
-   }
+   }  
 */
 }
-
+    
 
 void MyFree(long *block)
 {

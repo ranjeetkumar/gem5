@@ -16,8 +16,7 @@
 
 EXTERN_ENV
 
-#include <cmath>
-
+#include <math.h>
 #include "matrix.h"
 
 #define MISS_COST 4.74
@@ -88,8 +87,8 @@ void AssignBlocksNow()
   if (P == 1) {
     for (j=0; j<LB.n; j+=LB.partition_size[j])
       if (!LB.domain[j])
-        for (i=LB.col[j]; i<LB.col[j+1]; i++)
-          BLOCK(i)->owner = 0;
+	for (i=LB.col[j]; i<LB.col[j+1]; i++)
+	  BLOCK(i)->owner = 0;
   } else {
     EmbedBlocks();
   }
@@ -106,7 +105,7 @@ void EmbedBlocks()
   for (j=0; j<LB.n; j+=LB.partition_size[j])
     if (!LB.domain[j]) {
       for (block=LB.col[j]; block<LB.col[j+1]; block++) {
-        BLOCK(block)->owner = EmbeddedOwner(block);
+	BLOCK(block)->owner = EmbeddedOwner(block);
       }
     }
 

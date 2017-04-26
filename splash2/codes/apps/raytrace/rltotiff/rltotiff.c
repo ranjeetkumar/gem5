@@ -14,12 +14,11 @@
 /*                                                                       */
 /*************************************************************************/
 
-#include <malloc.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-
 #include "tiff_rgba_io.h"
+#include <stdio.h>
+#include <unistd.h>
+#include <malloc.h>
+#include <stdlib.h>
 
 typedef short SHORT;
 typedef long LONG;
@@ -38,66 +37,66 @@ typedef unsigned long ULONG;
 #define TRUE 1
 
 typedef struct
-        {
-        SHORT	sFileType;		/* Mark what kind of file we have.   */
-        SHORT	sBpp;			/* Bits per pixel, 1, 4, 8, 24, 32.  */
-        SHORT	sRows;			/* Up to 1024.			     */
-        SHORT	sCols;			/* Up to 1024.			     */
-        SHORT	sVectorType;		/* So far, 0 = rectangular blocks.   */
-        SHORT	sVectorSize;		/* So far, 16 for 4x4 square blocks. */
-        LONG	lCntVectors;		/* Up to 65536. 		     */
-        SHORT	sBrows; 		/* Number of block rows.	     */
-        SHORT	sBcols; 		/* Number of block cols.	     */
-        SHORT	sVrows; 		/* Number of vector rows.	     */
-        SHORT	sVcols; 		/* Number of vector cols.	     */
-        CHAR	achReserved[104];	/* Pad variable space to 128 bytes.  */
-        CHAR	achUser[128];		/* User application space.	     */
-        CHAR	achComment[256];	/* Rest of 1st block for comments.   */
-        }
-        ISPHDR;
+	{
+	SHORT	sFileType;		/* Mark what kind of file we have.   */
+	SHORT	sBpp;			/* Bits per pixel, 1, 4, 8, 24, 32.  */
+	SHORT	sRows;			/* Up to 1024.			     */
+	SHORT	sCols;			/* Up to 1024.			     */
+	SHORT	sVectorType;		/* So far, 0 = rectangular blocks.   */
+	SHORT	sVectorSize;		/* So far, 16 for 4x4 square blocks. */
+	LONG	lCntVectors;		/* Up to 65536. 		     */
+	SHORT	sBrows; 		/* Number of block rows.	     */
+	SHORT	sBcols; 		/* Number of block cols.	     */
+	SHORT	sVrows; 		/* Number of vector rows.	     */
+	SHORT	sVcols; 		/* Number of vector cols.	     */
+	CHAR	achReserved[104];	/* Pad variable space to 128 bytes.  */
+	CHAR	achUser[128];		/* User application space.	     */
+	CHAR	achComment[256];	/* Rest of 1st block for comments.   */
+	}
+	ISPHDR;
 
 
 typedef struct
-        {
-        USHORT	usRes1;
-        USHORT	usRes2;
-        USHORT	usRes3;
-        USHORT	usRes4;
-        USHORT	usRes5;
-        USHORT	usRes6;
-        USHORT	usResX;
-        USHORT	usResY;
-        USHORT	usRes7;
-        }
-        TGAHDR;
+	{
+	USHORT	usRes1;
+	USHORT	usRes2;
+	USHORT	usRes3;
+	USHORT	usRes4;
+	USHORT	usRes5;
+	USHORT	usRes6;
+	USHORT	usResX;
+	USHORT	usResY;
+	USHORT	usRes7;
+	}
+	TGAHDR;
 
 
 typedef struct
-        {
-        BYTE	b;
-        BYTE	g;
-        BYTE	r;
-        }
-        TGAPIX;
+	{
+	BYTE	b;
+	BYTE	g;
+	BYTE	r;
+	}
+	TGAPIX;
 
 
 typedef struct
-        {
-        BYTE	r;
-        BYTE	g;
-        BYTE	b;
-        BYTE	count;
-        }
-        SPAPIX;
+	{
+	BYTE	r;
+	BYTE	g;
+	BYTE	b;
+	BYTE	count;
+	}
+	SPAPIX;
 
 
 /*
 USHORT	ausBase[]    =
-        {
-        HST_BASE2,
-        HST_BASE1,
-        HST_BASE0
-        };
+	{
+	HST_BASE2,
+	HST_BASE1,
+	HST_BASE0
+	};
 */
 
 CHAR	*pchProgName = "rltotiff";         /* The program name.                 */
@@ -148,8 +147,8 @@ int main(int argc, char **argv)
     char *spachfile, *tiffile;
 
     if (argc < 3) {
-        fprintf(stderr, "spachtotiff <infile> <outfile>\n");
-        exit(1);
+	fprintf(stderr, "spachtotiff <infile> <outfile>\n");
+	exit(1);
     }
     spachfile = argv[1];
     tiffile = argv[2];
@@ -157,8 +156,8 @@ int main(int argc, char **argv)
     fp = fopen(spachfile, "rb");
 
     if (!fp) {
-        fprintf(stderr, "spachtotiff: could not open file %s\n", spachfile);
-        exit(1);
+	fprintf(stderr, "spachtotiff: could not open file %s\n", spachfile);
+	exit(1);
     }
 
     ProcessSpachFile(fp, spachfile);
@@ -180,10 +179,10 @@ void
 SetPixel24(INT i, INT j,  BYTE r,  BYTE g, BYTE b)
 {
     if (i+j*gbWidth >= gbWidth*gbHeight)
-        fprintf(stderr, "Bug!\n");
+	fprintf(stderr, "Bug!\n");
 
     gbRGBA[i+(gbHeight-j-1)*gbWidth] =
-        ((UINT)r)*256*256 + ((UINT)g)*256 + ((UINT)b);
+	((UINT)r)*256*256 + ((UINT)g)*256 + ((UINT)b);
 }
 
 
@@ -201,63 +200,63 @@ SetPixel24(INT i, INT j,  BYTE r,  BYTE g, BYTE b)
  */
 
 VOID	ProcessSpachFile(FILE	*pf, CHAR	*pchFileName)
-        {
-        INT	i;
-        INT	j;
-        INT	k;
-        INT	count;
-        UINT	ui;
-        LONG	lPixCnt;
+	{
+	INT	i;
+	INT	j;
+	INT	k;
+	INT	count;
+	UINT	ui;
+	LONG	lPixCnt;
 
-        ui	 = getc(pf);
-        ui	 = getc(pf);
-        ui	 = getc(pf);
-        iCntResX = ui*256 + (UINT)getc(pf);
+	ui	 = getc(pf);
+	ui	 = getc(pf);
+	ui	 = getc(pf);
+	iCntResX = ui*256 + (UINT)getc(pf);
 
-        ui	 = getc(pf);
-        ui	 = getc(pf);
-        ui	 = getc(pf);
-        iCntResY = ui*256 + (UINT)getc(pf);
+	ui	 = getc(pf);
+	ui	 = getc(pf);
+	ui	 = getc(pf);
+	iCntResY = ui*256 + (UINT)getc(pf);
 
-        gbWidth = iCntResX;
-        gbHeight = iCntResY;
+	gbWidth = iCntResX;
+	gbHeight = iCntResY;
 
-        lPixCnt  = (ULONG)iCntResX*(ULONG)iCntResY;
+	lPixCnt  = (ULONG)iCntResX*(ULONG)iCntResY;
 
-        configRGBABuf();
+	configRGBABuf();
 
 
-        if (fCenter)
-                {
-                iOffsetX = (iCntDcX - iCntResX)/2;
-                iOffsetY = (iCntDcY - iCntResY)/2;
-                }
+	if (fCenter)
+		{
+		iOffsetX = (iCntDcX - iCntResX)/2;
+		iOffsetY = (iCntDcY - iCntResY)/2;
+		}
 
-        for (i = 0, j = 0; lPixCnt > 0; lPixCnt -= count)
-                {
-                if (fread(&sp, 1, sizeof(sp), pf) != sizeof(sp))
-                        {
-                        fprintf(stderr, "%s: Unexpected EOF in file \"%s\".\n", pchProgName, pchFileName);
-                        exit(1);
-                        }
+	for (i = 0, j = 0; lPixCnt > 0; lPixCnt -= count)
+		{
+		if (fread(&sp, 1, sizeof(sp), pf) != sizeof(sp))
+			{
+			fprintf(stderr, "%s: Unexpected EOF in file \"%s\".\n", pchProgName, pchFileName);
+			exit(1);
+			}
 
-                count = (UINT)sp.count + 1;
+		count = (UINT)sp.count + 1;
 
-                for (k = 0; k < count; k++, i++)
-                        {
-                        if (i >= iCntResX)
-                                {
-                                i = 0;
-                                j++;
-                                }
+		for (k = 0; k < count; k++, i++)
+			{
+			if (i >= iCntResX)
+				{
+				i = 0;
+				j++;
+				}
 
-                        if (fDebug)
-                                printf("%ld\t%ld\t0x%02X\t0x%02X\t0x%02X\t0x%02X\n",
-                                        i, j, sp.count, sp.r, sp.g, sp.b);
+			if (fDebug)
+				printf("%ld\t%ld\t0x%02X\t0x%02X\t0x%02X\t0x%02X\n",
+					i, j, sp.count, sp.r, sp.g, sp.b);
 
-                        SetPixel24(i, j, sp.r, sp.g, sp.b);
-                        }
-                }
-        }
+			SetPixel24(i, j, sp.r, sp.g, sp.b);
+			}
+		}
+	}
 
 

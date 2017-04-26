@@ -131,7 +131,7 @@ string defv[] = {                 /* DEFAULT PARAMETER VALUES              */
 
 static long Child_Sequence[NUM_DIRECTIONS][NSUB] =
 {
-        { 2, 5, 6, 1, 0, 3, 4, 7},  /* BRC_FUC */
+	{ 2, 5, 6, 1, 0, 3, 4, 7},  /* BRC_FUC */
  { 2, 5, 6, 1, 0, 7, 4, 3},  /* BRC_FRA */
  { 1, 6, 5, 2, 3, 0, 7, 4},  /* BRA_FDA */
  { 1, 6, 5, 2, 3, 4, 7, 0},  /* BRA_FRC */
@@ -168,7 +168,7 @@ static long Child_Sequence[NUM_DIRECTIONS][NSUB] =
 
 static long Direction_Sequence[NUM_DIRECTIONS][NSUB] =
 {
-        { FRC_BUC, BRA_FRC, FDA_BDC, BLA_FUA, BUC_FLC, FUA_BUC, BRA_FRC, FDA_BLA },
+	{ FRC_BUC, BRA_FRC, FDA_BDC, BLA_FUA, BUC_FLC, FUA_BUC, BRA_FRC, FDA_BLA },
  /* BRC_FUC */
  { FRC_BUC, BRA_FRC, FDA_BDC, BLA_FUA, BRA_FDA, FRC_BRA, BUC_FUA, FLC_BDC },
  /* BRC_FRA */
@@ -242,13 +242,13 @@ int main (int argc, string argv[])
    while ((c = getopt(argc, argv, "h")) != -1) {
      switch(c) {
       case 'h':
-        Help();
-        exit(-1);
-        break;
+	Help();
+	exit(-1);
+	break;
       default:
-        fprintf(stderr, "Only valid option is \"-h\".\n");
-        exit(-1);
-        break;
+	fprintf(stderr, "Only valid option is \"-h\".\n");
+	exit(-1);
+	break;
      }
    }
 
@@ -278,17 +278,17 @@ int main (int argc, string argv[])
    printf("COMPUTETIME   = %12lu\n",Global->computeend - Global->computestart);
    printf("TRACKTIME     = %12lu\n",Global->tracktime);
    printf("PARTITIONTIME = %12lu\t%5.2f\n",Global->partitiontime,
-          ((float)Global->partitiontime)/Global->tracktime);
+	  ((float)Global->partitiontime)/Global->tracktime);
    printf("TREEBUILDTIME = %12lu\t%5.2f\n",Global->treebuildtime,
-          ((float)Global->treebuildtime)/Global->tracktime);
+	  ((float)Global->treebuildtime)/Global->tracktime);
    printf("FORCECALCTIME = %12lu\t%5.2f\n",Global->forcecalctime,
-          ((float)Global->forcecalctime)/Global->tracktime);
+	  ((float)Global->forcecalctime)/Global->tracktime);
    printf("RESTTIME      = %12lu\t%5.2f\n",
-          Global->tracktime - Global->partitiontime -
-          Global->treebuildtime - Global->forcecalctime,
-          ((float)(Global->tracktime-Global->partitiontime-
-                   Global->treebuildtime-Global->forcecalctime))/
-          Global->tracktime);
+	  Global->tracktime - Global->partitiontime -
+	  Global->treebuildtime - Global->forcecalctime,
+	  ((float)(Global->tracktime-Global->partitiontime-
+		   Global->treebuildtime-Global->forcecalctime))/
+	  Global->tracktime);
    MAIN_END;
 }
 
@@ -462,7 +462,7 @@ void startrun()
    else {
       nbody = getiparam("nbody");
       if (nbody < 1) {
-         error("startrun: absurd nbody\n");
+	 error("startrun: absurd nbody\n");
       }
       seed = getiparam("seed");
    }
@@ -527,14 +527,14 @@ void testdata()
       r = 1 / sqrt(pow(xrand(0.0, MFRAC), -2.0/3.0) - 1);
       /*   reject radii greater than 10 */
       while (r > 9.0) {
-         rejects++;
-         r = 1 / sqrt(pow(xrand(0.0, MFRAC), -2.0/3.0) - 1);
+	 rejects++;
+	 r = 1 / sqrt(pow(xrand(0.0, MFRAC), -2.0/3.0) - 1);
       }
       pickshell(Pos(p), rsc * r);
       ADDV(cmr, cmr, Pos(p));
       do {
-         x = xrand(0.0, 1.0);
-         y = xrand(0.0, 0.1);
+	 x = xrand(0.0, 1.0);
+	 y = xrand(0.0, 0.1);
 
       } while (y > x*x * pow(1 - x*x, 3.5));
 
@@ -552,8 +552,8 @@ void testdata()
 
       cp = p - halfnbody;
       for (i = 0; i < NDIM; i++){
-         Pos(p)[i] = Pos(cp)[i] + offset;
-         Vel(p)[i] = Vel(cp)[i];
+	 Pos(p)[i] = Pos(cp)[i] + offset;
+	 Vel(p)[i] = Vel(cp)[i];
       }
       ADDV(cmr, cmr, Pos(p));
       ADDV(cmv, cmv, Vel(p));
@@ -579,7 +579,7 @@ void pickshell(real vec[], real rad)
 
    do {
       for (k = 0; k < NDIM; k++) {
-         vec[k] = xrand(-1.0, 1.0);
+	 vec[k] = xrand(-1.0, 1.0);
       }
       DOTVP(rsq, vec, vec);
    } while (rsq > 1.0);
@@ -653,7 +653,7 @@ void stepsystem(long ProcessId)
     Cavg = (real) Cost(Global->G_root) / (real)NPROC ;
     Local[ProcessId].workMin = (long) (Cavg * ProcessId);
     Local[ProcessId].workMax = (long) (Cavg * (ProcessId + 1)
-                                      + (ProcessId == (NPROC - 1)));
+				      + (ProcessId == (NPROC - 1)));
 
     if ((ProcessId == 0) && (Local[ProcessId].nstep >= 2)) {
         CLOCK(partitionstart);
@@ -681,7 +681,7 @@ void stepsystem(long ProcessId)
 
     /* advance my bodies */
     for (pp = Local[ProcessId].mybodytab;
-         pp < Local[ProcessId].mybodytab+Local[ProcessId].mynbody; pp++) {
+	 pp < Local[ProcessId].mybodytab+Local[ProcessId].mynbody; pp++) {
        p = *pp;
        MULVS(dvel, Acc(p), dthf);
        ADDV(vel1, Vel(p), dvel);
@@ -691,20 +691,20 @@ void stepsystem(long ProcessId)
 
        for (i = 0; i < NDIM; i++) {
           if (Pos(p)[i]<Local[ProcessId].min[i]) {
-             Local[ProcessId].min[i]=Pos(p)[i];
-          }
+	     Local[ProcessId].min[i]=Pos(p)[i];
+	  }
           if (Pos(p)[i]>Local[ProcessId].max[i]) {
-             Local[ProcessId].max[i]=Pos(p)[i] ;
-          }
+	     Local[ProcessId].max[i]=Pos(p)[i] ;
+	  }
        }
     }
     LOCK(Global->CountLock);
     for (i = 0; i < NDIM; i++) {
        if (Global->min[i] > Local[ProcessId].min[i]) {
-          Global->min[i] = Local[ProcessId].min[i];
+	  Global->min[i] = Local[ProcessId].min[i];
        }
        if (Global->max[i] < Local[ProcessId].max[i]) {
-          Global->max[i] = Local[ProcessId].max[i];
+	  Global->max[i] = Local[ProcessId].max[i];
        }
     }
     UNLOCK(Global->CountLock);
@@ -722,9 +722,9 @@ void stepsystem(long ProcessId)
       Global->rsize=0;
       SUBV(Global->max,Global->max,Global->min);
       for (i = 0; i < NDIM; i++) {
-        if (Global->rsize < Global->max[i]) {
-           Global->rsize = Global->max[i];
-        }
+	if (Global->rsize < Global->max[i]) {
+	   Global->rsize = Global->max[i];
+	}
       }
       ADDVS(Global->rmin,Global->min,-Global->rsize/100000.0);
       Global->rsize = 1.00002*Global->rsize;
@@ -743,7 +743,7 @@ void ComputeForces(long ProcessId)
    vector acc1, dacc, dvel;
 
    for (pp = Local[ProcessId].mybodytab;
-        pp < Local[ProcessId].mybodytab+Local[ProcessId].mynbody;pp++) {
+	pp < Local[ProcessId].mybodytab+Local[ProcessId].mynbody;pp++) {
       p = *pp;
       SETV(acc1, Acc(p));
       Cost(p)=0;
@@ -751,13 +751,13 @@ void ComputeForces(long ProcessId)
       Local[ProcessId].myn2bcalc += Local[ProcessId].myn2bterm;
       Local[ProcessId].mynbccalc += Local[ProcessId].mynbcterm;
       if (!Local[ProcessId].skipself) {       /*   did we miss self-int?  */
-         Local[ProcessId].myselfint++;        /*   count another goofup   */
+	 Local[ProcessId].myselfint++;        /*   count another goofup   */
       }
       if (Local[ProcessId].nstep > 0) {
-         /*   use change in accel to make 2nd order correction to vel      */
-         SUBV(dacc, Acc(p), acc1);
-         MULVS(dvel, dacc, dthf);
-         ADDV(Vel(p), Vel(p), dvel);
+	 /*   use change in accel to make 2nd order correction to vel      */
+	 SUBV(dacc, Acc(p), acc1);
+	 MULVS(dvel, dacc, dthf);
+	 ADDV(Vel(p), Vel(p), dvel);
       }
    }
 }
@@ -797,29 +797,29 @@ void find_my_bodies(nodeptr mycell, long work, long direction, long ProcessId)
    if (Type(mycell) == LEAF) {
       l = (leafptr) mycell;
       for (i = 0; i < l->num_bodies; i++) {
-         if (work >= Local[ProcessId].workMin - .1) {
-            if ((Local[ProcessId].mynbody+2) > maxmybody) {
-               error("find_my_bodies: Processor %ld needs more than %ld bodies; increase fleaves\n", ProcessId, maxmybody);
-            }
-            Local[ProcessId].mybodytab[Local[ProcessId].mynbody++] =
-               Bodyp(l)[i];
-         }
-         work += Cost(Bodyp(l)[i]);
-         if (work >= Local[ProcessId].workMax-.1) {
-            break;
-         }
+	 if (work >= Local[ProcessId].workMin - .1) {
+	    if((Local[ProcessId].mynbody+2) > maxmybody) {
+	       error("find_my_bodies: Processor %ld needs more than %ld bodies; increase fleaves\n", ProcessId, maxmybody);
+	    }
+	    Local[ProcessId].mybodytab[Local[ProcessId].mynbody++] =
+	       Bodyp(l)[i];
+	 }
+	 work += Cost(Bodyp(l)[i]);
+	 if (work >= Local[ProcessId].workMax-.1) {
+	    break;
+	 }
       }
    }
    else {
-      for (i = 0; (i < NSUB) && (work < (Local[ProcessId].workMax - .1)); i++){
-         qptr = Subp(mycell)[Child_Sequence[direction][i]];
-         if (qptr!=NULL) {
-            if ((work+Cost(qptr)) >= (Local[ProcessId].workMin -.1)) {
-               find_my_bodies(qptr,work, Direction_Sequence[direction][i],
-                              ProcessId);
-            }
-            work += Cost(qptr);
-         }
+      for(i = 0; (i < NSUB) && (work < (Local[ProcessId].workMax - .1)); i++){
+	 qptr = Subp(mycell)[Child_Sequence[direction][i]];
+	 if (qptr!=NULL) {
+	    if ((work+Cost(qptr)) >= (Local[ProcessId].workMin -.1)) {
+	       find_my_bodies(qptr,work, Direction_Sequence[direction][i],
+			      ProcessId);
+	    }
+	    work += Cost(qptr);
+	 }
       }
    }
 }
@@ -853,8 +853,8 @@ void setbound()
 
    for (p = bodytab; p < bodytab+nbody; p++) {
       for (i=0; i<NDIM;i++) {
-         if (Pos(p)[i]<Local[0].min[i]) Local[0].min[i]=Pos(p)[i] ;
-         if (Pos(p)[i]>Local[0].max[i])  Local[0].max[i]=Pos(p)[i] ;
+	 if (Pos(p)[i]<Local[0].min[i]) Local[0].min[i]=Pos(p)[i] ;
+	 if (Pos(p)[i]>Local[0].max[i])  Local[0].max[i]=Pos(p)[i] ;
       }
    }
 

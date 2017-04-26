@@ -40,9 +40,9 @@ extern float density_opacity[MAX_DENSITY+1];
 extern float magnitude_opacity[MAX_MAGNITUDE+1];
                                 /*  opacity as function of magnitude         */
 extern long density_epsilon;	/*   minimum (density*map_divisor)           */
-                                /*     (>= MIN_DENSITY)                      */
+				/*     (>= MIN_DENSITY)                      */
 extern long magnitude_epsilon;	/*   minimum (magnitude*grd_divisor)**2      */
-                                /*     (> MIN_MAGNITUDE)                     */
+				/*     (> MIN_MAGNITUDE)                     */
 extern PIXEL background;	/*   color of background                     */
 extern float light[NM];		/*   normalized vector from object to light  */
 extern float ambient_color;     /*   color of ambient reflection     */
@@ -53,31 +53,31 @@ extern float depth_hither;	/*   percentage of full intensity at hither  */
 extern float depth_yon;		/*   percentage of full intensity at yon     */
 extern float depth_exponent;	/*   exponent of falloff from hither to yon  */
 extern float opacity_epsilon;	/*   minimum opacity                         */
-                                /*     (usually >= MIN_OPACITY,              */
-                                /*      < MIN_OPACITY during shading shades  */
-                                /*      all voxels for generation of mipmap) */
+				/*     (usually >= MIN_OPACITY,              */
+				/*      < MIN_OPACITY during shading shades  */
+				/*      all voxels for generation of mipmap) */
 extern float opacity_cutoff;	/*   cutoff opacity                          */
-                                /*     (<= MAX_OPACITY)                      */
+				/*     (<= MAX_OPACITY)                      */
 extern long highest_sampling_boxlen;
                                 /*   highest boxlen for adaptive sampling    */
-                                /*     (>= 1)                                */
+				/*     (>= 1)                                */
 extern long lowest_volume_boxlen;/*   lowest boxlen for volume data           */
-                                /*     (>= 1)                                */
+				/*     (>= 1)                                */
 extern long volume_color_difference;
-                                /*   minimum color diff for volume data      */
-                                /*     (>= MIN_PIXEL)                        */
+                        	/*   minimum color diff for volume data      */
+				/*     (>= MIN_PIXEL)                        */
 extern float angle[NM];         /*  initial viewing angle                    */
 extern long pyr_highest_level;	/*   highest level of pyramid to look at     */
-                                /*     (<= MAX_PYRLEVEL)                     */
+				/*     (<= MAX_PYRLEVEL)                     */
 extern long pyr_lowest_level;	/*   lowest level of pyramid to look at      */
-                                /*     (>= 0)                                */
+				/*     (>= 0)                                */
 
                                 /* Pre_View Globals                          */
 extern long frust_len; 	/* Size of clipping frustum                  */
-                                /*   (mins will be 0 in this program,        */
-                                /*    {x,y}len will be <= IK{X,Y}SIZE)       */
+				/*   (mins will be 0 in this program,        */
+				/*    {x,y}len will be <= IK{X,Y}SIZE)       */
 extern float depth_cueing[MAX_OUTLEN];
-                                /* Pre-computed table of depth cueing        */
+                         	/* Pre-computed table of depth cueing        */
 extern long image_zlen;	       	/* number of samples along viewing ray       */
 extern float in_max[NM];        /* Pre-computed clipping aids                */
 extern long opc_xlen,opc_xylen;
@@ -103,47 +103,47 @@ extern float uout_invvertex[2][2][2][NM];
 extern float obslight[NM];	/*   observer transformed light vector       */
 extern float obshighlight[NM];	/*   observer transformed highlight vector   */
 extern float invjacobian[NM][NM];
-                                /* Jacobian matrix showing object space      */
-                                /*   d{x,y,z} per image space d{x,y,z}       */
-                                /*   [0][0] is dx(object)/dx(image)          */
-                                /*   [0][2] is dz(object)/dx(image)          */
-                                /*   [2][0] is dx(object)/dz(image)          */
+                        	/* Jacobian matrix showing object space      */
+				/*   d{x,y,z} per image space d{x,y,z}       */
+				/*   [0][0] is dx(object)/dx(image)          */
+				/*   [0][2] is dz(object)/dx(image)          */
+				/*   [2][0] is dx(object)/dz(image)          */
 extern float invinvjacobian[NM][NM];
-                                /*   [i][j] = 1.0 / invjacobian[i][j]        */
+                        	/*   [i][j] = 1.0 / invjacobian[i][j]        */
 
 
                                 /* Density map globals                       */
 extern short map_len[NM];	/* Size of this density map                  */
 extern int map_length;		/* Total number of densities in map          */
-                                /*   (= product of lens)                     */
+				/*   (= product of lens)                     */
 extern DENSITY *map_address;	/* Pointer to map                            */
 
                                 /* Normal and gradient magnitude map globals */
 extern short norm_len[NM];	/* Size of this normal map                   */
 extern int norm_length;	/* Total number of normals in map            */
-                                /*   (= NM * product of lens)                */
+				/*   (= NM * product of lens)                */
 extern NORMAL *norm_address;	/* Pointer to normal map                     */
 extern float nmag_epsilon;
 
                                 /* Opacity map globals                       */
 extern short opc_len[NM];	/* Size of this opacity map                  */
 extern int opc_length;		/* Total number of opacities in map          */
-                                /*   (= product of lens)                     */
+				/*   (= product of lens)                     */
 extern OPACITY *opc_address;	/* Pointer to opacity map                    */
 
                                 /* Octree globals                            */
 extern short pyr_levels;	/* Number of levels in this pyramid          */
 extern short pyr_len[MAX_PYRLEVEL+1][NM];
-                                /* Number of voxels on each level            */
+                        	/* Number of voxels on each level            */
 extern short pyr_voxlen[MAX_PYRLEVEL+1][NM];
-                                /* Size of voxels on each level              */
+                          	/* Size of voxels on each level              */
 extern int pyr_length[MAX_PYRLEVEL+1];
                                 /* Total number of bytes on this level       */
-                                /* (= (long)((product of lens+7)/8))          */
+				/* (= (long)((product of lens+7)/8))          */
 extern BYTE *pyr_address[MAX_PYRLEVEL+1];
                                 /* Pointer to binary pyramid                 */
-                                /*   (only pyr_levels sets of lens, lengths, */
-                                /*    and 3-D arrays are written to file)    */
+				/*   (only pyr_levels sets of lens, lengths, */
+				/*    and 3-D arrays are written to file)    */
 extern long pyr_offset1;	/* Bit offset of desired bit within pyramid  */
 extern long pyr_offset2;	/* Bit offset of bit within byte             */
 extern BYTE *pyr_address2;	/* Pointer to byte containing bit            */

@@ -21,22 +21,21 @@
 *                                                                             *
 ******************************************************************************/
 
-#include <cstring>
-
+#include <string.h>
 #include "incl.h"
 
 /* The following declarations show the layout of the .opc file.              */
 /* If changed, the version number must be incremented and code               */
 /* written to handle loading of both old and current versions.               */
 
-                                /* Version for new .opc files:               */
+				/* Version for new .opc files:               */
 #define	OPC_CUR_VERSION   1	/*   Initial release                         */
 short opc_version;		/* Version of this .opc file                 */
 
 short opc_len[NM];	        /* Size of this opacity map                  */
 
 int opc_length;		/* Total number of opacities in map          */
-                                /*   (= product of lens)                     */
+				/*   (= product of lens)                     */
 OPACITY *opc_address;	        /* Pointer to opacity map                    */
 
 /* End of layout of .opc file.                                               */
@@ -77,7 +76,7 @@ void Allocate_Opacity(address, length)
   long i;
 
   printf("    Allocating opacity map of %ld bytes...\n",
-         length*sizeof(OPACITY));
+	 length*sizeof(OPACITY));
 
   *address = (OPACITY *)NU_MALLOC(length*sizeof(OPACITY),0);
 
@@ -138,34 +137,34 @@ void Opacity_Compute()
     for (outy=ystart; outy<ystop; outy++) {
       for (outx=xstart; outx<xstop; outx++) {
 
-        inx = INSET + outx;
-        iny = INSET + outy;
-        inz = INSET + outz;
+	inx = INSET + outx;
+	iny = INSET + outy;
+	inz = INSET + outz;
 
-        density = MAP(inz,iny,inx);
-        if (density > density_epsilon) {
+	density = MAP(inz,iny,inx);
+	if (density > density_epsilon) {
 
-          grd_x = (float)((long)MAP(inz,iny,inx+1) - (long)MAP(inz,iny,inx-1));
-          grd_y = (float)((long)MAP(inz,iny+1,inx) - (long)MAP(inz,iny-1,inx));
-          grd_z = (float)((long)MAP(inz+1,iny,inx) - (long)MAP(inz-1,iny,inx));
-          magnitude = grd_x*grd_x+grd_y*grd_y+grd_z*grd_z;
+	  grd_x = (float)((long)MAP(inz,iny,inx+1) - (long)MAP(inz,iny,inx-1));
+	  grd_y = (float)((long)MAP(inz,iny+1,inx) - (long)MAP(inz,iny-1,inx));
+	  grd_z = (float)((long)MAP(inz+1,iny,inx) - (long)MAP(inz-1,iny,inx));
+	  magnitude = grd_x*grd_x+grd_y*grd_y+grd_z*grd_z;
 
-          /* If (magnitude*grd_divisor)**2 is small, skip voxel             */
-          if (magnitude > nmag_epsilon) {
-            magnitude = .5*sqrt(magnitude);
-            /* For density * magnitude (d*m) operator:                      */
-            /*   Set opacity of surface to the product of user-specified    */
-            /*   functions of local density and gradient magnitude.         */
-            /*   Detects both front and rear-facing surfaces.               */
-            opacity = density_opacity[density] *
-              magnitude_opacity[(long)magnitude];
-            /* If opacity is small, skip shading and compositing of sample  */
-            if (opacity > opacity_epsilon)
-              OPC(outz,outy,outx) = NINT(opacity*MAX_OPC);
-          }
-        }
-        else
-          OPC(outz,outy,outx) = MIN_OPC;
+	  /* If (magnitude*grd_divisor)**2 is small, skip voxel             */
+	  if (magnitude > nmag_epsilon) {
+	    magnitude = .5*sqrt(magnitude);
+	    /* For density * magnitude (d*m) operator:                      */
+	    /*   Set opacity of surface to the product of user-specified    */
+	    /*   functions of local density and gradient magnitude.         */
+	    /*   Detects both front and rear-facing surfaces.               */
+	    opacity = density_opacity[density] *
+	      magnitude_opacity[(long)magnitude];
+	    /* If opacity is small, skip shading and compositing of sample  */
+	    if (opacity > opacity_epsilon)
+	      OPC(outz,outy,outx) = NINT(opacity*MAX_OPC);
+	  }
+	}
+	else
+	  OPC(outz,outy,outx) = MIN_OPC;
       }
     }
   }

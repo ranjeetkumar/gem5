@@ -36,10 +36,9 @@
 /*                                                                       */
 /*************************************************************************/
 
-#include <cmath>
-#include <cstdio>
-#include <cstdlib>
-
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
 MAIN_ENV
 
 #define MAXRAND					32767.0
@@ -163,13 +162,13 @@ int main(int argc, char *argv[])
 
   a = (double *) G_MALLOC(n*n*sizeof(double));
   if (a == NULL) {
-          printerr("Could not malloc memory for a.\n");
-          exit(-1);
+	  printerr("Could not malloc memory for a.\n");
+	  exit(-1);
   }
   rhs = (double *) G_MALLOC(n*sizeof(double));
   if (rhs == NULL) {
-          printerr("Could not malloc memory for rhs.\n");
-          exit(-1);
+	  printerr("Could not malloc memory for rhs.\n");
+	  exit(-1);
   }
 
   Global = (struct GlobalMemory *) G_MALLOC(sizeof(struct GlobalMemory));
@@ -200,7 +199,7 @@ int main(int argc, char *argv[])
   }
 
 /* POSSIBLE ENHANCEMENT:  Here is where one might distribute the a
-   matrix data across physically distributed memories in a
+   matrix data across physically distributed memories in a 
    round-robin fashion as desired. */
 
   BARINIT(Global->start, P);
@@ -457,17 +456,17 @@ void daxpy(double *a, double *b, long n, double alpha)
 long BlockOwner(long I, long J)
 {
 //	return((I%num_cols) + (J%num_rows)*num_cols);
-        return((I + J) % P);
+	return((I + J) % P);
 }
 
 long BlockOwnerColumn(long I, long J)
 {
-        return(I % P);
+	return(I % P);
 }
 
 long BlockOwnerRow(long I, long J)
 {
-        return(((J % P) + (P / 2)) % P);
+	return(((J % P) + (P / 2)) % P);
 }
 
 void lu(long n, long bs, long MyNum, struct LocalCopies *lc, long dostats)
@@ -479,7 +478,7 @@ void lu(long n, long bs, long MyNum, struct LocalCopies *lc, long dostats)
 
   strI = n;
   for (k=0, K=0; k<n; k+=bs, K++) {
-    kl = k+bs;
+    kl = k+bs; 
     if (kl>n) {
       kl = n;
     }
@@ -490,7 +489,7 @@ void lu(long n, long bs, long MyNum, struct LocalCopies *lc, long dostats)
 
     /* factor diagonal block */
     if (BlockOwner(K, K) == MyNum) {
-      A = &(a[k+k*n]);
+      A = &(a[k+k*n]); 
       lu0(A, kl-k, strI);
     }
 
@@ -508,7 +507,7 @@ void lu(long n, long bs, long MyNum, struct LocalCopies *lc, long dostats)
     D = &(a[k+k*n]);
     for (i=kl, I=K+1; i<n; i+=bs, I++) {
       if (BlockOwner/*Column*/(I, K) == MyNum) {  /* parcel out blocks */
-              /*if (K == 0) printf("C%lx\n", BlockOwnerColumn(I, K));*/
+	      /*if (K == 0) printf("C%lx\n", BlockOwnerColumn(I, K));*/
         il = i + bs;
         if (il > n) {
           il = n;
@@ -520,7 +519,7 @@ void lu(long n, long bs, long MyNum, struct LocalCopies *lc, long dostats)
     /* modify row k by diagonal block */
     for (j=kl, J=K+1; j<n; j+=bs, J++) {
       if (BlockOwner/*Row*/(K, J) == MyNum) {  /* parcel out blocks */
-              /*if (K == 0) printf("R%lx\n", BlockOwnerRow(K, J));*/
+	      /*if (K == 0) printf("R%lx\n", BlockOwnerRow(K, J));*/
         jl = j+bs;
         if (jl > n) {
           jl = n;
@@ -580,7 +579,7 @@ void InitA(double *rhs)
     for (i=0; i<n; i++) {
       a[i+j*n] = (double) lrand48()/MAXRAND;
       if (i == j) {
-        a[i+j*n] *= 10;
+	a[i+j*n] *= 10;
       }
     }
   }

@@ -28,7 +28,7 @@
 
 EXTERN_ENV;
 
-#include <cstdio>
+#include <stdio.h>
 
 include(radiosity.h)
 

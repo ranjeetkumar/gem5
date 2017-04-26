@@ -23,7 +23,7 @@
  */
 
 
-#include <cstdio>
+#include <stdio.h>
 
 EXTERN_ENV;
 
@@ -65,11 +65,11 @@ void foreach_element_in_patch(Patch *patch, void (*func)(), long  arg1, long pro
 
 static void _foreach_element(Element *elem, void (*func)(), long   arg1, long process_id)
 {
-    if ( elem == 0 )
+    if( elem == 0 )
         return ;
 
     /* Process children */
-    if ( ! LEAF_ELEMENT( elem ) )
+    if( ! LEAF_ELEMENT( elem ) )
         {
             _foreach_element( elem->center, func, arg1, process_id ) ;
             _foreach_element( elem->top,    func, arg1, process_id ) ;
@@ -90,11 +90,11 @@ void foreach_leaf_element_in_patch(Patch *patch, void (*func)(), long  arg1, lon
 
 static void _foreach_leaf_element(Element *elem, void (*func)(), long arg1, long process_id )
 {
-    if ( elem == 0 )
+    if( elem == 0 )
         return ;
 
     /* Process children */
-    if ( LEAF_ELEMENT( elem ) )
+    if( LEAF_ELEMENT( elem ) )
         func( elem, arg1, process_id ) ;
     else
         {
@@ -141,11 +141,11 @@ void ff_refine_elements(Element *e1, Element *e2, long level, long process_id)
     subdiv_advice = error_analysis( e1, e2, &i12, &i21, process_id ) ;
 
     /* Execute subdivision procedure */
-    if ( NO_INTERACTION(subdiv_advice) )
+    if( NO_INTERACTION(subdiv_advice) )
         /* Two elements are mutually invisible. Do nothing */
         return ;
 
-    else if ( NO_REFINEMENT_NECESSARY(subdiv_advice) )
+    else if( NO_REFINEMENT_NECESSARY(subdiv_advice) )
         {
             /* Create links and finish the job */
             inter = get_interaction(process_id) ;
@@ -162,12 +162,12 @@ void ff_refine_elements(Element *e1, Element *e2, long level, long process_id)
             /* Update cost variable */
             pc1 = &global->patch_cost[ e1->patch->seq_no ] ;
             pc2 = &global->patch_cost[ e2->patch->seq_no ] ;
-            if ( pc1->n_total_inter <= 13 )
+            if( pc1->n_total_inter <= 13 )
                 cost1 = (long)ceil(e1->area / Area_epsilon) ;
             else
                 cost1 = 1 ;
 
-            if ( pc2->n_total_inter <= 13 )
+            if( pc2->n_total_inter <= 13 )
                 cost2 = (long)ceil(e2->area / Area_epsilon) ;
             else
                 cost2 = 1 ;
@@ -183,7 +183,7 @@ void ff_refine_elements(Element *e1, Element *e2, long level, long process_id)
 #endif
         }
 
-    else if ( REFINE_PATCH_1(subdiv_advice) )
+    else if( REFINE_PATCH_1(subdiv_advice) )
         {
             /* Refine patch 1 */
             subdivide_element( e1, process_id ) ;
@@ -224,13 +224,13 @@ long error_analysis(Element *e1, Element *e2, Interaction *inter12, Interaction 
     /* Check visibility */
     cc = patch_intersection( &e1->patch->plane_equ,
                             &e2->ev1->p, &e2->ev2->p, &e2->ev3->p, process_id ) ;
-    if ( NEGATIVE_SIDE(cc) )
+    if( NEGATIVE_SIDE(cc) )
         /* If negative or on the plane, then do nothing */
         return( _NO_INTERACTION ) ;
 
     cc = patch_intersection( &e2->patch->plane_equ,
                             &e1->ev1->p, &e1->ev2->p, &e1->ev3->p, process_id ) ;
-    if ( NEGATIVE_SIDE(cc) )
+    if( NEGATIVE_SIDE(cc) )
         /* If negative or on the plane, then do nothing */
         return( _NO_INTERACTION ) ;
 
@@ -261,14 +261,14 @@ static long  bf_refine_element(long subdiv, Element *elem, Interaction *inter, l
     visibility_val = NO_VISIBILITY_NECESSARY(subdiv)?
         (float)1.0 : VISIBILITY_UNDEF ;
 
-    if ( REFINE_PATCH_1(subdiv) )
+    if( REFINE_PATCH_1(subdiv) )
         {
             /* Refine this element */
             /* (1) Make sure it has children */
             subdivide_element( elem, process_id ) ;
 
             /* (2) For each of the patch, create an interaction */
-            if ( element_completely_invisible( elem->center, e_dst, process_id ) == 0 )
+            if( element_completely_invisible( elem->center, e_dst, process_id ) == 0 )
                 {
                     pi = get_interaction(process_id) ;
                     compute_formfactor( elem->center, e_dst, pi, process_id ) ;
@@ -276,7 +276,7 @@ static long  bf_refine_element(long subdiv, Element *elem, Interaction *inter, l
                     insert_vis_undef_interaction( elem->center, pi, process_id ) ;
                     new_inter++ ;
                 }
-            if ( element_completely_invisible( elem->top, e_dst, process_id ) == 0 )
+            if( element_completely_invisible( elem->top, e_dst, process_id ) == 0 )
                 {
                     pi = get_interaction(process_id) ;
                     compute_formfactor( elem->top, e_dst, pi, process_id ) ;
@@ -284,7 +284,7 @@ static long  bf_refine_element(long subdiv, Element *elem, Interaction *inter, l
                     insert_vis_undef_interaction( elem->top, pi, process_id ) ;
                     new_inter++ ;
                 }
-            if ( element_completely_invisible( elem->left, e_dst, process_id ) == 0 )
+            if( element_completely_invisible( elem->left, e_dst, process_id ) == 0 )
                 {
                     pi = get_interaction(process_id) ;
                     compute_formfactor( elem->left, e_dst, pi, process_id ) ;
@@ -292,7 +292,7 @@ static long  bf_refine_element(long subdiv, Element *elem, Interaction *inter, l
                     insert_vis_undef_interaction( elem->left, pi, process_id ) ;
                     new_inter++ ;
                 }
-            if ( element_completely_invisible( elem->right, e_dst, process_id ) == 0 )
+            if( element_completely_invisible( elem->right, e_dst, process_id ) == 0 )
                 {
                     pi = get_interaction(process_id) ;
                     compute_formfactor( elem->right, e_dst, pi, process_id ) ;
@@ -311,7 +311,7 @@ static long  bf_refine_element(long subdiv, Element *elem, Interaction *inter, l
                NOTE: Use *inter as a place holder to link 4 new interactions
                since *prev may be NULL */
 
-            if ( element_completely_invisible( elem, e_dst->center, process_id ) == 0 )
+            if( element_completely_invisible( elem, e_dst->center, process_id ) == 0 )
                 {
                     pi = get_interaction(process_id) ;
                     compute_formfactor( elem, e_dst->center, pi, process_id ) ;
@@ -319,7 +319,7 @@ static long  bf_refine_element(long subdiv, Element *elem, Interaction *inter, l
                     insert_vis_undef_interaction( elem, pi, process_id ) ;
                     new_inter++ ;
                 }
-            if ( element_completely_invisible( elem, e_dst->top, process_id ) == 0 )
+            if( element_completely_invisible( elem, e_dst->top, process_id ) == 0 )
                 {
                     pi = get_interaction(process_id) ;
                     compute_formfactor( elem, e_dst->top, pi, process_id ) ;
@@ -327,7 +327,7 @@ static long  bf_refine_element(long subdiv, Element *elem, Interaction *inter, l
                     insert_vis_undef_interaction( elem, pi, process_id ) ;
                     new_inter++ ;
                 }
-            if ( element_completely_invisible( elem, e_dst->left, process_id ) == 0 )
+            if( element_completely_invisible( elem, e_dst->left, process_id ) == 0 )
                 {
                     pi = get_interaction(process_id) ;
                     compute_formfactor( elem, e_dst->left, pi, process_id ) ;
@@ -335,7 +335,7 @@ static long  bf_refine_element(long subdiv, Element *elem, Interaction *inter, l
                     insert_vis_undef_interaction( elem, pi, process_id ) ;
                     new_inter++ ;
                 }
-            if ( element_completely_invisible( elem, e_dst->right, process_id ) == 0 )
+            if( element_completely_invisible( elem, e_dst->right, process_id ) == 0 )
                 {
                     pi = get_interaction(process_id) ;
                     compute_formfactor( elem, e_dst->right, pi, process_id ) ;
@@ -372,12 +372,12 @@ void bf_error_analysis_list(Element *elem, Interaction *i_list, long process_id)
     long delta_n_inter = 0 ;
 
 
-    while ( inter )
+    while( inter )
         {
             /* Analyze error */
             subdiv_advice = bf_error_analysis( elem, inter, process_id ) ;
 
-            if ( NO_REFINEMENT_NECESSARY(subdiv_advice) )
+            if( NO_REFINEMENT_NECESSARY(subdiv_advice) )
                 {
                     /* Go on to the next interaction */
                     prev = inter ;
@@ -389,7 +389,7 @@ void bf_error_analysis_list(Element *elem, Interaction *i_list, long process_id)
                     /* Remove this interaction from the list */
                     refine_inter = inter ;
                     inter = inter->next ;
-                    if ( prev == 0 )
+                    if( prev == 0 )
                         i_list = inter ;
                     else
                         prev->next = inter ;
@@ -405,7 +405,7 @@ void bf_error_analysis_list(Element *elem, Interaction *i_list, long process_id)
         }
 
     /* Link good interactions to elem->intearctions */
-    if ( i_len > 0 )
+    if( i_len > 0 )
         {
             LOCK(elem->elem_lock->lock);
             prev->next = elem->interactions ;
@@ -416,7 +416,7 @@ void bf_error_analysis_list(Element *elem, Interaction *i_list, long process_id)
 
 #if PATCH_ASSIGNMENT == PATCH_ASSIGNMENT_COSTBASED
     /* Update patch interaction count */
-    if ( delta_n_inter != 0 )
+    if( delta_n_inter != 0 )
         {
             Patch_Cost *pc ;
 
@@ -453,7 +453,7 @@ long bf_error_analysis(Element *elem, Interaction *inter, long process_id)
        = B FV + B (Ferr V + F Verr + Ferr Verr)
        */
 
-    if ( (0.0 < inter->visibility) && (inter->visibility < 1.0) )
+    if( (0.0 < inter->visibility) && (inter->visibility < 1.0) )
         visibility_error = 1.0 ;
     else
         visibility_error = FF_VISIBILITY_ERROR ;
@@ -467,21 +467,21 @@ long bf_error_analysis(Element *elem, Interaction *inter, long process_id)
                    + visibility_error * inter->formfactor_err) * rad_avg ;
 
     /* If BF is smaller than the threshold, then not subdivide */
-    if ( (total_error <= BFepsilon) && (elem->n_interactions <= 10) )
+    if( (total_error <= BFepsilon) && (elem->n_interactions <= 10) )
         return( _NO_REFINEMENT_NECESSARY ) ;
-    else if ( total_error <= BFepsilon * 0.5 )
+    else if( total_error <= BFepsilon * 0.5 )
         return( _NO_REFINEMENT_NECESSARY ) ;
 
     /* Subdivide light source or receiver whichever is larger */
-    if ( elem->area > inter->destination->area )
+    if( elem->area > inter->destination->area )
         {
-            if ( elem->area > Area_epsilon )
+            if( elem->area > Area_epsilon )
                 /* Subdivide this element (receiver) */
                 return( _REFINE_PATCH_1 | vis_code ) ;
         }
     else
         {
-            if ( inter->destination->area > Area_epsilon )
+            if( inter->destination->area > Area_epsilon )
 
                 /* Subdivide source element */
                 return( _REFINE_PATCH_2 | vis_code ) ;
@@ -518,7 +518,7 @@ long radiosity_converged(long process_id)
     prev_total += 1.0e-4 ;
     difference = fabs( (current_total / prev_total) - (float)1.0 ) ;
 
-    if ( verbose_mode )
+    if( verbose_mode )
         {
             rad = global->total_energy ;
             rad.r /= global->total_patch_area ;
@@ -531,7 +531,7 @@ long radiosity_converged(long process_id)
             printf( "Difference %.2f%%\n", difference * 100.0 ) ;
         }
 
-    if ( difference <=  Energy_epsilon )
+    if( difference <=  Energy_epsilon )
         return( 1 ) ;
     else
         return( 0 ) ;
@@ -558,7 +558,7 @@ void subdivide_element(Element *e, long process_id)
     LOCK(e->elem_lock->lock);
 
     /* Check if the element already has children */
-    if ( ! _LEAF_ELEMENT(e) )
+    if( ! _LEAF_ELEMENT(e) )
         {
             UNLOCK(e->elem_lock->lock);
             return ;
@@ -710,7 +710,7 @@ void process_rays(Element *e, long process_id)
     /* For each interaction, do BF-error-analysis */
     bf_error_analysis_list( e, i_list, process_id ) ;
 
-    if ( e->n_vis_undef_inter == 0 )
+    if( e->n_vis_undef_inter == 0 )
         process_rays3( e, process_id ) ;
     else
         /* Some interactions were refined.
@@ -736,7 +736,7 @@ static void process_rays2(Element *e, long process_id)
     /* For each interaction, do BF-error-analysis */
     bf_error_analysis_list( e, i_list, process_id ) ;
 
-    if ( e->n_vis_undef_inter == 0 )
+    if( e->n_vis_undef_inter == 0 )
         process_rays3( e, process_id ) ;
     else
         /* Some interactions were refined.
@@ -755,7 +755,7 @@ static void process_rays3(Element *e, long process_id)
     gather_rays( e, process_id ) ;
 
     /* Now visit children */
-    if ( ! LEAF_ELEMENT(e) )
+    if( ! LEAF_ELEMENT(e) )
         {
             /* Compute radiosity that is pushed to descendents */
             rad_push.r = e->rad_in.r + e->rad_subtree.r ;
@@ -822,7 +822,7 @@ static void elem_join_operation(Element *e, Element *ec, long process_id)
 #endif
 
 
-    while ( e != 0 )
+    while( e != 0 )
         {
             /* Get radiosity of the child and add to my radiosity */
             LOCK(e->elem_lock->lock);
@@ -833,7 +833,7 @@ static void elem_join_operation(Element *e, Element *ec, long process_id)
             join_flag = (e->join_counter == 0) ;
             UNLOCK(e->elem_lock->lock);
 
-            if ( join_flag == 0 )
+            if( join_flag == 0 )
                 /* Other children are not finished. Return. */
                 return ;
 
@@ -892,7 +892,7 @@ static void gather_rays(Element *elem, long process_id)
 
 
     /* Return immediately if there is no interaction */
-    if ( (inter = elem->interactions) == 0 )
+    if( (inter = elem->interactions) == 0 )
         {
             elem->rad_subtree.r = 0.0 ;
             elem->rad_subtree.g = 0.0 ;
@@ -907,7 +907,7 @@ static void gather_rays(Element *elem, long process_id)
     rad_elem.g = 0.0 ;
     rad_elem.b = 0.0 ;
 
-    while ( inter )
+    while( inter )
         {
             /* Be careful !
                Use FF(out) to compute incoming energy */
@@ -951,13 +951,13 @@ long element_completely_invisible(Element *e1, Element *e2, long process_id)
     /* Check visibility */
     cc = patch_intersection( &e1->patch->plane_equ,
                             &e2->ev1->p, &e2->ev2->p, &e2->ev3->p, process_id ) ;
-    if ( NEGATIVE_SIDE(cc) )
+    if( NEGATIVE_SIDE(cc) )
         /* If negative or on the plane, then do nothing */
         return( 1 ) ;
 
     cc = patch_intersection( &e2->patch->plane_equ,
                             &e1->ev1->p, &e1->ev2->p, &e1->ev3->p, process_id ) ;
-    if ( NEGATIVE_SIDE(cc) )
+    if( NEGATIVE_SIDE(cc) )
         /* If negative or on the plane, then do nothing */
         return( 1 ) ;
 
@@ -981,7 +981,7 @@ Element *get_element(long process_id)
     LOCK(global->free_element_lock);
 
     /* Test pointer */
-    if ( global->free_element == 0 )
+    if( global->free_element == 0 )
         {
             printf( "Fatal: Ran out of element buffer\n" ) ;
             UNLOCK(global->free_element_lock);
@@ -1049,7 +1049,7 @@ void init_elemlist(long process_id)
     long i ;
 
     /* Initialize Element free list */
-    for ( i = 0 ; i < MAX_ELEMENTS-1 ; i++ )
+    for( i = 0 ; i < MAX_ELEMENTS-1 ; i++ )
         {
             global->element_buf[i].center = &global->element_buf[i+1] ;
             /* Initialize lock variable */
@@ -1110,10 +1110,10 @@ void foreach_interaction_in_element(Element *elem, void (*func)(), long arg1, lo
 {
     Interaction *inter ;
 
-    if ( elem == 0 )
+    if( elem == 0 )
         return ;
 
-    for ( inter = elem->interactions ; inter ; inter = inter->next )
+    for( inter = elem->interactions ; inter ; inter = inter->next )
         func( elem, inter, arg1, process_id ) ;
 }
 
@@ -1147,18 +1147,18 @@ void compute_formfactor(Element *e_src, Element *e_dst, Interaction *inter, long
     ff_c1 = compute_diff_disc_formfactor( &pc1_src, e_src, &pc_dst, e_dst, process_id ) ;
     ff_c2 = compute_diff_disc_formfactor( &pc2_src, e_src, &pc_dst, e_dst, process_id ) ;
     ff_c3 = compute_diff_disc_formfactor( &pc3_src, e_src, &pc_dst, e_dst, process_id ) ;
-    if ( ff_c  < 0 ) ff_c  = 0 ;
-    if ( ff_c1 < 0 ) ff_c1 = 0 ;
-    if ( ff_c2 < 0 ) ff_c2 = 0 ;
-    if ( ff_c3 < 0 ) ff_c3 = 0 ;
+    if( ff_c  < 0 ) ff_c  = 0 ;
+    if( ff_c1 < 0 ) ff_c1 = 0 ;
+    if( ff_c2 < 0 ) ff_c2 = 0 ;
+    if( ff_c3 < 0 ) ff_c3 = 0 ;
     ff_avg = (ff_c + ff_c1 + ff_c2 + ff_c3) * (float)0.25 ;
     ff_min = ff_max = ff_c ;
-    if ( ff_min > ff_c1 ) ff_min = ff_c1 ;
-    if ( ff_min > ff_c2 ) ff_min = ff_c2 ;
-    if ( ff_min > ff_c3 ) ff_min = ff_c3 ;
-    if ( ff_max < ff_c1 ) ff_max = ff_c1 ;
-    if ( ff_max < ff_c2 ) ff_max = ff_c2 ;
-    if ( ff_max < ff_c3 ) ff_max = ff_c3 ;
+    if( ff_min > ff_c1 ) ff_min = ff_c1 ;
+    if( ff_min > ff_c2 ) ff_min = ff_c2 ;
+    if( ff_min > ff_c3 ) ff_min = ff_c3 ;
+    if( ff_max < ff_c1 ) ff_max = ff_c1 ;
+    if( ff_max < ff_c2 ) ff_max = ff_c2 ;
+    if( ff_max < ff_c3 ) ff_max = ff_c3 ;
 
     /* (2) Compute FF(diff-disc) from the 3 vertices of the source */
     ff_1 = compute_diff_disc_formfactor( &e_src->ev1->p, e_src,
@@ -1170,26 +1170,26 @@ void compute_formfactor(Element *e_src, Element *e_dst, Interaction *inter, long
 
     /* (3) Find FF min and max */
     ff_min = ff_max = ff_c ;
-    if ( ff_min > ff_1 ) ff_min = ff_1 ;
-    if ( ff_min > ff_2 ) ff_min = ff_2 ;
-    if ( ff_min > ff_3 ) ff_min = ff_3 ;
-    if ( ff_max < ff_1 ) ff_max = ff_1 ;
-    if ( ff_max < ff_2 ) ff_max = ff_2 ;
-    if ( ff_max < ff_3 ) ff_max = ff_3 ;
+    if( ff_min > ff_1 ) ff_min = ff_1 ;
+    if( ff_min > ff_2 ) ff_min = ff_2 ;
+    if( ff_min > ff_3 ) ff_min = ff_3 ;
+    if( ff_max < ff_1 ) ff_max = ff_1 ;
+    if( ff_max < ff_2 ) ff_max = ff_2 ;
+    if( ff_max < ff_3 ) ff_max = ff_3 ;
 
     /* (4) Clip FF(diff-disc) if it is negative */
-    if ( ff_avg < 0 )
+    if( ff_avg < 0 )
         ff_avg = 0 ;
     inter->formfactor_out = ff_avg ;
 
     /* (5) Then find maximum difference from the FF at the center */
     ff_err = (ff_max - ff_avg) ;
-    if ( ff_err < (ff_avg - ff_min) )
+    if( ff_err < (ff_avg - ff_min) )
         ff_err = ff_avg - ff_min ;
     inter->formfactor_err = ff_err ;
 
     /* (6) Correct visibility if partially visible */
-    if ( (ff_avg < 0) && (inter->visibility == 0) )
+    if( (ff_avg < 0) && (inter->visibility == 0) )
         /* All ray missed the visible portion of the elements.
            Set visibility to a non-zero value manually */
         /** inter->visibility = FF_VISIBILITY_ERROR **/ ;
@@ -1244,10 +1244,10 @@ static float compute_diff_disc_formfactor(Vertex *p, Element *e_src, Vertex *p_d
     ff_c3= _diff_disc_formfactor( p, e_src, &p_c3, quarter_area,
                                  &e_dst->patch->plane_equ.n, process_id ) ;
 
-    if ( ff_c  < 0 ) ff_c  = 0 ;
-    if ( ff_c1 < 0 ) ff_c1 = 0 ;
-    if ( ff_c2 < 0 ) ff_c2 = 0 ;
-    if ( ff_c3 < 0 ) ff_c3 = 0 ;
+    if( ff_c  < 0 ) ff_c  = 0 ;
+    if( ff_c1 < 0 ) ff_c1 = 0 ;
+    if( ff_c2 < 0 ) ff_c2 = 0 ;
+    if( ff_c3 < 0 ) ff_c3 = 0 ;
 
     return( ff_c + ff_c1 + ff_c2 + ff_c3 ) ;
 }
@@ -1256,7 +1256,7 @@ static float compute_diff_disc_formfactor(Vertex *p, Element *e_src, Vertex *p_d
 void compute_interaction(Element *e_src, Element *e_dst, Interaction *inter, long subdiv, long process_id)
 {
     /* (1) Check visibility. */
-    if ( NO_VISIBILITY_NECESSARY(subdiv) )
+    if( NO_VISIBILITY_NECESSARY(subdiv) )
         inter->visibility = 1.0 ;
     else
         inter->visibility = VISIBILITY_UNDEF ;
@@ -1296,7 +1296,7 @@ void delete_interaction(Element *elem, Interaction *prev, Interaction *inter, lo
 {
     /* Remove from the list */
     LOCK(elem->elem_lock->lock);
-    if ( prev == 0 )
+    if( prev == 0 )
         elem->interactions = inter->next ;
     else
         prev->next = inter->next ;
@@ -1323,7 +1323,7 @@ void delete_vis_undef_interaction(Element *elem, Interaction *prev, Interaction 
 {
     /* Remove from the list */
     LOCK(elem->elem_lock->lock);
-    if ( prev == 0 )
+    if( prev == 0 )
         elem->vis_undef_inter = inter->next ;
     else
         prev->next = inter->next ;
@@ -1349,7 +1349,7 @@ Interaction *get_interaction(long process_id)
     LOCK(global->free_interaction_lock);
 
     /* Test pointer */
-    if ( global->free_interaction == 0 )
+    if( global->free_interaction == 0 )
         {
             printf( "Fatal: Ran out of interaction buffer\n" ) ;
             UNLOCK(global->free_interaction_lock);
@@ -1402,7 +1402,7 @@ void init_interactionlist(long process_id)
     long i ;
 
     /* Initialize Interaction free list */
-    for ( i = 0 ; i < MAX_INTERACTIONS-1 ; i++ )
+    for( i = 0 ; i < MAX_INTERACTIONS-1 ; i++ )
         global->interaction_buf[i].next = &global->interaction_buf[i+1] ;
     global->interaction_buf[ MAX_INTERACTIONS-1 ].next = 0 ;
     global->free_interaction = global->interaction_buf ;

@@ -20,10 +20,9 @@
 
    performs the laplacian calculation for a subblock. */
 
-#include <cmath>
-#include <cstdio>
-#include <ctime>
-
+#include <stdio.h>
+#include <math.h>
+#include <time.h>
 #include "decs.h"
 
 void laplacalc(double x[IMAX][JMAX], double z[IMAX][JMAX], long firstrow, long lastrow, long firstcol, long lastcol, long numrows, long numcols)

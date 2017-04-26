@@ -56,11 +56,10 @@ MAIN_ENV
 #define DOWNRIGHT        7
 #define PAGE_SIZE     4096
 
-#include <cmath>
-#include <cstdio>
-#include <cstdlib>
-#include <ctime>
-
+#include <stdio.h>
+#include <math.h>
+#include <time.h>
+#include <stdlib.h>
 #include "decs.h"
 
 struct multi_struct *multi;

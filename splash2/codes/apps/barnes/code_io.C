@@ -79,9 +79,9 @@ void initoutput()
 {
    printf("\n\t\t%s\n\n", headline);
    printf("%10s%10s%10s%10s%10s%10s%10s%10s\n",
-          "nbody", "dtime", "eps", "tol", "dtout", "tstop","fcells","NPROC");
+	  "nbody", "dtime", "eps", "tol", "dtout", "tstop","fcells","NPROC");
    printf("%10ld%10.5f%10.4f%10.2f%10.3f%10.3f%10.2f%10ld\n\n",
-          nbody, dtime, eps, tol, dtout, tstop, fcells, NPROC);
+	  nbody, dtime, eps, tol, dtout, tstop, fcells, NPROC);
 }
 
 /*
@@ -157,7 +157,7 @@ void diagnostics(long ProcessId)
    CLRV(Local[ProcessId].mycmphase[1]);
    CLRV(Local[ProcessId].myamvec);
    for (pp = Local[ProcessId].mybodytab+Local[ProcessId].mynbody -1;
-        pp >= Local[ProcessId].mybodytab; pp--) {
+	pp >= Local[ProcessId].mybodytab; pp--) {
       p= *pp;
       Local[ProcessId].mymtot += Mass(p);
       DOTVP(velsq, Vel(p), Vel(p));
@@ -181,9 +181,9 @@ void diagnostics(long ProcessId)
       + Local[ProcessId].myetot[2];
    if (Local[ProcessId].mymtot!=0){
       DIVVS(Local[ProcessId].mycmphase[0], Local[ProcessId].mycmphase[0],
-            Local[ProcessId].mymtot);
+	    Local[ProcessId].mymtot);
       DIVVS(Local[ProcessId].mycmphase[1], Local[ProcessId].mycmphase[1],
-            Local[ProcessId].mymtot);
+	    Local[ProcessId].mymtot);
    }
 }
 

@@ -23,11 +23,10 @@
 /*                                                                       */
 /*************************************************************************/
 
-#include <cmath>
-#include <cstdio>
-#include <cstdlib>
-#include <ctime>
-
+#include <stdio.h>
+#include <math.h>
+#include <time.h>
+#include <stdlib.h>
 #include "decs.h"
 
 MAIN_ENV

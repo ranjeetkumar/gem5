@@ -67,14 +67,14 @@ EXTERN_ENV
 #define MAX_AA_COL	9
 
 #define INT_PAD_SIZE	256		/* padding size for 32-bit
-           quantities to avoid false-sharing. Pads are inserted in two
-           situations: (i) when variables are really private to a processor
-           but are declared in a shared array owing to the lack of a private
-           space in the sproc lightweight threads model, and (ii) when
-           there are simple situations of "control" variables that are written
-           by only one processor but read by several, and declared in a
-           shared array indexed by process id, e.g. wpstat and workpool
-           declared in this file */
+	   quantities to avoid false-sharing. Pads are inserted in two
+	   situations: (i) when variables are really private to a processor
+	   but are declared in a shared array owing to the lack of a private
+	   space in the sproc lightweight threads model, and (ii) when
+	   there are simple situations of "control" variables that are written
+	   by only one processor but read by several, and declared in a
+	   shared array indexed by process id, e.g. wpstat and workpool
+	   declared in this file */
 
 #define MAX_SUBDIV_LEVEL 3		/* Max HUG subdivision level.	     */
 #define MAX_RAYINFO	(MAX_SUBDIV_LEVEL + 1)
@@ -210,25 +210,25 @@ EXTERN_ENV
 #define VecDot(A, B)		( A[0]*B[0] + A[1]*B[1] + A[2]*B[2] )
 
 #define VecCross(C, A, B)	{ C[0] = A[1]*B[2] - A[2]*B[1]; \
-                                  C[1] = A[2]*B[0] - A[0]*B[2]; \
-                                  C[2] = A[0]*B[1] - A[1]*B[0]; }
+				  C[1] = A[2]*B[0] - A[0]*B[2]; \
+				  C[2] = A[0]*B[1] - A[1]*B[0]; }
 
 #define VecNegate(B, A) 	{ B[0] = -A[0];  B[1] = -A[1];	B[2] = -A[2]; }
 
 #define VecCopy(B, A)		{ B[0] =  A[0];  B[1] =  A[1];	B[2] =	A[2]; }
 
 #define VecAdd(C, A, B) 	{ C[0] = A[0] + B[0]; \
-                                  C[1] = A[1] + B[1]; \
-                                  C[2] = A[2] + B[2]; }
+				  C[1] = A[1] + B[1]; \
+				  C[2] = A[2] + B[2]; }
 
 #define VecSub(C, A, B) 	{ C[0] = A[0] - B[0]; \
-                                  C[1] = A[1] - B[1]; \
-                                  C[2] = A[2] - B[2]; }
+				  C[1] = A[1] - B[1]; \
+				  C[2] = A[2] - B[2]; }
 
 
 #define VecScale(B, scale, A)	{ B[0] = scale * A[0]; \
-                                  B[1] = scale * A[1]; \
-                                  B[2] = scale * A[2]; }
+				  B[1] = scale * A[1]; \
+				  B[2] = scale * A[2]; }
 
 
 /*
@@ -236,11 +236,11 @@ EXTERN_ENV
  */
 
 #define IsectAdd(hit, tval, P)	{ (hit)->t = tval;  \
-                                  (hit)->pelem = P; }
+				  (hit)->pelem = P; }
 
 #define RayPoint(pi, ray, tval) { pi[0] = ray->P[0] + ray->D[0]*tval; \
-                                  pi[1] = ray->P[1] + ray->D[1]*tval; \
-                                  pi[2] = ray->P[2] + ray->D[2]*tval; }
+				  pi[1] = ray->P[1] + ray->D[1]*tval; \
+				  pi[2] = ray->P[2] + ray->D[2]*tval; }
 
 
 
@@ -289,19 +289,19 @@ typedef VEC3	COLOR;			/* An r, g, b color.		     */
  */
 
 typedef struct	pprocs
-        {
-        CHAR	    *(*name)(); 	/* Primitive name.		     */
-        VOID	    (*print)(); 	/* Primitive print.		     */
-        VOID	    (*read)();		/* Read from model file.	     */
-        VOID	    (*binread)();	/* Binary read from model file.      */
-        VOID	    (*transform)();	/* Transform primitive. 	     */
-        INT	    (*intersect)();	/* Intersect object with a ray.      */
-        INT	    (*pe_intersect)();	/* Intersect primelement with a ray. */
-        VOID	    (*normal)();	/* Compute normal vector.	     */
-        VOID	    (*normalize)();	/* Data normalization to unit cube.  */
-        VOID	    (*bbox)();		/* Bounding box constructor.	     */
-        }
-        PPROCS;
+	{
+	CHAR	    *(*name)(); 	/* Primitive name.		     */
+	VOID	    (*print)(); 	/* Primitive print.		     */
+	VOID	    (*read)();		/* Read from model file.	     */
+	VOID	    (*binread)();	/* Binary read from model file.      */
+	VOID	    (*transform)();	/* Transform primitive. 	     */
+	INT	    (*intersect)();	/* Intersect object with a ray.      */
+	INT	    (*pe_intersect)();	/* Intersect primelement with a ray. */
+	VOID	    (*normal)();	/* Compute normal vector.	     */
+	VOID	    (*normalize)();	/* Data normalization to unit cube.  */
+	VOID	    (*bbox)();		/* Bounding box constructor.	     */
+	}
+	PPROCS;
 
 
 /*
@@ -309,16 +309,16 @@ typedef struct	pprocs
  */
 
 typedef struct	surf
-        {
-        COLOR		fcolor; 	/* Front facing color.		     */
-        COLOR		bcolor; 	/* Back facing color.		     */
-        REAL		kdiff;		/* Diffuse coefficient. 	     */
-        REAL		kspec;		/* Specular coefficient.	     */
-        REAL		ktran;		/* Transmission coefficient.	     */
-        REAL		refrindex;	/* Index of refraction. 	     */
-        REAL		kspecn; 	/* Specular distribution coeff.      */
-        }
-        SURF;
+	{
+	COLOR		fcolor; 	/* Front facing color.		     */
+	COLOR		bcolor; 	/* Back facing color.		     */
+	REAL		kdiff;		/* Diffuse coefficient. 	     */
+	REAL		kspec;		/* Specular coefficient.	     */
+	REAL		ktran;		/* Transmission coefficient.	     */
+	REAL		refrindex;	/* Index of refraction. 	     */
+	REAL		kspecn; 	/* Specular distribution coeff.      */
+	}
+	SURF;
 
 
 
@@ -327,13 +327,13 @@ typedef struct	surf
  */
 
 typedef struct	light
-        {
-        VEC4		pos;		/* Light position.		     */
-        COLOR		col;		/* Light color. 		     */
-        BOOL		shadow; 	/* Send shadow rays?		     */
-        struct light	*next;		/* Ptr to next light.		     */
-        }
-        LIGHT;
+	{
+	VEC4		pos;		/* Light position.		     */
+	COLOR		col;		/* Light color. 		     */
+	BOOL		shadow; 	/* Send shadow rays?		     */
+	struct light	*next;		/* Ptr to next light.		     */
+	}
+	LIGHT;
 
 
 
@@ -342,12 +342,12 @@ typedef struct	light
  */
 
 typedef struct	pixel
-        {
-        R32	r;
-        R32	g;
-        R32	b;
-        }
-        PIXEL;
+	{
+	R32	r;
+	R32	g;
+	R32	b;
+	}
+	PIXEL;
 
 
 
@@ -356,17 +356,17 @@ typedef struct	pixel
  */
 
 typedef struct voxel
-        {
-        INT		id;		/* id = index1D 		     */
-        INT		numelements;	/* Number of elements in voxel.      */
-        struct voxel	*next;		/* Hashtable bucket list.	     */
-        CHAR		*cell;		/* Ptr to grid or ptr to ElemPtr list*/
-        CHAR		celltype;	/* 0 => local voxel, 1 => local grid */
-                                        /* 2 => GSM voxel, 3 => GSM grid     */
-                                        /* 4 => remote voxel, 5 =>remote grid*/
-        CHAR		dummy[sizeof(INT) - 1];
-        }
-        VOXEL;
+	{
+	INT		id;		/* id = index1D 		     */
+	INT		numelements;	/* Number of elements in voxel.      */
+	struct voxel	*next;		/* Hashtable bucket list.	     */
+	CHAR		*cell;		/* Ptr to grid or ptr to ElemPtr list*/
+	CHAR		celltype;	/* 0 => local voxel, 1 => local grid */
+					/* 2 => GSM voxel, 3 => GSM grid     */
+					/* 4 => remote voxel, 5 =>remote grid*/
+	CHAR		dummy[sizeof(INT) - 1];
+	}
+	VOXEL;
 
 
 
@@ -375,11 +375,11 @@ typedef struct voxel
  */
 
 typedef struct	bbox
-        {
-        REAL	dnear[3];
-        REAL	dfar[3];
-        }
-        BBOX;
+	{
+	REAL	dnear[3];
+	REAL	dfar[3];
+	}
+	BBOX;
 
 
 
@@ -388,20 +388,20 @@ typedef struct	bbox
  */
 
 typedef struct	view
-        {
-        POINT	eye;			/* Eye position.		     */
-        POINT	coi;			/* Center position		     */
-        MATRIX	vtrans; 		/* Viewing transformation	     */
-        MATRIX	vtransInv;		/* Inverse viewing transformation    */
-        MATRIX	model;			/* Global model transformation	     */
-        COLOR	bkg;			/* Background color.		     */
-        INT	projection;		/* Projection type.		     */
-        REAL	vang;			/* View angle.			     */
-        COLOR	ambient;		/* Ambient light.		     */
-        BOOL	shad;			/* Shadow indicator.		     */
-        BOOL	shading;		/* Shading indicator.		     */
-        }
-        VIEW;
+	{
+	POINT	eye;			/* Eye position.		     */
+	POINT	coi;			/* Center position		     */
+	MATRIX	vtrans; 		/* Viewing transformation	     */
+	MATRIX	vtransInv;		/* Inverse viewing transformation    */
+	MATRIX	model;			/* Global model transformation	     */
+	COLOR	bkg;			/* Background color.		     */
+	INT	projection;		/* Projection type.		     */
+	REAL	vang;			/* View angle.			     */
+	COLOR	ambient;		/* Ambient light.		     */
+	BOOL	shad;			/* Shadow indicator.		     */
+	BOOL	shading;		/* Shading indicator.		     */
+	}
+	VIEW;
 
 
 /*
@@ -409,25 +409,25 @@ typedef struct	view
  */
 
 typedef struct	display
-        {
-        INT	maxlevel;	/* Maximum raytrace level.		     */
-        INT	maxAAsubdiv;	/* Maximum antialiasing subdivision.	     */
-        INT	aarow;		/* Max anti row index for super-sampling.    */
-        INT	aacol;		/* Max anti column index for super-sampling. */
-        REAL	aatolerance;	/* Antialiasing tolerance color difference.  */
-        INT	xres,yres;	/* Display resolution.			     */
-        INT	numpixels;	/* Total number of pixels in framebuffer.    */
-        REAL	minweight;	/* Minimum ray weight.			     */
-        REAL	scrDist;	/* Screen distance from eye.		     */
-        REAL	scrWidth;	/* Screen width.			     */
-        REAL	scrHeight;	/* Screen height.			     */
-        REAL	scrHalfWidth;	/* Screen half width.			     */
-        REAL	scrHalfHeight;	/* Screen half height.			     */
-        REAL	vWscale;	/* Screen width scale.			     */
-        REAL	vHscale;	/* Screen height scale. 		     */
-        PIXEL	*framebuffer;	/* Ptr to the framebuffer.		     */
-        }
-        DISPLAY;
+	{
+	INT	maxlevel;	/* Maximum raytrace level.		     */
+	INT	maxAAsubdiv;	/* Maximum antialiasing subdivision.	     */
+	INT	aarow;		/* Max anti row index for super-sampling.    */
+	INT	aacol;		/* Max anti column index for super-sampling. */
+	REAL	aatolerance;	/* Antialiasing tolerance color difference.  */
+	INT	xres,yres;	/* Display resolution.			     */
+	INT	numpixels;	/* Total number of pixels in framebuffer.    */
+	REAL	minweight;	/* Minimum ray weight.			     */
+	REAL	scrDist;	/* Screen distance from eye.		     */
+	REAL	scrWidth;	/* Screen width.			     */
+	REAL	scrHeight;	/* Screen height.			     */
+	REAL	scrHalfWidth;	/* Screen half width.			     */
+	REAL	scrHalfHeight;	/* Screen half height.			     */
+	REAL	vWscale;	/* Screen width scale.			     */
+	REAL	vHscale;	/* Screen height scale. 		     */
+	PIXEL	*framebuffer;	/* Ptr to the framebuffer.		     */
+	}
+	DISPLAY;
 
 
 
@@ -436,13 +436,13 @@ typedef struct	display
  */
 
 typedef struct element
-        {
-        INT		index;
-        struct object	*parent;	/* Ptr back to parent object.	     */
-        CHAR		*data;		/* Pointer to data info.	     */
-        BBOX		bv;		/* Element bounding volume.	     */
-        }
-        ELEMENT;
+	{
+	INT		index;
+	struct object	*parent;	/* Ptr back to parent object.	     */
+	CHAR		*data;		/* Pointer to data info.	     */
+	BBOX		bv;		/* Element bounding volume.	     */
+	}
+	ELEMENT;
 
 
 /*
@@ -450,17 +450,17 @@ typedef struct element
  */
 
 typedef struct object
-        {
-        INT		index;
-        CHAR		name[NAME_LEN]; /* Name of object.		     */
-        BBOX		bv;		/* Bound volume.		     */
-        ELEMENT 	*pelem; 	/* Pointer to prim element list.     */
-        INT		numelements;	/* Number of primitive elements.     */
-        PPROCS		*procs; 	/* Pointer to primitive procs.	     */
-        SURF		*surf;		/* Pointer to surface properties.    */
-        struct object	*next;		/* Next primitive (linked list).     */
-        }
-        OBJECT;
+	{
+	INT		index;
+	CHAR		name[NAME_LEN]; /* Name of object.		     */
+	BBOX		bv;		/* Bound volume.		     */
+	ELEMENT 	*pelem; 	/* Pointer to prim element list.     */
+	INT		numelements;	/* Number of primitive elements.     */
+	PPROCS		*procs; 	/* Pointer to primitive procs.	     */
+	SURF		*surf;		/* Pointer to surface properties.    */
+	struct object	*next;		/* Next primitive (linked list).     */
+	}
+	OBJECT;
 
 
 /*
@@ -468,14 +468,14 @@ typedef struct object
  */
 
 typedef struct	irecord
-        {
-        REAL	t;			/* Line parameter at intersection.   */
-        ELEMENT *pelem; 		/* Primitve element.		     */
-        REAL	b1;			/* Barycentric coordinates of	     */
-        REAL	b2;			/* intersection for triangles.	     */
-        REAL	b3;
-        }
-        IRECORD;
+	{
+	REAL	t;			/* Line parameter at intersection.   */
+	ELEMENT *pelem; 		/* Primitve element.		     */
+	REAL	b1;			/* Barycentric coordinates of	     */
+	REAL	b2;			/* intersection for triangles.	     */
+	REAL	b3;
+	}
+	IRECORD;
 
 
 
@@ -484,56 +484,56 @@ typedef struct	irecord
  */
 
 typedef struct btnode
-        {
-        ELEMENT **pe;		/* Array of primitive element ptrs in node.  */
-        REAL	p[3];		/* Lower left corner of bounding box	     */
-                                /* of space represented by node.	     */
-        INT	nprims; 	/* # prims in node primElem list.	     */
-        INT	n[3];		/* Gridsizes for this box.		     */
-        INT	i[3];		/* Indices of cell (lower left corner	     */
-                                /* if not a leaf) in grid.		     */
-        INT	axis;		/* subdiv axis, 0,1,2 => x,y,z		     */
-        INT	totalPrimsAllocated;  /* This is used for garbage allocation.*/
-        struct	btnode *btn[2]; /* Ptrs to children.			     */
-        }
-        BTNODE;
+	{
+	ELEMENT **pe;		/* Array of primitive element ptrs in node.  */
+	REAL	p[3];		/* Lower left corner of bounding box	     */
+				/* of space represented by node.	     */
+	INT	nprims; 	/* # prims in node primElem list.	     */
+	INT	n[3];		/* Gridsizes for this box.		     */
+	INT	i[3];		/* Indices of cell (lower left corner	     */
+				/* if not a leaf) in grid.		     */
+	INT	axis;		/* subdiv axis, 0,1,2 => x,y,z		     */
+	INT	totalPrimsAllocated;  /* This is used for garbage allocation.*/
+	struct	btnode *btn[2]; /* Ptrs to children.			     */
+	}
+	BTNODE;
 
 
 
 typedef struct grid
-        {
-        INT		id;
-        VOXEL		**hashtable;	/* hashtable[ num_buckets ] is indexed	*/
-                                        /* by index1D mod num_buckets,		*/
-                                        /* num_buckets and n, the  # of cells/	*/
-                                        /* axis, should be relatively prime,	*/
-                                        /* grids at different  levels may	*/
-                                        /* have different num_buckets.		*/
-        UINT		*emptycells;	/* emptycells[ ceil( NumCells		*/
-                                        /* sizeof(unsigned) ) ], a packed	*/
-                                        /* array of bits indicating for 	*/
-                                        /* each cell if it is empty,		*/
-                                        /* 1 => empty,				*/
-                                        /* grids at different levels may	*/
-                                        /* have different NumCells.		*/
-        ELEMENT 	**pepa; 	/* prim element pointer list		*/
-        INT		num_prims;	/* number of prims on prim element	*/
-                                        /* list 				*/
-        INT		indx_inc[3];	/* if n is # of cells per axis, 	*/
-                                        /* NumCells is n**3,			*/
-                                        /* indx_inc[0,1,2] = 1, n, n**2;	*/
-                                        /* inc for index1D.			*/
-        INT		num_buckets;	/* # buckets in hashtable		*/
-        REAL		min[3]; 	/* cell min boundary, world coord	*/
-        REAL		cellsize[3];	/* cellsize of voxels in this grid	*/
-                                        /* in world coord			*/
-        INT		subdiv_level;	/* # levels of space subdiv		*/
-                                        /* to reach this grid,			*/
-                                        /* 0 is top level.			*/
-        BTNODE		*bintree;	/* root of bintree for this grid	*/
-        struct grid	*next;		/* grid list				*/
-        }
-        GRID;
+	{
+	INT		id;
+	VOXEL		**hashtable;	/* hashtable[ num_buckets ] is indexed	*/
+					/* by index1D mod num_buckets,		*/
+					/* num_buckets and n, the  # of cells/	*/
+					/* axis, should be relatively prime,	*/
+					/* grids at different  levels may	*/
+					/* have different num_buckets.		*/
+	UINT		*emptycells;	/* emptycells[ ceil( NumCells		*/
+					/* sizeof(unsigned) ) ], a packed	*/
+					/* array of bits indicating for 	*/
+					/* each cell if it is empty,		*/
+					/* 1 => empty,				*/
+					/* grids at different levels may	*/
+					/* have different NumCells.		*/
+	ELEMENT 	**pepa; 	/* prim element pointer list		*/
+	INT		num_prims;	/* number of prims on prim element	*/
+					/* list 				*/
+	INT		indx_inc[3];	/* if n is # of cells per axis, 	*/
+					/* NumCells is n**3,			*/
+					/* indx_inc[0,1,2] = 1, n, n**2;	*/
+					/* inc for index1D.			*/
+	INT		num_buckets;	/* # buckets in hashtable		*/
+	REAL		min[3]; 	/* cell min boundary, world coord	*/
+	REAL		cellsize[3];	/* cellsize of voxels in this grid	*/
+					/* in world coord			*/
+	INT		subdiv_level;	/* # levels of space subdiv		*/
+					/* to reach this grid,			*/
+					/* 0 is top level.			*/
+	BTNODE		*bintree;	/* root of bintree for this grid	*/
+	struct grid	*next;		/* grid list				*/
+	}
+	GRID;
 
 
 
@@ -544,27 +544,27 @@ typedef struct grid
  */
 
 typedef struct	rayinfo
-        {
-        GRID	*grid;		/* Grid for this rayinfo.		     */
-        REAL	d[3];		/* Dist along ray from world coord origin to */
-                                /* next voxel boundary. 		     */
-        INT	entry_plane;	/* Entry plane for current voxel,	     */
-                                /* (0,1,2) => (x,y,z).			     */
-        REAL	t_in;		/* Dist along ray from world coord origin to */
-                                /* entry point of current voxel.	     */
-        INT	exit_plane;	/* Exit plane for current voxel,	     */
-                                /* (0,1,2) => (x,y,z).			     */
-        REAL	t_out;		/* Dist along ray from world coord origin to */
-                                /* exit point of current voxel. 	     */
-        REAL	delta[3];	/* Dist along ray between voxel boundaries.  */
-        INT	index3D[3];	/* Current cell in cell units wrt grid origin*/
-        INT	index1D;	/* Index1D = i + j * n + k * n**2	     */
-                                /* where  index3D[] = i,j,k and n is the     */
-                                /* # of divisions per axis.		     */
-        INT	indx_inc1D[3];	/* Including sign of ray direction.	     */
-        struct	rayinfo *next;	/* Ptr to next structure.		     */
-        }
-        RAYINFO;
+	{
+	GRID	*grid;		/* Grid for this rayinfo.		     */
+	REAL	d[3];		/* Dist along ray from world coord origin to */
+				/* next voxel boundary. 		     */
+	INT	entry_plane;	/* Entry plane for current voxel,	     */
+				/* (0,1,2) => (x,y,z).			     */
+	REAL	t_in;		/* Dist along ray from world coord origin to */
+				/* entry point of current voxel.	     */
+	INT	exit_plane;	/* Exit plane for current voxel,	     */
+				/* (0,1,2) => (x,y,z).			     */
+	REAL	t_out;		/* Dist along ray from world coord origin to */
+				/* exit point of current voxel. 	     */
+	REAL	delta[3];	/* Dist along ray between voxel boundaries.  */
+	INT	index3D[3];	/* Current cell in cell units wrt grid origin*/
+	INT	index1D;	/* Index1D = i + j * n + k * n**2	     */
+				/* where  index3D[] = i,j,k and n is the     */
+				/* # of divisions per axis.		     */
+	INT	indx_inc1D[3];	/* Including sign of ray direction.	     */
+	struct	rayinfo *next;	/* Ptr to next structure.		     */
+	}
+	RAYINFO;
 
 
 
@@ -573,20 +573,20 @@ typedef struct	rayinfo
  */
 
 typedef struct	ray
-        {
-        LONG		id;			/* Ray id.		     */
-        INT		x, y;			/* Pixel ray is part of.     */
-        VEC3		P;			/* Position (origin).	     */
-        VEC3		D;			/* Direction.		     */
-        INT		level;			/* Level of ray in ray tree. */
-        RAYINFO 	*ri;			/* Grid dependent ray info.  */
-        INT		ri_indx;
-        INT		indx_inc3D[3];		/* Incl sign of ray direction*/
-        RAYINFO 	rinfo[MAX_RAYINFO + 1];
-        R32		weight; 		/* Ray weight.		     */
-        R32		dummy;
-        }
-        RAY;
+	{
+	LONG		id;			/* Ray id.		     */
+	INT		x, y;			/* Pixel ray is part of.     */
+	VEC3		P;			/* Position (origin).	     */
+	VEC3		D;			/* Direction.		     */
+	INT		level;			/* Level of ray in ray tree. */
+	RAYINFO 	*ri;			/* Grid dependent ray info.  */
+	INT		ri_indx;
+	INT		indx_inc3D[3];		/* Incl sign of ray direction*/
+	RAYINFO 	rinfo[MAX_RAYINFO + 1];
+	R32		weight; 		/* Ray weight.		     */
+	R32		dummy;
+	}
+	RAY;
 
 
 
@@ -595,12 +595,12 @@ typedef struct	ray
  */
 
 typedef struct	rayjob
-        {
-        INT	x, y;			/* Primary ray pixel start address.  */
-        INT	xlen, ylen;		/* Length of scanline bundle.	     */
-        INT	xcurr, ycurr;		/* Current ray pixel address.	     */
-        }
-        RAYJOB;
+	{
+	INT	x, y;			/* Primary ray pixel start address.  */
+	INT	xlen, ylen;		/* Length of scanline bundle.	     */
+	INT	xcurr, ycurr;		/* Current ray pixel address.	     */
+	}
+	RAYJOB;
 
 
 
@@ -609,12 +609,12 @@ typedef struct	rayjob
  */
 
 typedef struct	wpjob
-        {
-        INT	ypix, xpix;		/* Primary ray pixel address.	     */
-        INT	xdim, ydim;		/* Pixel bundle size.		     */
-        struct	wpjob	*next;
-        }
-        WPJOB;
+	{
+	INT	ypix, xpix;		/* Primary ray pixel address.	     */
+	INT	xdim, ydim;		/* Pixel bundle size.		     */
+	struct	wpjob	*next;
+	}
+	WPJOB;
 
 
 
@@ -623,13 +623,13 @@ typedef struct	wpjob
  */
 
 typedef struct	node
-        {
-        struct	node	huge	*next;	/* Ptr to next free node.	     */
-        UINT	size;			/* Size of node in bytes excl header.*/
-        BOOL	free;			/* TRUE = free, FALSE = in use.      */
-        UINT	cksm;			/* Arena integrity check.	     */
-        }
-        NODE;
+	{
+	struct	node	huge	*next;	/* Ptr to next free node.	     */
+	UINT	size;			/* Size of node in bytes excl header.*/
+	BOOL	free;			/* TRUE = free, FALSE = in use.      */
+	UINT	cksm;			/* Arena integrity check.	     */
+	}
+	NODE;
 
 
 
@@ -638,29 +638,29 @@ typedef struct	node
  */
 
 typedef struct	gmem
-        {
-        INT	nprocs; 		/* Number of processes. 	     */
-        INT	pid;			/* Global process id counter.	     */
-        INT	rid;			/* Global ray id counter.	     */
-        OBJECT	*modelroot;		/* Root of model list.		     */
-        GRID	*world_level_grid;	/* Zero level grid pointer.	     */
-        NODE	huge *freelist; 	/* Ptr to global free memory heap.   */
-        INT	wpstat[MAX_PROCS][INT_PAD_SIZE]; /* Shared work pool
-                                           status hints.  Padded to avoid
-                                           false-sharing */
-        WPJOB	*workpool[MAX_PROCS][INT_PAD_SIZE]; /* Ptr to heads of
-                                           shared work pools.  Padded to
-                                           avoid false-sharing */
+	{
+	INT	nprocs; 		/* Number of processes. 	     */
+	INT	pid;			/* Global process id counter.	     */
+	INT	rid;			/* Global ray id counter.	     */
+	OBJECT	*modelroot;		/* Root of model list.		     */
+	GRID	*world_level_grid;	/* Zero level grid pointer.	     */
+	NODE	huge *freelist; 	/* Ptr to global free memory heap.   */
+	INT	wpstat[MAX_PROCS][INT_PAD_SIZE]; /* Shared work pool
+					   status hints.  Padded to avoid
+					   false-sharing */
+	WPJOB	*workpool[MAX_PROCS][INT_PAD_SIZE]; /* Ptr to heads of
+					   shared work pools.  Padded to
+					   avoid false-sharing */
 
-        BARDEC(start)			/* Barrier for startup sync.	     */
-        LOCKDEC(pidlock)		/* Lock to increment pid.	     */
-        LOCKDEC(ridlock)		/* Lock to increment rid.	     */
-        LOCKDEC(memlock)		/* Lock for memory manager.	     */
-        ALOCKDEC(wplock, MAX_PROCS)	/* Locks for shared work pools.      */
+	BARDEC(start)			/* Barrier for startup sync.	     */
+	LOCKDEC(pidlock)		/* Lock to increment pid.	     */
+	LOCKDEC(ridlock)		/* Lock to increment rid.	     */
+	LOCKDEC(memlock)		/* Lock for memory manager.	     */
+	ALOCKDEC(wplock, MAX_PROCS)	/* Locks for shared work pools.      */
     UINT par_start_time;
     UINT partime[MAX_PROCS];
-        }
-        GMEM;
+	}
+	GMEM;
 
 
 

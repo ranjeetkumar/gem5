@@ -44,21 +44,20 @@
     */
 
 MAIN_ENV
-#include <cstdio>
-#include <cstring>
-
+#include <stdio.h>
+#include <string.h>
 #include "split.h"
 
 /*  include files for declarations  */
+#include "parameters.h"
+#include "mdvar.h"
+#include "water.h"
+#include "wwpot.h"
 #include "cnst.h"
+#include "mddata.h"
 #include "fileio.h"
 #include "frcnst.h"
 #include "global.h"
-#include "mddata.h"
-#include "mdvar.h"
-#include "parameters.h"
-#include "water.h"
-#include "wwpot.h"
 
 long NMOL,NORDER,NATMO,NATMO3,NMOL1;
 long NATOMS;
@@ -183,8 +182,8 @@ int main(int argc, char **argv)
         /* macro calls to initialize synch varibles  */
 
         BARINIT(gl->start, NumProcs);
-        BARINIT(gl->InterfBar, NumProcs);
-        BARINIT(gl->PotengBar, NumProcs);
+	BARINIT(gl->InterfBar, NumProcs);
+	BARINIT(gl->PotengBar, NumProcs);
         LOCKINIT(gl->IOLock);
         LOCKINIT(gl->IndexLock);
         LOCKINIT(gl->IntrafVirLock);
@@ -242,7 +241,7 @@ int main(int argc, char **argv)
     gl->Index = 1;
 
     if (NSAVE > 0)  /* not true for input decks provided */
-        fprintf(six,"COLLECTING X AND V DATA AT EVERY %4ld TIME STEPS \n",NSAVE);
+	fprintf(six,"COLLECTING X AND V DATA AT EVERY %4ld TIME STEPS \n",NSAVE);
 
     /* spawn helper processes, each getting its unique process id */
     CLOCK(gl->computestart);
@@ -287,6 +286,6 @@ void WorkStart() /* routine that each created process starts at;
 
     LocalXTT = MDMAIN(NSTEP,NPRINT,NSAVE,NORD1,ProcID);
     if (ProcID == 0) {
-            XTT = LocalXTT;
+	    XTT = LocalXTT;
     }
 }

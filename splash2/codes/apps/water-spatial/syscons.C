@@ -15,16 +15,17 @@
 /*************************************************************************/
 
 EXTERN_ENV
-#include <cmath>
-#include <cstdio>
+#include <stdio.h>
+#include <math.h>
 
-#include "cnst.h"
-#include "global.h"
-#include "mddata.h"
-#include "mdvar.h"
+
 #include "parameters.h"
+#include "mdvar.h"
 #include "water.h"
 #include "wwpot.h"
+#include "cnst.h"
+#include "mddata.h"
+#include "global.h"
 
 void SYSCNS()                    /* sets up some system constants */
 {

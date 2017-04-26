@@ -17,11 +17,11 @@
 #ifndef _Defs_H
 #define _Defs_H 1
 
-#include <cassert>
-#include <climits>
-#include <cmath>
-#include <cstdio>
-#include <cstdlib>
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+#include <math.h>
+#include <limits.h>
 
 /* Define booleans */
 #ifdef TRUE

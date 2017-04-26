@@ -14,7 +14,7 @@
 /*                                                                       */
 /*************************************************************************/
 
-#include <cstdio>
+#include <stdio.h>
 
 #define FitsInCache 2048
 
@@ -22,38 +22,38 @@
 #define PAGE_SIZE 4096
 
 typedef struct {
-        long n, m, *col, *startrow, *row;
-        double *nz;
-        } SMatrix;
+	long n, m, *col, *startrow, *row;
+	double *nz;
+	} SMatrix;
 
 struct Pair {
-        long block_num;
-        struct Pair *next;
-        };
+	long block_num;
+	struct Pair *next;
+	};
 
 typedef struct {
         long i, j, owner, remaining, nmod;
-        long length; /* number of full rows in block */
-        long parent; /* block number of parent block */
-        double checksum;
-        volatile unsigned long done;
-        long *structure, *relative;
-        double *nz;
-        struct Pair *pair;
+	long length; /* number of full rows in block */
+	long parent; /* block number of parent block */
+	double checksum;
+	volatile unsigned long done;
+	long *structure, *relative;
+	double *nz;
+	struct Pair *pair;
       } Block;
 
 typedef union {
         Block *block;
-        double nz;
+	double nz;
       } Entry;
-
+       
 typedef struct {
         long n, *col, *row, n_blocks, n_entries, entries_allocated;
-        long *partition_size, *renumbering, *mapI, *mapJ;
-        long *domain, *domains, n_domains, *proc_domains;
-        long n_partitions, max_partition;
-        double **proc_domain_storage;
-        Entry *entry;
+	long *partition_size, *renumbering, *mapI, *mapJ;
+	long *domain, *domains, n_domains, *proc_domains;
+	long n_partitions, max_partition;
+	double **proc_domain_storage;
+	Entry *entry;
       } BMatrix;
 
 #define BLOCK(bl_no) (LB.entry[bl_no].block)
@@ -62,10 +62,10 @@ typedef struct {
 #define OWNER(bl_no) (BLOCK(bl_no)->owner)
 
 struct Update {
-        long i, j, src, remaining;
-        long dimi, dimj, *structi, *structj;
-        double *update;
-        struct Update *next;
+	long i, j, src, remaining;
+	long dimi, dimj, *structi, *structj;
+	double *update;
+	struct Update *next;
       };
 
 struct Task {
@@ -75,18 +75,18 @@ struct Task {
   };
 
 struct GlobalMemory {
-        BARDEC(start)
-        LOCKDEC(waitLock)
-        LOCKDEC(memLock)
-        unsigned long runtime[MAX_PROC];
-        };
+	BARDEC(start)
+	LOCKDEC(waitLock)
+	LOCKDEC(memLock)
+	unsigned long runtime[MAX_PROC];
+	};
 
 struct BlockList {
-        long theBlock, row, col, length;
-        long *structure;
-        double *nz;
-        struct BlockList *next;
-        };
+	long theBlock, row, col, length;
+	long *structure;
+	double *nz;
+	struct BlockList *next;
+	};
 
 struct LocalCopies {
        double *blktmp;

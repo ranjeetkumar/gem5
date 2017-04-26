@@ -16,14 +16,14 @@
 
 EXTERN_ENV
 
-#include <cmath>
-
 #include "matrix.h"
+#include <math.h>
+
 
 struct Chunk {
-        long first, last, assign;
-        struct Chunk *next;
-        } *chunks_head = NULL, *chunks_tail = NULL;
+	long first, last, assign;
+	struct Chunk *next;
+	} *chunks_head = NULL, *chunks_tail = NULL;
 
 long tolerance = 20;
 
@@ -61,16 +61,16 @@ void Partition(SMatrix M, long parts, long *T, long *assigned_ops, long *domain,
       maxm = assigned_ops[MaxBucket(assigned_ops, parts)];
 
       if (maxm == 0 ||
-          (100.0*(maxm - minm)/(double) maxm < tolerance) ||
-          (1.0*parts*maxm/work_tree[M.n] < 0.05))
-        break;
+	  (100.0*(maxm - minm)/(double) maxm < tolerance) ||
+	  (1.0*parts*maxm/work_tree[M.n] < 0.05))
+	break;
 
       t = GetChunk();
 
       change = Divide(t);
 
       if (!change)
-        break;
+	break;
 
       NumberPartition(parts, assigned_ops, 0);
     }
@@ -182,7 +182,7 @@ long Divide(struct Chunk *root)
 
   first_in_super = root->last-1;
   while (firstchild[first_in_super]+1 ==
-         firstchild[first_in_super+1]) {
+	 firstchild[first_in_super+1]) {
     first_in_super--;
   }
 
@@ -202,80 +202,80 @@ long Divide(struct Chunk *root)
 
 long MaxBucket(long *assigned_ops, long parts)
 {
-        long i, maxm, ind;
+	long i, maxm, ind;
 
-        maxm = assigned_ops[0]; ind = 0;
-        for (i=1; i<parts; i++)
-                if (assigned_ops[i] > maxm) {
-                        ind = i; maxm = assigned_ops[i];
-                        }
+	maxm = assigned_ops[0]; ind = 0;
+	for (i=1; i<parts; i++)
+		if (assigned_ops[i] > maxm) {
+			ind = i; maxm = assigned_ops[i];
+			}
 
-        return(ind);
+	return(ind);
 }
 
 long MinBucket(long *assigned_ops, long parts)
 {
-        long i, minm, ind;
+	long i, minm, ind;
 
-        minm = assigned_ops[0]; ind = 0;
-        for (i=1; i<parts; i++)
-                if (assigned_ops[i] < minm) {
-                        ind = i; minm = assigned_ops[i];
-                        }
+	minm = assigned_ops[0]; ind = 0;
+	for (i=1; i<parts; i++)
+		if (assigned_ops[i] < minm) {
+			ind = i; minm = assigned_ops[i];
+			}
 
-        return(ind);
+	return(ind);
 }
 
 
 struct Chunk *NewChunk()
 {
-        struct Chunk *t;
+	struct Chunk *t;
 
-        t = (struct Chunk *) malloc(sizeof(struct Chunk));
+	t = (struct Chunk *) malloc(sizeof(struct Chunk));
 
-        return(t);
+	return(t);
 }
 
 
 
 void AddInOrder(struct Chunk *t)
 {
-        struct Chunk *current;
-        long work;
+	struct Chunk *current;
+	long work;
 
-        work = work_tree[t->last-1];
-        current = chunks_head;
-        if (!current) {
-                t->next = NULL;
-                chunks_head = t;
-                }
-        else if (work >= work_tree[current->last-1]) {
-                t->next = chunks_head;
-                chunks_head = t;
-                }
-        else {
-                while (current->next && work<work_tree[current->next->last-1])
-                        current = current->next;
-                t->next = current->next;
-                current->next = t;
-                }
-
-        if (t->next == NULL)
-                chunks_tail = t;
+	work = work_tree[t->last-1];
+	current = chunks_head;
+	if (!current) {
+		t->next = NULL;
+		chunks_head = t;
+		}
+	else if (work >= work_tree[current->last-1]) {
+		t->next = chunks_head;
+		chunks_head = t;
+		}
+	else {
+		while (current->next && work<work_tree[current->next->last-1])
+			current = current->next;
+		t->next = current->next;
+		current->next = t;
+		}
+		
+	if (t->next == NULL)
+		chunks_tail = t;
 }
 
 
 struct Chunk *GetChunk()
 {
-        struct Chunk *t;
+	struct Chunk *t;
 
-        t = chunks_head;
-        if (t) {
-          chunks_head = t->next;
-          if (t == chunks_tail)
-            chunks_tail = NULL;
-          }
+	t = chunks_head;
+	if (t) {
+	  chunks_head = t->next;
+	  if (t == chunks_tail)
+	    chunks_tail = NULL;
+	  }
 
-        return(t);
+	return(t);
 }
 
