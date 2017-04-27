@@ -67,9 +67,7 @@ int main(int argc, char *argv[])
 
     cout << "Beginning multiply...";
 
-    m5_dumpreset_stats(0, 0);
     multiply(A, B, C, size);
-    m5_dumpreset_stats(0, 0);
 
     cout << "Done." << endl;
 
